@@ -1,5 +1,6 @@
 ---
 import '@/styles/global.css';
+import BackToTop from '@/components/BackToTop.astro';
 
 interface Props {
 	title: string;
@@ -22,8 +23,15 @@ const baseUrl = import.meta.env.BASE_URL.endsWith('/')
 		<link rel="icon" href={`${baseUrl}favicon.ico`} />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
+		<script is:inline>
+			// ponytail: runs before paint to avoid a flash of the wrong theme; keep in sync with ThemeToggle.tsx
+			const theme = localStorage.getItem('theme');
+			const dark = theme === 'dark' || (theme !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
+			document.documentElement.classList.toggle('dark', dark);
+		</script>
 	</head>
-	<body>
+	<body id="top">
 		<slot />
+		<BackToTop />
 	</body>
 </html>

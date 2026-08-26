@@ -45,7 +45,7 @@ export function FieldDetailsDialog({ selected, onOpenChange, restoreFocusRef }: 
           <dl className="grid gap-3 text-sm sm:grid-cols-2">
             <div>
               <dt className="font-medium text-muted-foreground">Identifier</dt>
-              <dd className="mt-1 font-mono text-xs">{selected.field.id}</dd>
+              <dd className="mt-1 font-mono text-xs break-words">{selected.field.id}</dd>
             </div>
             <div>
               <dt className="font-medium text-muted-foreground">Type</dt>

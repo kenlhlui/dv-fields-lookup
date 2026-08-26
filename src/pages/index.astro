@@ -1,21 +1,36 @@
 ---
+import AcknowledgementsDialog from '@/components/AcknowledgementsDialog';
 import MetadataDictionary from '@/components/dictionary/MetadataDictionary';
+import ThemeToggle from '@/components/ThemeToggle';
+import Footer from '@/components/Footer.astro';
 import metadataJson from '@/data/metadata.json';
 import Layout from '@/layouts/Layout.astro';
 import { validateMetadata } from '@/lib/metadata';
+import { site } from '@/site.config';
+import { compiledContent } from '@/content/acknowledgements.md';
 
 const metadata = validateMetadata(metadataJson);
+const acknowledgementsHtml = await compiledContent();
 ---
 
 <Layout title="Metadata Lookup" description="Search and browse demonstration Dataverse metadata fields.">
 	<main class="mx-auto min-h-screen w-full max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
-		<header class="mb-10 max-w-3xl">
-			<p class="mb-3 text-sm font-semibold uppercase tracking-[0.18em] text-primary">Dataverse field guide</p>
-			<h1 class="text-4xl font-semibold tracking-tight text-balance sm:text-5xl">Metadata Lookup</h1>
-			<p class="mt-4 text-lg leading-8 text-muted-foreground">
-				Search and explore a demonstration metadata dictionary while keeping every field in context.
-			</p>
+		<header class="mb-10 flex items-center justify-between gap-4">
+			<div class="max-w-3xl">
+				<p class="mb-3 text-sm font-semibold uppercase tracking-[0.18em] text-primary">Dataverse fields</p>
+				<h1 class="text-4xl font-semibold tracking-tight text-balance sm:text-5xl">Metadata Field Lookup</h1>
+				<p class="mt-4 text-lg leading-8 text-muted-foreground">
+					Search and explore metadata fields in Dataverse, with specifications and best practices in context.
+				</p>
+			</div>
+			<div class="flex items-center gap-1">
+				<AcknowledgementsDialog html={acknowledgementsHtml} client:load />
+				<ThemeToggle client:load />
+			</div>
 		</header>
 		<MetadataDictionary blocks={metadata} client:load />
 	</main>
+	<Footer githubUrl={site.githubUrl}>
+		<p class="whitespace-pre-line">{site.footerText}</p>
+	</Footer>
 </Layout>

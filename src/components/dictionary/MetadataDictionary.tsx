@@ -1,6 +1,7 @@
 import { Search } from 'lucide-react';
 import { useMemo, useRef, useState } from 'react';
 
+import { BlockNav } from '@/components/dictionary/BlockNav';
 import { FieldDetailsDialog, type SelectedField } from '@/components/dictionary/FieldDetailsDialog';
 import { MetadataBlockSection } from '@/components/dictionary/MetadataBlockSection';
 import { Button } from '@/components/ui/button';
@@ -41,24 +42,32 @@ export default function MetadataDictionary({ blocks }: { blocks: MetadataBlock[]
 
   return (
     <div className="space-y-8">
+      <BlockNav blocks={visibleBlocks.map((result) => result.block)} />
       <div className="space-y-3">
         <label htmlFor="metadata-search" className="text-sm font-medium">
           Search metadata fields
         </label>
-        <div className="relative">
-          <Search
-            aria-hidden="true"
-            className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
-          />
-          <Input
-            ref={searchInputRef}
-            id="metadata-search"
-            type="search"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search names, descriptions, identifiers, and examples…"
-            className="h-10 pl-9"
-          />
+        <div className="flex gap-2">
+          <div className="relative flex-1">
+            <Search
+              aria-hidden="true"
+              className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
+            />
+            <Input
+              ref={searchInputRef}
+              id="metadata-search"
+              type="search"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Search names, descriptions, identifiers, and examples…"
+              className="h-10 pl-9"
+            />
+          </div>
+          {(query || blockFilter.size > 0) && (
+            <Button type="button" variant="outline" className="h-10" onClick={clearSearch}>
+              Clear all
+            </Button>
+          )}
         </div>
         <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by metadata block">
           {blocks.map((block) => (
