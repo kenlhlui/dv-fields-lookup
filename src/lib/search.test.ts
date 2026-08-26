@@ -12,73 +12,83 @@ describe('createMetadataSearch', () => {
     const view = search.search('   ');
 
     expect(view.isSearching).toBe(false);
-    expect(view.matchingFieldCount).toBe(14);
+    expect(view.matchingFieldCount).toBe(292);
     expect(view.blocks.map(({ block }) => block.id)).toEqual([
       'citation',
       'geospatial',
-      'socialScience',
-      'astronomy',
+      'socialscience',
+      'astrophysics',
+      'biomedical',
+      'journal',
+      'customMRA',
+      'customGSD',
+      'customARCS',
+      'customPSRI',
+      'customPSI',
+      'customCHIA',
+      'customDigaai',
+      'customSAEF',
+      'computationalworkflow',
+      'LocalContextsCVoc',
+      '3dobjects',
+      'heal',
     ]);
   });
 
   it('removes unrelated blocks while retaining every Fuse-matched field in its full source block', () => {
-    const view = search.search('ORCID');
+    const view = search.search('timePeriodCovered');
 
     expect(view.isSearching).toBe(true);
     expect(view.matchingFieldCount).toBe(2);
     expect(view.blocks.map(({ block }) => block.id)).toEqual(['citation']);
-    expect(view.blocks[0].block.groups.flatMap((group) => group.fields).map((field) => field.id)).toEqual([
-      'authorName',
-      'authorIdentifier',
-      'authorIdentifierScheme',
-      'otherId',
-      'otherIdAgency',
-    ]);
-    expect([...view.blocks[0].matches.keys()]).toEqual(['authorIdentifier', 'authorIdentifierScheme']);
+    expect(view.blocks[0].block.fields.map((field) => field.id)).toEqual(
+      blocks.find((block) => block.id === 'citation')?.fields.map((field) => field.id),
+    );
+    expect([...view.blocks[0].matches.keys()].sort()).toEqual(['timePeriodCoveredEnd', 'timePeriodCoveredStart']);
   });
 
-  it('searches identifiers, aliases, summaries, descriptions, and examples', () => {
-    expect(search.search('authorIdentifier').blocks[0].matches.get('authorIdentifier')).toBeDefined();
-    expect(search.search('researcher ID').matchingFieldCount).toBe(1);
-    expect(search.search('persistent identifier').blocks[0].matches.get('authorIdentifier')?.ranges.summary).toEqual([[0, 20]]);
-    expect(search.search('globally unique').matchingFieldCount).toBe(1);
-    expect(search.search('0000-0002-1825-0097').matchingFieldCount).toBe(1);
+  it('searches identifiers, definitions, best-practice definitions, and examples', () => {
+    expect(search.search('authorAffiliation').blocks[0].matches.get('authorAffiliation')).toBeDefined();
+    const affiliationMatches = search.search('organization with which the author is affiliated').blocks[0].matches;
+    expect(affiliationMatches.has('authorAffiliation')).toBe(true);
+    expect(search.search('Ada Lovelace').matchingFieldCount).toBe(0);
   });
 
-  it('ranks a direct field-name match ahead of a description-only match', () => {
-    expect(search.search('identifier').blocks[0].block.id).toBe('citation');
+  it('ranks a direct field-name match ahead of a definition-only match', () => {
+    expect(search.search('subject').blocks[0].block.id).toBe('citation');
   });
 
   it('returns normalized inclusive name ranges for a direct name match', () => {
-    const match = search.search('Identifier').blocks[0].matches.get('authorIdentifier');
+    const match = search.search('authorAffiliation').blocks[0].matches.get('authorAffiliation');
 
-    expect(match?.ranges.name).toEqual([[0, 9]]);
+    expect(match?.ranges.name).toEqual([
+      [0, 5],
+      [7, 17],
+    ]);
   });
 
   it('retains source order for blocks with equal scores', () => {
     const matchingField = {
       id: 'sameFirst',
       name: 'Same name',
-      summary: 'A summary.',
-      description: 'A description.',
+      definition: 'A definition.',
       type: 'Text',
       required: false,
       repeatable: false,
       example: 'Example',
-      aliases: [],
     };
     const equalScoreBlocks: MetadataBlock[] = [
       {
         id: 'first',
         name: 'First',
         description: 'First block.',
-        groups: [{ id: 'firstGroup', name: 'First group', fields: [matchingField] }],
+        fields: [matchingField],
       },
       {
         id: 'second',
         name: 'Second',
         description: 'Second block.',
-        groups: [{ id: 'secondGroup', name: 'Second group', fields: [{ ...matchingField, id: 'sameSecond' }] }],
+        fields: [{ ...matchingField, id: 'sameSecond' }],
       },
     ];
 

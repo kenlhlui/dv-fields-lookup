@@ -7,7 +7,7 @@ export type TextRange = readonly [start: number, end: number];
 export interface FieldMatch {
   fieldId: string;
   score: number;
-  ranges: Partial<Record<'id' | 'name' | 'summary' | 'description' | 'example', TextRange[]>>;
+  ranges: Partial<Record<'id' | 'name' | 'definition' | 'bestPracticeDefinition' | 'example', TextRange[]>>;
 }
 
 export interface SearchBlock {
@@ -29,23 +29,27 @@ interface SearchRecord {
   field: MetadataField;
   id: string;
   name: string;
-  aliases: string[];
-  summary: string;
-  description: string;
+  definition: string;
+  bestPracticeDefinition: string;
   example: string;
 }
 
 type MatchableProperty = keyof FieldMatch['ranges'];
-type SearchProperty = 'id' | 'name' | 'aliases' | 'summary' | 'description' | 'example';
+type SearchProperty = 'id' | 'name' | 'definition' | 'bestPracticeDefinition' | 'example';
 
-const matchableProperties = new Set<MatchableProperty>(['id', 'name', 'summary', 'description', 'example']);
+const matchableProperties = new Set<MatchableProperty>([
+  'id',
+  'name',
+  'definition',
+  'bestPracticeDefinition',
+  'example',
+]);
 const searchKeys: { name: SearchProperty; weight: number }[] = [
   { name: 'name', weight: 0.35 },
   { name: 'id', weight: 0.2 },
-  { name: 'aliases', weight: 0.15 },
-  { name: 'summary', weight: 0.13 },
-  { name: 'description', weight: 0.12 },
-  { name: 'example', weight: 0.05 },
+  { name: 'definition', weight: 0.18 },
+  { name: 'bestPracticeDefinition', weight: 0.17 },
+  { name: 'example', weight: 0.1 },
 ];
 
 function normalizeRanges(indices: ReadonlyArray<readonly [number, number]>): TextRange[] {
@@ -82,18 +86,15 @@ function rangesFor(matches: ReadonlyArray<FuseResultMatch> | undefined): FieldMa
 
 export function createMetadataSearch(blocks: MetadataBlock[]): { search(query: string): SearchView } {
   const records: SearchRecord[] = blocks.flatMap((block, blockIndex) =>
-    block.groups.flatMap((group) =>
-      group.fields.map((field) => ({
-        blockIndex,
-        field,
-        id: field.id,
-        name: field.name,
-        aliases: field.aliases,
-        summary: field.summary,
-        description: field.description,
-        example: field.example,
-      })),
-    ),
+    block.fields.map((field) => ({
+      blockIndex,
+      field,
+      id: field.id,
+      name: field.name,
+      definition: field.definition,
+      bestPracticeDefinition: field.bestPracticeDefinition ?? '',
+      example: field.example ?? '',
+    })),
   );
   const fuse = new Fuse(records, {
     includeMatches: true,

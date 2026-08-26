@@ -7,31 +7,26 @@ import { FieldDetailsDialog, type SelectedField } from '@/components/dictionary/
 
 const field = {
   id: 'authorIdentifier',
-  name: 'Identifier',
-  summary: 'Persistent identifier associated with the author.',
-  description:
+  name: 'Author Identifier',
+  definition: 'A globally unique identifier associated with the author.',
+  bestPracticeDefinition:
     'A globally unique identifier for the named author, such as an ORCID iD. Use the corresponding scheme in Identifier Scheme.',
+  recommendation: 'Recommended',
   type: 'Text',
   required: false,
   repeatable: true,
   example: 'https://orcid.org/0000-0002-1825-0097',
-  aliases: ['ORCID', 'researcher ID'],
+  values: ['ORCID', 'ISNI'],
 } satisfies SelectedField['field'];
-
-const group = {
-  id: 'author',
-  name: 'Author',
-  fields: [field],
-} satisfies SelectedField['group'];
 
 const block = {
   id: 'citation',
   name: 'Citation Metadata',
   description: 'Core information used to identify, describe, and cite a dataset.',
-  groups: [group],
+  fields: [field],
 } satisfies SelectedField['block'];
 
-const selected: SelectedField = { block, group, field };
+const selected: SelectedField = { block, field };
 
 describe('FieldDetailsDialog', () => {
   it('exposes complete field metadata and hierarchy in an accessible dialog', () => {
@@ -43,8 +38,9 @@ describe('FieldDetailsDialog', () => {
       />,
     );
 
-    const dialog = screen.getByRole('dialog', { name: 'Identifier' });
+    const dialog = screen.getByRole('dialog', { name: 'Author Identifier' });
     expect(dialog).toHaveClass('max-h-[calc(100dvh-2rem)]', 'overflow-y-auto');
+    expect(dialog).toHaveTextContent('A globally unique identifier associated with the author.');
     expect(dialog).toHaveTextContent(
       'A globally unique identifier for the named author, such as an ORCID iD. Use the corresponding scheme in Identifier Scheme.',
     );
@@ -52,15 +48,11 @@ describe('FieldDetailsDialog', () => {
     expect(dialog).toHaveTextContent('Text');
     expect(dialog).toHaveTextContent('No');
     expect(dialog).toHaveTextContent('Yes');
+    expect(dialog).toHaveTextContent('Recommended');
     expect(dialog).toHaveTextContent('https://orcid.org/0000-0002-1825-0097');
     expect(dialog).toHaveTextContent('ORCID');
-    expect(dialog).toHaveTextContent('Citation Metadata › Author › Identifier');
-    expect(screen.getByText('researcher ID')).toHaveClass(
-      'h-auto',
-      'max-w-full',
-      'whitespace-normal',
-      'break-words',
-    );
+    expect(dialog).toHaveTextContent('Citation Metadata › Author Identifier');
+    expect(screen.getByText('ISNI')).toHaveClass('h-auto', 'max-w-full', 'whitespace-normal', 'break-words');
   });
 
   it('reports dismissal when Escape closes the controlled dialog', async () => {
@@ -101,7 +93,7 @@ describe('FieldDetailsDialog', () => {
       return (
         <>
           <button ref={restoreFocusRef} onClick={() => setOpen(true)}>
-            View details for Identifier
+            View details for Author Identifier
           </button>
           <FieldDetailsDialog
             selected={open ? selected : null}
@@ -113,7 +105,7 @@ describe('FieldDetailsDialog', () => {
     }
 
     render(<DialogHarness />);
-    const opener = screen.getByRole('button', { name: 'View details for Identifier' });
+    const opener = screen.getByRole('button', { name: 'View details for Author Identifier' });
     await user.click(opener);
 
     await user.keyboard('{Escape}');

@@ -24,7 +24,6 @@ describe('index page', () => {
     );
     expect(html).toContain('<link rel="icon" type="image/svg+xml" href="/dv-fields-lookup/favicon.svg">');
     expect(html).toMatch(/<h1[^>]*>Metadata Lookup<\/h1>/);
-    expect(html).toContain('Demonstration data · Not canonical Dataverse documentation');
     expect(html).toContain('<label for="metadata-search"');
     expect(html).toContain('Search metadata fields');
     expect(html).toContain('Citation Metadata');

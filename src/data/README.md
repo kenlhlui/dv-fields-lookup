@@ -1,0 +1,1 @@
+The metadatablocks.json file can be generated via the `/api/metadatablocks?returnDatasetFieldTypes=true` endpoint from a Dataverse instance.

@@ -45,7 +45,7 @@ export function FieldCard({ field, match, onSelect }: FieldCardProps) {
           )}
         </div>
         <CardDescription>
-          <HighlightText text={field.summary} ranges={match?.ranges.summary} />
+          <HighlightText text={field.definition} ranges={match?.ranges.definition} />
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-wrap gap-2">
@@ -60,6 +60,11 @@ export function FieldCard({ field, match, onSelect }: FieldCardProps) {
         {field.repeatable && (
           <Badge variant="outline" className="h-auto max-w-full whitespace-normal break-words text-left">
             Repeatable
+          </Badge>
+        )}
+        {field.recommendation && (
+          <Badge variant="outline" className="h-auto max-w-full whitespace-normal break-words text-left">
+            Best practice: {field.recommendation}
           </Badge>
         )}
       </CardContent>

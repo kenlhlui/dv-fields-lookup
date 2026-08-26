@@ -13,11 +13,10 @@ import {
 } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
 import { getFieldPath } from '@/lib/metadata';
-import type { MetadataBlock, MetadataField, MetadataGroup } from '@/lib/metadata';
+import type { MetadataBlock, MetadataField } from '@/lib/metadata';
 
 export interface SelectedField {
   block: MetadataBlock;
-  group: MetadataGroup;
   field: MetadataField;
 }
 
@@ -40,7 +39,7 @@ export function FieldDetailsDialog({ selected, onOpenChange, restoreFocusRef }: 
         >
           <DialogHeader className="pr-10">
             <DialogTitle>{selected.field.name}</DialogTitle>
-            <DialogDescription>{selected.field.description}</DialogDescription>
+            <DialogDescription>{selected.field.definition}</DialogDescription>
           </DialogHeader>
 
           <dl className="grid gap-3 text-sm sm:grid-cols-2">
@@ -60,28 +59,45 @@ export function FieldDetailsDialog({ selected, onOpenChange, restoreFocusRef }: 
               <dt className="font-medium text-muted-foreground">Repeatable</dt>
               <dd className="mt-1">{selected.field.repeatable ? 'Yes' : 'No'}</dd>
             </div>
+            {selected.field.recommendation && (
+              <div>
+                <dt className="font-medium text-muted-foreground">Best practice</dt>
+                <dd className="mt-1">{selected.field.recommendation}</dd>
+              </div>
+            )}
           </dl>
 
           <Separator />
 
-          <div className="space-y-2">
-            <h3 className="text-sm font-medium">Example</h3>
-            <pre className="overflow-x-auto rounded-md bg-muted p-3 text-xs">
-              <code>{selected.field.example}</code>
-            </pre>
-          </div>
-
-          {selected.field.aliases.length ? (
+          {selected.field.bestPracticeDefinition ? (
             <div className="space-y-2">
-              <h3 className="text-sm font-medium">Aliases</h3>
+              <h3 className="text-sm font-medium">Best practice definition</h3>
+              <p className="whitespace-pre-line text-sm text-muted-foreground">
+                {selected.field.bestPracticeDefinition}
+              </p>
+            </div>
+          ) : null}
+
+          {selected.field.example ? (
+            <div className="space-y-2">
+              <h3 className="text-sm font-medium">Example</h3>
+              <pre className="overflow-x-auto rounded-md bg-muted p-3 text-xs whitespace-pre-wrap">
+                <code>{selected.field.example}</code>
+              </pre>
+            </div>
+          ) : null}
+
+          {selected.field.values?.length ? (
+            <div className="space-y-2">
+              <h3 className="text-sm font-medium">Allowed values</h3>
               <div className="flex flex-wrap gap-2">
-                {selected.field.aliases.map((alias) => (
+                {selected.field.values.map((value) => (
                   <Badge
-                    key={alias}
+                    key={value}
                     variant="secondary"
                     className="h-auto max-w-full whitespace-normal break-words text-left"
                   >
-                    {alias}
+                    {value}
                   </Badge>
                 ))}
               </div>
@@ -90,9 +106,7 @@ export function FieldDetailsDialog({ selected, onOpenChange, restoreFocusRef }: 
 
           <div className="space-y-1">
             <h3 className="text-sm font-medium">Path</h3>
-            <p className="text-sm text-muted-foreground">
-              {getFieldPath(selected.block, selected.group, selected.field)}
-            </p>
+            <p className="text-sm text-muted-foreground">{getFieldPath(selected.block, selected.field)}</p>
           </div>
 
           <DialogFooter>

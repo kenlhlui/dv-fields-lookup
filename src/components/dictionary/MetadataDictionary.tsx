@@ -5,7 +5,7 @@ import { FieldDetailsDialog, type SelectedField } from '@/components/dictionary/
 import { MetadataBlockSection } from '@/components/dictionary/MetadataBlockSection';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { countFields, type MetadataBlock, type MetadataField, type MetadataGroup } from '@/lib/metadata';
+import { countFields, type MetadataBlock, type MetadataField } from '@/lib/metadata';
 import { createMetadataSearch } from '@/lib/search';
 
 function pluralize(count: number, singular: string, plural = `${singular}s`) {
@@ -28,9 +28,9 @@ export default function MetadataDictionary({ blocks }: { blocks: MetadataBlock[]
     : countFields(visibleBlocks.map((result) => result.block));
   const summary = `${fieldCount} ${view.isSearching ? 'matching ' : ''}${pluralize(fieldCount, 'field')} · ${visibleBlocks.length} ${pluralize(visibleBlocks.length, 'metadata block')}`;
 
-  function selectField(block: MetadataBlock, group: MetadataGroup, field: MetadataField, opener: HTMLButtonElement) {
+  function selectField(block: MetadataBlock, field: MetadataField, opener: HTMLButtonElement) {
     restoreFocusRef.current = opener;
-    setSelected({ block, group, field });
+    setSelected({ block, field });
   }
 
   function clearSearch() {

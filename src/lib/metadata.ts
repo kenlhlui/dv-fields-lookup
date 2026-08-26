@@ -5,31 +5,25 @@ const nonempty = z.string().trim().min(1);
 const metadataFieldSchema = z.object({
   id: nonempty,
   name: nonempty,
-  summary: nonempty,
-  description: nonempty,
+  definition: nonempty,
+  bestPracticeDefinition: nonempty.optional(),
+  recommendation: nonempty.optional(),
   type: nonempty,
   required: z.boolean(),
   repeatable: z.boolean(),
-  example: nonempty,
-  aliases: z.array(nonempty),
-});
-
-const metadataGroupSchema = z.object({
-  id: nonempty,
-  name: nonempty,
-  fields: z.array(metadataFieldSchema).min(1),
+  example: nonempty.optional(),
+  values: z.array(nonempty).optional(),
 });
 
 const metadataBlockSchema = z.object({
   id: nonempty,
   name: nonempty,
   description: nonempty,
-  groups: z.array(metadataGroupSchema).min(1),
+  fields: z.array(metadataFieldSchema).min(1),
 });
 
 const metadataSchema = z.array(metadataBlockSchema).min(1).superRefine((blocks, context) => {
   const blockIds = new Set<string>();
-  const groupIds = new Set<string>();
   const fieldIds = new Set<string>();
   const addId = (seen: Set<string>, kind: string, id: string, path: (string | number)[]) => {
     if (seen.has(id)) {
@@ -40,17 +34,13 @@ const metadataSchema = z.array(metadataBlockSchema).min(1).superRefine((blocks, 
 
   for (const [blockIndex, block] of blocks.entries()) {
     addId(blockIds, 'block', block.id, [blockIndex, 'id']);
-    for (const [groupIndex, group] of block.groups.entries()) {
-      addId(groupIds, 'group', group.id, [blockIndex, 'groups', groupIndex, 'id']);
-      for (const [fieldIndex, field] of group.fields.entries()) {
-        addId(fieldIds, 'field', field.id, [blockIndex, 'groups', groupIndex, 'fields', fieldIndex, 'id']);
-      }
+    for (const [fieldIndex, field] of block.fields.entries()) {
+      addId(fieldIds, 'field', field.id, [blockIndex, 'fields', fieldIndex, 'id']);
     }
   }
 });
 
 export type MetadataField = z.infer<typeof metadataFieldSchema>;
-export type MetadataGroup = z.infer<typeof metadataGroupSchema>;
 export type MetadataBlock = z.infer<typeof metadataBlockSchema>;
 
 export function validateMetadata(input: unknown): MetadataBlock[] {
@@ -58,12 +48,9 @@ export function validateMetadata(input: unknown): MetadataBlock[] {
 }
 
 export function countFields(blocks: MetadataBlock[]): number {
-  return blocks.reduce(
-    (total, block) => total + block.groups.reduce((groupTotal, group) => groupTotal + group.fields.length, 0),
-    0,
-  );
+  return blocks.reduce((total, block) => total + block.fields.length, 0);
 }
 
-export function getFieldPath(block: MetadataBlock, group: MetadataGroup, field: MetadataField): string {
-  return `${block.name} › ${group.name} › ${field.name}`;
+export function getFieldPath(block: MetadataBlock, field: MetadataField): string {
+  return `${block.name} › ${field.name}`;
 }
