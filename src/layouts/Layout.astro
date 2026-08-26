@@ -1,5 +1,6 @@
 ---
 import '@/styles/global.css';
+import BackToTop from '@/components/BackToTop.astro';
 
 interface Props {
 	title: string;
@@ -29,7 +30,8 @@ const baseUrl = import.meta.env.BASE_URL.endsWith('/')
 			document.documentElement.classList.toggle('dark', dark);
 		</script>
 	</head>
-	<body>
+	<body id="top">
 		<slot />
+		<BackToTop />
 	</body>
 </html>
