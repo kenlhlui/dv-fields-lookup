@@ -1,9 +1,11 @@
 ---
 import MetadataDictionary from '@/components/dictionary/MetadataDictionary';
 import ThemeToggle from '@/components/ThemeToggle';
+import Footer from '@/components/Footer.astro';
 import metadataJson from '@/data/metadata.json';
 import Layout from '@/layouts/Layout.astro';
 import { validateMetadata } from '@/lib/metadata';
+import { site } from '@/site.config';
 
 const metadata = validateMetadata(metadataJson);
 ---
@@ -22,4 +24,7 @@ const metadata = validateMetadata(metadataJson);
 		</header>
 		<MetadataDictionary blocks={metadata} client:load />
 	</main>
+	<Footer githubUrl={site.githubUrl}>
+		<p class="whitespace-pre-line">{site.footerText}</p>
+	</Footer>
 </Layout>
