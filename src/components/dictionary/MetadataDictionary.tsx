@@ -14,13 +14,14 @@ function pluralize(count: number, singular: string, plural = `${singular}s`) {
 
 export default function MetadataDictionary({ blocks }: { blocks: MetadataBlock[] }) {
   const [query, setQuery] = useState('');
-  const [blockFilter, setBlockFilter] = useState<string | null>(null);
+  const [blockFilter, setBlockFilter] = useState<ReadonlySet<string>>(new Set());
   const [selected, setSelected] = useState<SelectedField | null>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const restoreFocusRef = useRef<HTMLElement | null>(null);
   const metadataSearch = useMemo(() => createMetadataSearch(blocks), [blocks]);
   const view = useMemo(() => metadataSearch.search(query), [metadataSearch, query]);
-  const visibleBlocks = blockFilter ? view.blocks.filter((result) => result.block.id === blockFilter) : view.blocks;
+  const visibleBlocks =
+    blockFilter.size > 0 ? view.blocks.filter((result) => blockFilter.has(result.block.id)) : view.blocks;
 
   const fieldCount = view.isSearching
     ? visibleBlocks.reduce((total, result) => total + result.matches.size, 0)
@@ -34,7 +35,7 @@ export default function MetadataDictionary({ blocks }: { blocks: MetadataBlock[]
 
   function clearSearch() {
     setQuery('');
-    setBlockFilter(null);
+    setBlockFilter(new Set());
     searchInputRef.current?.focus();
   }
 
@@ -64,10 +65,18 @@ export default function MetadataDictionary({ blocks }: { blocks: MetadataBlock[]
             <Button
               key={block.id}
               type="button"
-              variant={blockFilter === block.id ? 'default' : 'outline'}
+              variant={blockFilter.has(block.id) ? 'default' : 'outline'}
               size="sm"
-              aria-pressed={blockFilter === block.id}
-              onClick={() => setBlockFilter((current) => (current === block.id ? null : block.id))}
+              aria-pressed={blockFilter.has(block.id)}
+              onClick={() =>
+                setBlockFilter((current) => {
+                  const next = new Set(current);
+                  if (!next.delete(block.id)) {
+                    next.add(block.id);
+                  }
+                  return next;
+                })
+              }
             >
               {block.name}
             </Button>

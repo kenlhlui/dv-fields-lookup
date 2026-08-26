@@ -201,6 +201,18 @@ describe('MetadataDictionary', () => {
     expect(screen.getByRole('heading', { name: 'Citation Metadata' })).toBeInTheDocument();
   });
 
+  it('selects multiple facet chips at once', async () => {
+    const user = userEvent.setup();
+    render(<MetadataDictionary blocks={blocks} />);
+
+    await user.click(screen.getByRole('button', { name: 'Citation Metadata' }));
+    await user.click(screen.getByRole('button', { name: 'Geospatial Metadata' }));
+
+    expect(screen.getByRole('status')).toHaveTextContent('7 fields · 2 metadata blocks');
+    expect(screen.getByRole('heading', { name: 'Citation Metadata' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Geospatial Metadata' })).toBeInTheDocument();
+  });
+
   it('combines the block facet with an active text search', async () => {
     const user = userEvent.setup();
     render(<MetadataDictionary blocks={blocks} />);
