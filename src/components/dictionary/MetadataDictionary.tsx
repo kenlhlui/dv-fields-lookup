@@ -47,20 +47,27 @@ export default function MetadataDictionary({ blocks }: { blocks: MetadataBlock[]
         <label htmlFor="metadata-search" className="text-sm font-medium">
           Search metadata fields
         </label>
-        <div className="relative">
-          <Search
-            aria-hidden="true"
-            className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
-          />
-          <Input
-            ref={searchInputRef}
-            id="metadata-search"
-            type="search"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search names, descriptions, identifiers, and examples…"
-            className="h-10 pl-9"
-          />
+        <div className="flex gap-2">
+          <div className="relative flex-1">
+            <Search
+              aria-hidden="true"
+              className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
+            />
+            <Input
+              ref={searchInputRef}
+              id="metadata-search"
+              type="search"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Search names, descriptions, identifiers, and examples…"
+              className="h-10 pl-9"
+            />
+          </div>
+          {(query || blockFilter.size > 0) && (
+            <Button type="button" variant="outline" className="h-10" onClick={clearSearch}>
+              Clear all
+            </Button>
+          )}
         </div>
         <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by metadata block">
           {blocks.map((block) => (
