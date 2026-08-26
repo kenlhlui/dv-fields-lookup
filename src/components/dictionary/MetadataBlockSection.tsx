@@ -5,7 +5,7 @@ import type { SearchBlock } from '@/lib/search';
 
 interface MetadataBlockSectionProps {
   result: SearchBlock;
-  onSelectField(block: MetadataBlock, group: MetadataGroup, field: MetadataField): void;
+  onSelectField(block: MetadataBlock, group: MetadataGroup, field: MetadataField, opener: HTMLButtonElement): void;
 }
 
 export function MetadataBlockSection({ result, onSelectField }: MetadataBlockSectionProps) {
@@ -32,7 +32,7 @@ export function MetadataBlockSection({ result, onSelectField }: MetadataBlockSec
                 key={field.id}
                 field={field}
                 match={result.matches.get(field.id)}
-                onSelect={() => onSelectField(result.block, group, field)}
+                onSelect={(opener) => onSelectField(result.block, group, field, opener)}
               />
             ))}
           </div>

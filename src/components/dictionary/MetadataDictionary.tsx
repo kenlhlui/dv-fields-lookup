@@ -23,9 +23,8 @@ export default function MetadataDictionary({ blocks }: { blocks: MetadataBlock[]
   const fieldCount = view.isSearching ? view.matchingFieldCount : countFields(blocks);
   const summary = `${fieldCount} ${view.isSearching ? 'matching ' : ''}${pluralize(fieldCount, 'field')} · ${view.blocks.length} ${pluralize(view.blocks.length, 'metadata block')}`;
 
-  function selectField(block: MetadataBlock, group: MetadataGroup, field: MetadataField) {
-    const activeElement = document.activeElement;
-    restoreFocusRef.current = activeElement instanceof HTMLElement ? activeElement : null;
+  function selectField(block: MetadataBlock, group: MetadataGroup, field: MetadataField, opener: HTMLButtonElement) {
+    restoreFocusRef.current = opener;
     setSelected({ block, group, field });
   }
 

@@ -93,6 +93,11 @@ describe('MetadataBlockSection', () => {
 
     await user.click(screen.getByRole('button', { name: 'View details for Identifier' }));
 
-    expect(onSelectField).toHaveBeenCalledWith(block, block.groups[0], block.groups[0].fields[1]);
+    expect(onSelectField).toHaveBeenCalledWith(
+      block,
+      block.groups[0],
+      block.groups[0].fields[1],
+      screen.getByRole('button', { name: 'View details for Identifier' }),
+    );
   });
 });

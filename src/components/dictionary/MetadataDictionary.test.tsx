@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 
@@ -178,6 +178,20 @@ describe('MetadataDictionary', () => {
     expect(screen.getByRole('dialog', { name: 'Identifier' })).toHaveTextContent(
       'Citation Metadata › Author › Identifier',
     );
+    await user.keyboard('{Escape}');
+
+    expect(opener).toHaveFocus();
+  });
+
+  it('restores focus to the explicit details-button opener after an unfocused click', async () => {
+    const user = userEvent.setup();
+    render(<MetadataDictionary blocks={blocks} />);
+    const opener = screen.getByRole('button', { name: 'View details for Identifier' });
+
+    expect(opener).not.toHaveFocus();
+    fireEvent.click(opener);
+    expect(screen.getByRole('dialog', { name: 'Identifier' })).toBeInTheDocument();
+
     await user.keyboard('{Escape}');
 
     expect(opener).toHaveFocus();

@@ -18,7 +18,7 @@ import { cn } from '@/lib/utils';
 interface FieldCardProps {
   field: MetadataField;
   match?: FieldMatch;
-  onSelect(): void;
+  onSelect(opener: HTMLButtonElement): void;
 }
 
 export function FieldCard({ field, match, onSelect }: FieldCardProps) {
@@ -50,7 +50,12 @@ export function FieldCard({ field, match, onSelect }: FieldCardProps) {
         {field.repeatable && <Badge variant="outline">Repeatable</Badge>}
       </CardContent>
       <CardFooter className="justify-end">
-        <Button variant="outline" size="sm" onClick={onSelect} aria-label={`View details for ${field.name}`}>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={(event) => onSelect(event.currentTarget)}
+          aria-label={`View details for ${field.name}`}
+        >
           View details
         </Button>
       </CardFooter>
