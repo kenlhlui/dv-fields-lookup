@@ -95,7 +95,7 @@ describe('MetadataDictionary', () => {
     expect(screen.getByRole('heading', { name: 'Geospatial Metadata' })).toBeInTheDocument();
   });
 
-  it('keeps every Citation field visible and marks both authoritative Fuse matches', async () => {
+  it('narrows Citation to only its matching fields and marks both authoritative Fuse matches', async () => {
     const user = userEvent.setup();
     render(<MetadataDictionary blocks={blocks} />);
 
@@ -103,8 +103,9 @@ describe('MetadataDictionary', () => {
 
     expect(screen.getByRole('status')).toHaveTextContent('2 matching fields · 1 metadata block');
     const citation = screen.getByRole('region', { name: 'Citation Metadata' });
-    expect(within(citation).getAllByRole('button', { name: /view details for/i })).toHaveLength(5);
+    expect(within(citation).getAllByRole('button', { name: /view details for/i })).toHaveLength(2);
     expect(within(citation).getAllByLabelText('Search match')).toHaveLength(2);
+    expect(within(citation).queryByText('Author Name')).not.toBeInTheDocument();
     expect(screen.queryByRole('heading', { name: 'Geospatial Metadata' })).not.toBeInTheDocument();
   });
 

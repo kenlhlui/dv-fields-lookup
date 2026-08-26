@@ -9,7 +9,10 @@ interface MetadataBlockSectionProps {
 }
 
 export function MetadataBlockSection({ result, onSelectField }: MetadataBlockSectionProps) {
-  const fieldCount = result.block.fields.length;
+  // Searching narrows a block to its matching fields; browsing shows every field (matches is empty).
+  const fields =
+    result.matches.size > 0 ? result.block.fields.filter((field) => result.matches.has(field.id)) : result.block.fields;
+  const fieldCount = fields.length;
 
   return (
     <section aria-labelledby={`metadata-block-${result.block.id}`} className="space-y-6">
@@ -24,7 +27,7 @@ export function MetadataBlockSection({ result, onSelectField }: MetadataBlockSec
       </header>
       <Separator />
       <div className="grid gap-4 md:grid-cols-2">
-        {result.block.fields.map((field) => (
+        {fields.map((field) => (
           <FieldCard
             key={field.id}
             field={field}
