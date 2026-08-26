@@ -40,3 +40,7 @@ pnpm build
 The site deploys to GitHub Pages under the `/dv-fields-lookup/` base path. Astro validates `src/data/metadata.json` during rendering, so real metadata can replace the demonstration dataset later without changing the application shell as long as it satisfies the validated metadata shape in `src/lib/metadata.ts`.
 
 Deployment runs via [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) on every push to `main` and on manual workflow dispatch. The one required one-time repository setting: in **Settings → Pages**, set **Source** to **GitHub Actions**.
+
+
+## Acknowledgments
+The bestPracticeDefinition text is from the [Dataverse North Metadata Best Practices Guide v 3.0](https://doi.org/10.5281/zenodo.5668945), license under CC-BY 4.0.
