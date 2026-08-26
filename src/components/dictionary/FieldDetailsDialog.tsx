@@ -1,3 +1,5 @@
+import type * as React from 'react';
+
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -22,13 +24,20 @@ export interface SelectedField {
 interface FieldDetailsDialogProps {
   selected: SelectedField | null;
   onOpenChange(open: boolean): void;
+  restoreFocusRef: React.RefObject<HTMLElement | null>;
 }
 
-export function FieldDetailsDialog({ selected, onOpenChange }: FieldDetailsDialogProps) {
+export function FieldDetailsDialog({ selected, onOpenChange, restoreFocusRef }: FieldDetailsDialogProps) {
   return (
     <Dialog open={selected !== null} onOpenChange={onOpenChange}>
       {selected && (
-        <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-lg">
+        <DialogContent
+          className="max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-lg"
+          onCloseAutoFocus={(event) => {
+            event.preventDefault();
+            restoreFocusRef.current?.focus();
+          }}
+        >
           <DialogHeader>
             <DialogTitle>{selected.field.name}</DialogTitle>
             <DialogDescription>{selected.field.description}</DialogDescription>
