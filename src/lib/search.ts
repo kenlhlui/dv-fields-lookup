@@ -48,11 +48,6 @@ const searchKeys: { name: SearchProperty; weight: number }[] = [
   { name: 'example', weight: 0.05 },
 ];
 
-interface LiteralMatchQuality {
-  exactness: number;
-  weight: number;
-}
-
 function normalizeRanges(indices: ReadonlyArray<readonly [number, number]>): TextRange[] {
   const ranges = indices
     .filter(([start, end]) => Number.isFinite(start) && Number.isFinite(end))
@@ -85,35 +80,6 @@ function rangesFor(matches: ReadonlyArray<FuseResultMatch> | undefined): FieldMa
   return ranges;
 }
 
-function literalMatchQuality(record: SearchRecord, query: string): LiteralMatchQuality {
-  const normalizedQuery = query.toLocaleLowerCase();
-  let quality: LiteralMatchQuality = { exactness: 0, weight: 0 };
-
-  for (const { name, weight } of searchKeys) {
-    const values = Array.isArray(record[name]) ? record[name] : [record[name]];
-    for (const value of values) {
-      const normalizedValue = value.toLocaleLowerCase();
-      if (!normalizedValue.includes(normalizedQuery)) {
-        continue;
-      }
-
-      const candidate = { exactness: Number(normalizedValue === normalizedQuery) + 1, weight };
-      if (
-        candidate.exactness > quality.exactness ||
-        (candidate.exactness === quality.exactness && candidate.weight > quality.weight)
-      ) {
-        quality = candidate;
-      }
-    }
-  }
-
-  return quality;
-}
-
-function isAtLeastAsLiteral(result: LiteralMatchQuality, best: LiteralMatchQuality): boolean {
-  return result.exactness === best.exactness && result.weight === best.weight;
-}
-
 export function createMetadataSearch(blocks: MetadataBlock[]): { search(query: string): SearchView } {
   const records: SearchRecord[] = blocks.flatMap((block, blockIndex) =>
     block.groups.flatMap((group) =>
@@ -135,8 +101,6 @@ export function createMetadataSearch(blocks: MetadataBlock[]): { search(query: s
     ignoreLocation: true,
     minMatchCharLength: 2,
     threshold: 0.32,
-    useTokenSearch: true,
-    tokenMatch: 'all',
     keys: searchKeys,
   });
 
@@ -157,21 +121,8 @@ export function createMetadataSearch(blocks: MetadataBlock[]): { search(query: s
         };
       }
 
-      const results = fuse.search(normalizedQuery);
-      const literalQualities = results.map(({ item }) => literalMatchQuality(item, normalizedQuery));
-      const bestLiteralMatch = literalQualities.reduce<LiteralMatchQuality>(
-        (best, quality) =>
-          quality.exactness > best.exactness ||
-          (quality.exactness === best.exactness && quality.weight > best.weight)
-            ? quality
-            : best,
-        { exactness: 0, weight: 0 },
-      );
       const groupedBlocks = new Map<number, SearchBlock>();
-      for (const [resultIndex, result] of results.entries()) {
-        if (bestLiteralMatch.exactness > 0 && !isAtLeastAsLiteral(literalQualities[resultIndex], bestLiteralMatch)) {
-          continue;
-        }
+      for (const result of fuse.search(normalizedQuery)) {
         const score = result.score ?? 1;
         const current = groupedBlocks.get(result.item.blockIndex);
         const searchBlock = current ?? {

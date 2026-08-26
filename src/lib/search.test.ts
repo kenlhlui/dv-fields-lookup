@@ -21,11 +21,11 @@ describe('createMetadataSearch', () => {
     ]);
   });
 
-  it('removes unrelated blocks but retains every field in a matching block', () => {
+  it('removes unrelated blocks while retaining every Fuse-matched field in its full source block', () => {
     const view = search.search('ORCID');
 
     expect(view.isSearching).toBe(true);
-    expect(view.matchingFieldCount).toBe(1);
+    expect(view.matchingFieldCount).toBe(2);
     expect(view.blocks.map(({ block }) => block.id)).toEqual(['citation']);
     expect(view.blocks[0].block.groups.flatMap((group) => group.fields).map((field) => field.id)).toEqual([
       'authorName',
@@ -34,13 +34,13 @@ describe('createMetadataSearch', () => {
       'otherId',
       'otherIdAgency',
     ]);
-    expect([...view.blocks[0].matches.keys()]).toEqual(['authorIdentifier']);
+    expect([...view.blocks[0].matches.keys()]).toEqual(['authorIdentifier', 'authorIdentifierScheme']);
   });
 
   it('searches identifiers, aliases, summaries, descriptions, and examples', () => {
-    expect(search.search('authorIdentifier').matchingFieldCount).toBe(1);
+    expect(search.search('authorIdentifier').blocks[0].matches.get('authorIdentifier')).toBeDefined();
     expect(search.search('researcher ID').matchingFieldCount).toBe(1);
-    expect(search.search('persistent author').matchingFieldCount).toBe(1);
+    expect(search.search('persistent identifier').blocks[0].matches.get('authorIdentifier')?.ranges.summary).toEqual([[0, 20]]);
     expect(search.search('globally unique').matchingFieldCount).toBe(1);
     expect(search.search('0000-0002-1825-0097').matchingFieldCount).toBe(1);
   });
