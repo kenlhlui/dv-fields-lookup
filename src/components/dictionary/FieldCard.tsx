@@ -56,7 +56,7 @@ export function FieldCard({ field, match, onSelect }: FieldCardProps) {
           <HighlightText text={field.definition} ranges={match?.ranges.definition} />
         </CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-wrap gap-2">
+      <CardContent className="flex flex-1 flex-wrap content-start gap-2">
         <Badge
           variant="outline"
           className={cn('h-auto max-w-full whitespace-normal break-words text-left', badgeColor.type)}
