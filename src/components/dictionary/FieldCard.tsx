@@ -25,16 +25,20 @@ export function FieldCard({ field, match, onSelect }: FieldCardProps) {
   const isMatch = match !== undefined;
 
   return (
-    <Card className={cn(isMatch && 'bg-primary/5 ring-2 ring-primary/35')}>
+    <Card className={cn('h-full', isMatch && 'bg-primary/5 ring-2 ring-primary/35')}>
       <CardHeader>
-        <div className="flex items-start justify-between gap-3">
-          <CardTitle>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <CardTitle className="min-w-0 flex-1">
             <h4>
               <HighlightText text={field.name} ranges={match?.ranges.name} />
             </h4>
           </CardTitle>
           {isMatch && (
-            <Badge variant="secondary" className="gap-1" aria-label="Search match">
+            <Badge
+              variant="secondary"
+              className="h-auto max-w-full gap-1 whitespace-normal break-words text-left"
+              aria-label="Search match"
+            >
               <Search aria-hidden="true" />
               Search match
             </Badge>
@@ -45,14 +49,25 @@ export function FieldCard({ field, match, onSelect }: FieldCardProps) {
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-wrap gap-2">
-        <Badge variant="outline">Type: {field.type}</Badge>
-        {field.required && <Badge variant="outline">Required</Badge>}
-        {field.repeatable && <Badge variant="outline">Repeatable</Badge>}
+        <Badge variant="outline" className="h-auto max-w-full whitespace-normal break-words text-left">
+          Type: {field.type}
+        </Badge>
+        {field.required && (
+          <Badge variant="outline" className="h-auto max-w-full whitespace-normal break-words text-left">
+            Required
+          </Badge>
+        )}
+        {field.repeatable && (
+          <Badge variant="outline" className="h-auto max-w-full whitespace-normal break-words text-left">
+            Repeatable
+          </Badge>
+        )}
       </CardContent>
       <CardFooter className="justify-end">
         <Button
           variant="outline"
           size="sm"
+          className="min-h-11 px-4 sm:min-h-7 sm:px-2.5"
           onClick={(event) => onSelect(event.currentTarget)}
           aria-label={`View details for ${field.name}`}
         >

@@ -26,7 +26,7 @@ export function MetadataBlockSection({ result, onSelectField }: MetadataBlockSec
       {result.block.groups.map((group) => (
         <div key={group.id} className="space-y-3">
           <h3 className="text-lg font-medium">{group.name}</h3>
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="grid gap-4 md:grid-cols-2">
             {group.fields.map((field) => (
               <FieldCard
                 key={field.id}

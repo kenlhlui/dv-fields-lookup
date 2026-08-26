@@ -38,7 +38,7 @@ export function FieldDetailsDialog({ selected, onOpenChange, restoreFocusRef }: 
             restoreFocusRef.current?.focus();
           }}
         >
-          <DialogHeader>
+          <DialogHeader className="pr-10">
             <DialogTitle>{selected.field.name}</DialogTitle>
             <DialogDescription>{selected.field.description}</DialogDescription>
           </DialogHeader>
@@ -76,7 +76,11 @@ export function FieldDetailsDialog({ selected, onOpenChange, restoreFocusRef }: 
               <h3 className="text-sm font-medium">Aliases</h3>
               <div className="flex flex-wrap gap-2">
                 {selected.field.aliases.map((alias) => (
-                  <Badge key={alias} variant="secondary">
+                  <Badge
+                    key={alias}
+                    variant="secondary"
+                    className="h-auto max-w-full whitespace-normal break-words text-left"
+                  >
                     {alias}
                   </Badge>
                 ))}
@@ -93,7 +97,9 @@ export function FieldDetailsDialog({ selected, onOpenChange, restoreFocusRef }: 
 
           <DialogFooter>
             <DialogClose asChild>
-              <Button variant="outline">Close</Button>
+              <Button variant="outline" className="min-h-11 px-4 sm:min-h-8 sm:px-2.5">
+                Close
+              </Button>
             </DialogClose>
           </DialogFooter>
         </DialogContent>

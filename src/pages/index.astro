@@ -1,11 +1,24 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
+import MetadataDictionary from '@/components/dictionary/MetadataDictionary';
+import metadataJson from '@/data/metadata.json';
+import Layout from '@/layouts/Layout.astro';
+import { validateMetadata } from '@/lib/metadata';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const metadata = validateMetadata(metadataJson);
 ---
 
-<Layout>
-	<Welcome />
+<Layout title="Metadata Lookup" description="Search and browse demonstration Dataverse metadata fields.">
+	<main class="mx-auto min-h-screen w-full max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+		<header class="mb-10 max-w-3xl">
+			<p class="mb-3 text-sm font-semibold uppercase tracking-[0.18em] text-primary">Dataverse field guide</p>
+			<h1 class="text-4xl font-semibold tracking-tight text-balance sm:text-5xl">Metadata Lookup</h1>
+			<p class="mt-4 text-lg leading-8 text-muted-foreground">
+				Search and explore a demonstration metadata dictionary while keeping every field in context.
+			</p>
+			<p class="mt-2 text-sm text-muted-foreground">
+				Demonstration data · Not canonical Dataverse documentation
+			</p>
+		</header>
+		<MetadataDictionary blocks={metadata} client:load />
+	</main>
 </Layout>

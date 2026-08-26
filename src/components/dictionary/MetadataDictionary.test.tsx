@@ -121,7 +121,7 @@ describe('MetadataDictionary', () => {
   it('renders the full dictionary with an accessible search input and summary', () => {
     render(<MetadataDictionary blocks={blocks} />);
 
-    expect(screen.getByLabelText('Search metadata fields')).toBeInTheDocument();
+    expect(screen.getByLabelText('Search metadata fields')).toHaveClass('h-11', 'md:h-10');
     expect(screen.getByRole('status')).toHaveTextContent('7 fields · 2 metadata blocks');
     expect(screen.getByRole('heading', { name: 'Citation Metadata' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Geospatial Metadata' })).toBeInTheDocument();
@@ -162,7 +162,9 @@ describe('MetadataDictionary', () => {
     await user.type(input, 'zzzz-no-field');
 
     expect(screen.getByRole('status')).toHaveTextContent('No metadata fields matched “zzzz-no-field”');
-    await user.click(screen.getByRole('button', { name: 'Clear search' }));
+    const clearButton = screen.getByRole('button', { name: 'Clear search' });
+    expect(clearButton).toHaveClass('min-h-11', 'sm:min-h-8');
+    await user.click(clearButton);
 
     expect(screen.getByRole('status')).toHaveTextContent('7 fields · 2 metadata blocks');
     expect(input).toHaveFocus();

@@ -91,7 +91,17 @@ describe('MetadataBlockSection', () => {
     expect(screen.queryAllByText('Required')).toHaveLength(1);
     expect(screen.queryAllByText('Repeatable')).toHaveLength(1);
 
-    await user.click(screen.getByRole('button', { name: 'View details for Identifier' }));
+    const detailsButton = screen.getByRole('button', { name: 'View details for Identifier' });
+    expect(detailsButton).toHaveClass('min-h-11', 'sm:min-h-7');
+    expect(screen.getByText('Type: Controlled vocabulary')).toHaveClass(
+      'h-auto',
+      'max-w-full',
+      'whitespace-normal',
+      'break-words',
+    );
+    expect(detailsButton.closest('.grid')).toHaveClass('md:grid-cols-2');
+
+    await user.click(detailsButton);
 
     expect(onSelectField).toHaveBeenCalledWith(
       block,

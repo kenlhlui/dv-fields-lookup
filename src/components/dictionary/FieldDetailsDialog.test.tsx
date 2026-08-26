@@ -44,6 +44,7 @@ describe('FieldDetailsDialog', () => {
     );
 
     const dialog = screen.getByRole('dialog', { name: 'Identifier' });
+    expect(dialog).toHaveClass('max-h-[calc(100dvh-2rem)]', 'overflow-y-auto');
     expect(dialog).toHaveTextContent(
       'A globally unique identifier for the named author, such as an ORCID iD. Use the corresponding scheme in Identifier Scheme.',
     );
@@ -54,6 +55,21 @@ describe('FieldDetailsDialog', () => {
     expect(dialog).toHaveTextContent('https://orcid.org/0000-0002-1825-0097');
     expect(dialog).toHaveTextContent('ORCID');
     expect(dialog).toHaveTextContent('Citation Metadata › Author › Identifier');
+    expect(screen.getByText('researcher ID')).toHaveClass(
+      'h-auto',
+      'max-w-full',
+      'whitespace-normal',
+      'break-words',
+    );
+    const closeButtons = screen.getAllByRole('button', { name: 'Close' });
+    expect(closeButtons.find((button) => button.dataset.size === 'default')).toHaveClass(
+      'min-h-11',
+      'sm:min-h-8',
+    );
+    expect(closeButtons.find((button) => button.dataset.size === 'icon-sm')).toHaveClass(
+      'size-11',
+      'sm:size-7',
+    );
   });
 
   it('reports dismissal when Escape closes the controlled dialog', async () => {

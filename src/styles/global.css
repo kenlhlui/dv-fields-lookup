@@ -119,12 +119,35 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
-    }
-  body {
-    @apply bg-background text-foreground;
-    }
+    @apply border-border;
+  }
+
   html {
     @apply font-sans;
-    }
+    color-scheme: light;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply min-h-screen bg-background text-foreground antialiased;
+    background-image:
+      radial-gradient(circle at top left, color-mix(in oklab, var(--primary) 8%, transparent), transparent 28rem),
+      linear-gradient(to bottom, color-mix(in oklab, var(--muted) 35%, transparent), transparent 18rem);
+  }
+
+  button,
+  input {
+    font: inherit;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

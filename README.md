@@ -1,46 +1,40 @@
-# Astro Starter Kit: Basics
+# Metadata Lookup
 
-```sh
-npm create astro@latest -- --template basics
+Metadata Lookup is a static Astro application for searching and browsing Dataverse-style metadata fields without losing their block and group context. It renders the complete dictionary by default, preserves sibling fields around search matches, and exposes full field details in an accessible dialog.
+
+> [!IMPORTANT]
+> The bundled metadata is demonstration data. It is not canonical Dataverse documentation.
+
+## Prerequisites
+
+- Node.js 22.12.0 or newer
+- [pnpm](https://pnpm.io/)
+
+## Development
+
+Install dependencies:
+
+```bash
+pnpm install
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+Start Astro's background development server and manage it with:
 
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
+```bash
+pnpm astro dev --background
+pnpm astro dev status
+pnpm astro dev logs
+pnpm astro dev stop
 ```
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+Run automated verification and create a production build:
 
-## 🧞 Commands
+```bash
+pnpm test
+pnpm check
+pnpm build
+```
 
-All commands are run from the root of the project, from a terminal:
+## Data and deployment
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+The site deploys to GitHub Pages under the `/dv-fields-lookup/` base path. Astro validates `src/data/metadata.json` during rendering, so real metadata can replace the demonstration dataset later without changing the application shell as long as it satisfies the validated metadata shape in `src/lib/metadata.ts`.
