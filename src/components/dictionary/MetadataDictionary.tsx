@@ -1,6 +1,7 @@
 import { Search } from 'lucide-react';
 import { useMemo, useRef, useState } from 'react';
 
+import { BlockNav } from '@/components/dictionary/BlockNav';
 import { FieldDetailsDialog, type SelectedField } from '@/components/dictionary/FieldDetailsDialog';
 import { MetadataBlockSection } from '@/components/dictionary/MetadataBlockSection';
 import { Button } from '@/components/ui/button';
@@ -41,6 +42,7 @@ export default function MetadataDictionary({ blocks }: { blocks: MetadataBlock[]
 
   return (
     <div className="space-y-8">
+      <BlockNav blocks={visibleBlocks.map((result) => result.block)} />
       <div className="space-y-3">
         <label htmlFor="metadata-search" className="text-sm font-medium">
           Search metadata fields
