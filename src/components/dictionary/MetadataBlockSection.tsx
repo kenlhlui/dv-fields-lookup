@@ -1,3 +1,5 @@
+import { ChevronDown } from 'lucide-react';
+
 import { FieldCard } from '@/components/dictionary/FieldCard';
 import { Separator } from '@/components/ui/separator';
 import type { MetadataBlock, MetadataField } from '@/lib/metadata';
@@ -15,27 +17,37 @@ export function MetadataBlockSection({ result, onSelectField }: MetadataBlockSec
   const fieldCount = fields.length;
 
   return (
-    <section aria-labelledby={`metadata-block-${result.block.id}`} className="space-y-6">
-      <header className="space-y-2">
-        <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-          <h2 id={`metadata-block-${result.block.id}`} className="text-2xl font-semibold tracking-tight">
-            {result.block.name}
-          </h2>
-          <p className="text-sm text-muted-foreground">{fieldCount} fields</p>
-        </div>
-        <p className="max-w-3xl text-muted-foreground">{result.block.description}</p>
-      </header>
-      <Separator />
-      <div className="grid gap-4 md:grid-cols-2">
-        {fields.map((field) => (
-          <FieldCard
-            key={field.id}
-            field={field}
-            match={result.matches.get(field.id)}
-            onSelect={(opener) => onSelectField(result.block, field, opener)}
+    // section keeps the `region` landmark role; `open` by default so search results and
+    // first-visit browsing aren't hidden behind a click.
+    <section aria-labelledby={`metadata-block-${result.block.id}`}>
+      <details open className="group space-y-6">
+        <summary className="flex cursor-pointer list-none items-start justify-between gap-3 [&::-webkit-details-marker]:hidden">
+          <div className="space-y-2">
+            <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+              <h2 id={`metadata-block-${result.block.id}`} className="text-2xl font-semibold tracking-tight">
+                {result.block.name}
+              </h2>
+              <p className="text-sm text-muted-foreground">{fieldCount} fields</p>
+            </div>
+            <p className="max-w-3xl text-muted-foreground">{result.block.description}</p>
+          </div>
+          <ChevronDown
+            aria-hidden="true"
+            className="mt-1 size-5 shrink-0 text-muted-foreground transition-transform group-open:rotate-180"
           />
-        ))}
-      </div>
+        </summary>
+        <Separator />
+        <div className="grid gap-4 md:grid-cols-2">
+          {fields.map((field) => (
+            <FieldCard
+              key={field.id}
+              field={field}
+              match={result.matches.get(field.id)}
+              onSelect={(opener) => onSelectField(result.block, field, opener)}
+            />
+          ))}
+        </div>
+      </details>
     </section>
   );
 }
