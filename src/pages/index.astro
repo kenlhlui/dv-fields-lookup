@@ -1,4 +1,5 @@
 ---
+import AcknowledgementsDialog from '@/components/AcknowledgementsDialog';
 import MetadataDictionary from '@/components/dictionary/MetadataDictionary';
 import ThemeToggle from '@/components/ThemeToggle';
 import Footer from '@/components/Footer.astro';
@@ -6,8 +7,10 @@ import metadataJson from '@/data/metadata.json';
 import Layout from '@/layouts/Layout.astro';
 import { validateMetadata } from '@/lib/metadata';
 import { site } from '@/site.config';
+import { compiledContent } from '@/content/acknowledgements.md';
 
 const metadata = validateMetadata(metadataJson);
+const acknowledgementsHtml = await compiledContent();
 ---
 
 <Layout title="Metadata Lookup" description="Search and browse demonstration Dataverse metadata fields.">
@@ -20,7 +23,10 @@ const metadata = validateMetadata(metadataJson);
 					Search and explore a demonstration metadata dictionary.
 				</p>
 			</div>
-			<ThemeToggle client:load />
+			<div class="flex items-center gap-1">
+				<AcknowledgementsDialog html={acknowledgementsHtml} client:load />
+				<ThemeToggle client:load />
+			</div>
 		</header>
 		<MetadataDictionary blocks={metadata} client:load />
 	</main>
