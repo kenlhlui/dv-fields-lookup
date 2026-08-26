@@ -14,14 +14,18 @@ function pluralize(count: number, singular: string, plural = `${singular}s`) {
 
 export default function MetadataDictionary({ blocks }: { blocks: MetadataBlock[] }) {
   const [query, setQuery] = useState('');
+  const [blockFilter, setBlockFilter] = useState<string | null>(null);
   const [selected, setSelected] = useState<SelectedField | null>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const restoreFocusRef = useRef<HTMLElement | null>(null);
   const metadataSearch = useMemo(() => createMetadataSearch(blocks), [blocks]);
   const view = useMemo(() => metadataSearch.search(query), [metadataSearch, query]);
+  const visibleBlocks = blockFilter ? view.blocks.filter((result) => result.block.id === blockFilter) : view.blocks;
 
-  const fieldCount = view.isSearching ? view.matchingFieldCount : countFields(blocks);
-  const summary = `${fieldCount} ${view.isSearching ? 'matching ' : ''}${pluralize(fieldCount, 'field')} · ${view.blocks.length} ${pluralize(view.blocks.length, 'metadata block')}`;
+  const fieldCount = view.isSearching
+    ? visibleBlocks.reduce((total, result) => total + result.matches.size, 0)
+    : countFields(visibleBlocks.map((result) => result.block));
+  const summary = `${fieldCount} ${view.isSearching ? 'matching ' : ''}${pluralize(fieldCount, 'field')} · ${visibleBlocks.length} ${pluralize(visibleBlocks.length, 'metadata block')}`;
 
   function selectField(block: MetadataBlock, group: MetadataGroup, field: MetadataField, opener: HTMLButtonElement) {
     restoreFocusRef.current = opener;
@@ -30,6 +34,7 @@ export default function MetadataDictionary({ blocks }: { blocks: MetadataBlock[]
 
   function clearSearch() {
     setQuery('');
+    setBlockFilter(null);
     searchInputRef.current?.focus();
   }
 
@@ -54,14 +59,28 @@ export default function MetadataDictionary({ blocks }: { blocks: MetadataBlock[]
             className="h-10 pl-9"
           />
         </div>
+        <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by metadata block">
+          {blocks.map((block) => (
+            <Button
+              key={block.id}
+              type="button"
+              variant={blockFilter === block.id ? 'default' : 'outline'}
+              size="sm"
+              aria-pressed={blockFilter === block.id}
+              onClick={() => setBlockFilter((current) => (current === block.id ? null : block.id))}
+            >
+              {block.name}
+            </Button>
+          ))}
+        </div>
         <p role="status" aria-live="polite" className="text-sm text-muted-foreground">
-          {view.isSearching && view.blocks.length === 0
+          {view.isSearching && visibleBlocks.length === 0
             ? `No metadata fields matched “${view.normalizedQuery}”`
             : summary}
         </p>
       </div>
 
-      {view.isSearching && view.blocks.length === 0 ? (
+      {view.isSearching && visibleBlocks.length === 0 ? (
         <div className="rounded-lg border p-6" aria-label="No search results">
           <p>No metadata fields matched “{view.normalizedQuery}”</p>
           <p className="text-muted-foreground">Try a different search term or clear the current search.</p>
@@ -71,7 +90,7 @@ export default function MetadataDictionary({ blocks }: { blocks: MetadataBlock[]
         </div>
       ) : (
         <div className="space-y-12">
-          {view.blocks.map((result) => (
+          {visibleBlocks.map((result) => (
             <MetadataBlockSection key={result.block.id} result={result} onSelectField={selectField} />
           ))}
         </div>
