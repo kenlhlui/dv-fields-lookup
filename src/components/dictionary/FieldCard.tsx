@@ -21,6 +21,14 @@ interface FieldCardProps {
   onSelect(opener: HTMLButtonElement): void;
 }
 
+// GitHub Primer accent colors (accent/danger/done/success), 10% tint w/ tinted text + border.
+const badgeColor = {
+  type: 'border-[#0969da]/30 bg-[#0969da]/10 text-[#0969da] dark:border-[#4493f8]/40 dark:bg-[#0969da]/15 dark:text-[#4493f8]',
+  required: 'border-[#cf222e]/30 bg-[#cf222e]/10 text-[#cf222e] dark:border-[#f85149]/40 dark:bg-[#cf222e]/15 dark:text-[#f85149]',
+  repeatable: 'border-[#8250df]/30 bg-[#8250df]/10 text-[#8250df] dark:border-[#a475f9]/40 dark:bg-[#8250df]/15 dark:text-[#a475f9]',
+  bestPractice: 'border-[#1a7f37]/30 bg-[#1a7f37]/10 text-[#1a7f37] dark:border-[#3fb950]/40 dark:bg-[#1a7f37]/15 dark:text-[#3fb950]',
+} as const;
+
 export function FieldCard({ field, match, onSelect }: FieldCardProps) {
   const isMatch = match !== undefined;
 
@@ -49,21 +57,33 @@ export function FieldCard({ field, match, onSelect }: FieldCardProps) {
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-wrap gap-2">
-        <Badge variant="outline" className="h-auto max-w-full whitespace-normal break-words text-left">
+        <Badge
+          variant="outline"
+          className={cn('h-auto max-w-full whitespace-normal break-words text-left', badgeColor.type)}
+        >
           Type: {field.type}
         </Badge>
         {field.required && (
-          <Badge variant="outline" className="h-auto max-w-full whitespace-normal break-words text-left">
+          <Badge
+            variant="outline"
+            className={cn('h-auto max-w-full whitespace-normal break-words text-left', badgeColor.required)}
+          >
             Required
           </Badge>
         )}
         {field.repeatable && (
-          <Badge variant="outline" className="h-auto max-w-full whitespace-normal break-words text-left">
+          <Badge
+            variant="outline"
+            className={cn('h-auto max-w-full whitespace-normal break-words text-left', badgeColor.repeatable)}
+          >
             Repeatable
           </Badge>
         )}
         {field.recommendation && (
-          <Badge variant="outline" className="h-auto max-w-full whitespace-normal break-words text-left">
+          <Badge
+            variant="outline"
+            className={cn('h-auto max-w-full whitespace-normal break-words text-left', badgeColor.bestPractice)}
+          >
             Best practice: {field.recommendation}
           </Badge>
         )}
