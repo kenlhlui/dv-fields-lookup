@@ -1,0 +1,206 @@
+import Fuse, { type FuseResultMatch } from 'fuse.js';
+
+import { countFields, type MetadataBlock, type MetadataField } from '@/lib/metadata';
+
+export type TextRange = readonly [start: number, end: number];
+
+export interface FieldMatch {
+  fieldId: string;
+  score: number;
+  ranges: Partial<Record<'id' | 'name' | 'summary' | 'description' | 'example', TextRange[]>>;
+}
+
+export interface SearchBlock {
+  block: MetadataBlock;
+  matches: Map<string, FieldMatch>;
+  bestScore: number;
+  sourceIndex: number;
+}
+
+export interface SearchView {
+  isSearching: boolean;
+  normalizedQuery: string;
+  matchingFieldCount: number;
+  blocks: SearchBlock[];
+}
+
+interface SearchRecord {
+  blockIndex: number;
+  field: MetadataField;
+  id: string;
+  name: string;
+  aliases: string[];
+  summary: string;
+  description: string;
+  example: string;
+}
+
+type MatchableProperty = keyof FieldMatch['ranges'];
+type SearchProperty = 'id' | 'name' | 'aliases' | 'summary' | 'description' | 'example';
+
+const matchableProperties = new Set<MatchableProperty>(['id', 'name', 'summary', 'description', 'example']);
+const searchKeys: { name: SearchProperty; weight: number }[] = [
+  { name: 'name', weight: 0.35 },
+  { name: 'id', weight: 0.2 },
+  { name: 'aliases', weight: 0.15 },
+  { name: 'summary', weight: 0.13 },
+  { name: 'description', weight: 0.12 },
+  { name: 'example', weight: 0.05 },
+];
+
+interface LiteralMatchQuality {
+  exactness: number;
+  weight: number;
+}
+
+function normalizeRanges(indices: ReadonlyArray<readonly [number, number]>): TextRange[] {
+  const ranges = indices
+    .filter(([start, end]) => Number.isFinite(start) && Number.isFinite(end))
+    .map(([start, end]) => [Math.min(start, end), Math.max(start, end)] as TextRange)
+    .sort(([leftStart, leftEnd], [rightStart, rightEnd]) => leftStart - rightStart || leftEnd - rightEnd);
+
+  return ranges.reduce<TextRange[]>((merged, [start, end]) => {
+    const previous = merged.at(-1);
+    if (previous && start <= previous[1] + 1) {
+      merged[merged.length - 1] = [previous[0], Math.max(previous[1], end)];
+    } else {
+      merged.push([start, end]);
+    }
+    return merged;
+  }, []);
+}
+
+function rangesFor(matches: ReadonlyArray<FuseResultMatch> | undefined): FieldMatch['ranges'] {
+  const ranges: FieldMatch['ranges'] = {};
+
+  for (const match of matches ?? []) {
+    if (!match.key || !matchableProperties.has(match.key as MatchableProperty)) {
+      continue;
+    }
+
+    const key = match.key as MatchableProperty;
+    ranges[key] = normalizeRanges([...(ranges[key] ?? []), ...match.indices]);
+  }
+
+  return ranges;
+}
+
+function literalMatchQuality(record: SearchRecord, query: string): LiteralMatchQuality {
+  const normalizedQuery = query.toLocaleLowerCase();
+  let quality: LiteralMatchQuality = { exactness: 0, weight: 0 };
+
+  for (const { name, weight } of searchKeys) {
+    const values = Array.isArray(record[name]) ? record[name] : [record[name]];
+    for (const value of values) {
+      const normalizedValue = value.toLocaleLowerCase();
+      if (!normalizedValue.includes(normalizedQuery)) {
+        continue;
+      }
+
+      const candidate = { exactness: Number(normalizedValue === normalizedQuery) + 1, weight };
+      if (
+        candidate.exactness > quality.exactness ||
+        (candidate.exactness === quality.exactness && candidate.weight > quality.weight)
+      ) {
+        quality = candidate;
+      }
+    }
+  }
+
+  return quality;
+}
+
+function isAtLeastAsLiteral(result: LiteralMatchQuality, best: LiteralMatchQuality): boolean {
+  return result.exactness === best.exactness && result.weight === best.weight;
+}
+
+export function createMetadataSearch(blocks: MetadataBlock[]): { search(query: string): SearchView } {
+  const records: SearchRecord[] = blocks.flatMap((block, blockIndex) =>
+    block.groups.flatMap((group) =>
+      group.fields.map((field) => ({
+        blockIndex,
+        field,
+        id: field.id,
+        name: field.name,
+        aliases: field.aliases,
+        summary: field.summary,
+        description: field.description,
+        example: field.example,
+      })),
+    ),
+  );
+  const fuse = new Fuse(records, {
+    includeMatches: true,
+    includeScore: true,
+    ignoreLocation: true,
+    minMatchCharLength: 2,
+    threshold: 0.32,
+    useTokenSearch: true,
+    tokenMatch: 'all',
+    keys: searchKeys,
+  });
+
+  return {
+    search(query) {
+      const normalizedQuery = query.trim();
+      if (!normalizedQuery) {
+        return {
+          isSearching: false,
+          normalizedQuery,
+          matchingFieldCount: countFields(blocks),
+          blocks: blocks.map((block, sourceIndex) => ({
+            block,
+            matches: new Map(),
+            bestScore: 0,
+            sourceIndex,
+          })),
+        };
+      }
+
+      const results = fuse.search(normalizedQuery);
+      const literalQualities = results.map(({ item }) => literalMatchQuality(item, normalizedQuery));
+      const bestLiteralMatch = literalQualities.reduce<LiteralMatchQuality>(
+        (best, quality) =>
+          quality.exactness > best.exactness ||
+          (quality.exactness === best.exactness && quality.weight > best.weight)
+            ? quality
+            : best,
+        { exactness: 0, weight: 0 },
+      );
+      const groupedBlocks = new Map<number, SearchBlock>();
+      for (const [resultIndex, result] of results.entries()) {
+        if (bestLiteralMatch.exactness > 0 && !isAtLeastAsLiteral(literalQualities[resultIndex], bestLiteralMatch)) {
+          continue;
+        }
+        const score = result.score ?? 1;
+        const current = groupedBlocks.get(result.item.blockIndex);
+        const searchBlock = current ?? {
+          block: blocks[result.item.blockIndex],
+          matches: new Map(),
+          bestScore: score,
+          sourceIndex: result.item.blockIndex,
+        };
+        const existing = searchBlock.matches.get(result.item.field.id);
+
+        searchBlock.bestScore = Math.min(searchBlock.bestScore, score);
+        searchBlock.matches.set(result.item.field.id, {
+          fieldId: result.item.field.id,
+          score: Math.min(existing?.score ?? score, score),
+          ranges: rangesFor(result.matches),
+        });
+        groupedBlocks.set(result.item.blockIndex, searchBlock);
+      }
+
+      const searchBlocks = [...groupedBlocks.values()].sort(
+        (left, right) => left.bestScore - right.bestScore || left.sourceIndex - right.sourceIndex,
+      );
+
+      return {
+        isSearching: true,
+        normalizedQuery,
+        matchingFieldCount: searchBlocks.reduce((total, block) => total + block.matches.size, 0),
+        blocks: searchBlocks,
+      };
+    },
+  };
+}
