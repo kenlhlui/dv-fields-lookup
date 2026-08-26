@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dv-fields-lookup/schema/metadata.schema.json",
+  "title": "Dataverse metadata field dictionary",
+  "description": "Validates src/data/metadata.json. Mirrors the zod schema in src/lib/metadata.ts, except id-uniqueness (block ids, field ids) which JSON Schema can't express and stays enforced there.",
+  "type": "array",
+  "minItems": 1,
+  "items": { "$ref": "#/$defs/block" },
+  "$defs": {
+    "nonEmptyString": {
+      "type": "string",
+      "pattern": "\\S"
+    },
+    "block": {
+      "type": "object",
+      "required": ["id", "name", "description", "fields"],
+      "properties": {
+        "id": { "$ref": "#/$defs/nonEmptyString" },
+        "name": { "$ref": "#/$defs/nonEmptyString" },
+        "description": { "$ref": "#/$defs/nonEmptyString" },
+        "fields": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/field" }
+        }
+      }
+    },
+    "field": {
+      "type": "object",
+      "required": ["id", "name", "definition", "type", "required", "repeatable"],
+      "properties": {
+        "id": { "$ref": "#/$defs/nonEmptyString" },
+        "name": { "$ref": "#/$defs/nonEmptyString" },
+        "definition": { "$ref": "#/$defs/nonEmptyString" },
+        "type": { "$ref": "#/$defs/nonEmptyString" },
+        "required": { "type": "boolean" },
+        "repeatable": { "type": "boolean" },
+        "bestPracticeDefinition": {
+          "$ref": "#/$defs/nonEmptyString",
+          "description": "Optional: not present in metadatablocks.json, currently sourced from fields.xlsx and merged in later."
+        },
+        "recommendation": { "$ref": "#/$defs/nonEmptyString" },
+        "example": { "$ref": "#/$defs/nonEmptyString" },
+        "values": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/nonEmptyString" }
+        }
+      }
+    }
+  }
+}

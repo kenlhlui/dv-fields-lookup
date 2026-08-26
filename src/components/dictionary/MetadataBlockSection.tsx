@@ -1,15 +1,15 @@
 import { FieldCard } from '@/components/dictionary/FieldCard';
 import { Separator } from '@/components/ui/separator';
-import type { MetadataBlock, MetadataField, MetadataGroup } from '@/lib/metadata';
+import type { MetadataBlock, MetadataField } from '@/lib/metadata';
 import type { SearchBlock } from '@/lib/search';
 
 interface MetadataBlockSectionProps {
   result: SearchBlock;
-  onSelectField(block: MetadataBlock, group: MetadataGroup, field: MetadataField, opener: HTMLButtonElement): void;
+  onSelectField(block: MetadataBlock, field: MetadataField, opener: HTMLButtonElement): void;
 }
 
 export function MetadataBlockSection({ result, onSelectField }: MetadataBlockSectionProps) {
-  const fieldCount = result.block.groups.reduce((count, group) => count + group.fields.length, 0);
+  const fieldCount = result.block.fields.length;
 
   return (
     <section aria-labelledby={`metadata-block-${result.block.id}`} className="space-y-6">
@@ -23,21 +23,16 @@ export function MetadataBlockSection({ result, onSelectField }: MetadataBlockSec
         <p className="max-w-3xl text-muted-foreground">{result.block.description}</p>
       </header>
       <Separator />
-      {result.block.groups.map((group) => (
-        <div key={group.id} className="space-y-3">
-          <h3 className="text-lg font-medium">{group.name}</h3>
-          <div className="grid gap-4 md:grid-cols-2">
-            {group.fields.map((field) => (
-              <FieldCard
-                key={field.id}
-                field={field}
-                match={result.matches.get(field.id)}
-                onSelect={(opener) => onSelectField(result.block, group, field, opener)}
-              />
-            ))}
-          </div>
-        </div>
-      ))}
+      <div className="grid gap-4 md:grid-cols-2">
+        {result.block.fields.map((field) => (
+          <FieldCard
+            key={field.id}
+            field={field}
+            match={result.matches.get(field.id)}
+            onSelect={(opener) => onSelectField(result.block, field, opener)}
+          />
+        ))}
+      </div>
     </section>
   );
 }

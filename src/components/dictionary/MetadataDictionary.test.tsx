@@ -10,73 +10,51 @@ const blocks: MetadataBlock[] = [
     id: 'citation',
     name: 'Citation Metadata',
     description: 'Core information used to identify and cite a dataset.',
-    groups: [
+    fields: [
       {
-        id: 'author',
-        name: 'Author',
-        fields: [
-          {
-            id: 'authorName',
-            name: 'Name',
-            summary: 'Person responsible for creating the dataset.',
-            description: 'The full name of a credited person or organization.',
-            type: 'Text',
-            required: true,
-            repeatable: true,
-            example: 'Ada Lovelace',
-            aliases: ['creator'],
-          },
-          {
-            id: 'authorIdentifier',
-            name: 'Identifier',
-            summary: 'Persistent identifier associated with the author.',
-            description: 'A globally unique identifier for the named author, such as an ORCID iD.',
-            type: 'Text',
-            required: false,
-            repeatable: true,
-            example: 'https://orcid.org/0000-0002-1825-0097',
-            aliases: ['ORCID'],
-          },
-          {
-            id: 'authorIdentifierScheme',
-            name: 'Identifier Scheme',
-            summary: 'Scheme used for the author identifier.',
-            description: 'The system that issued or manages the author identifier.',
-            type: 'Controlled Vocabulary',
-            required: false,
-            repeatable: true,
-            example: 'ORCID',
-            aliases: ['identifier type'],
-          },
-        ],
+        id: 'authorName',
+        name: 'Author Name',
+        definition: 'Person responsible for creating the dataset.',
+        type: 'Text',
+        required: true,
+        repeatable: true,
+        example: 'Ada Lovelace',
       },
       {
-        id: 'otherIdentifier',
+        id: 'authorIdentifier',
+        name: 'Author Identifier',
+        definition: 'A globally unique identifier for the named author, such as an ORCID iD.',
+        type: 'Text',
+        required: false,
+        repeatable: true,
+        example: 'https://orcid.org/0000-0002-1825-0097',
+      },
+      {
+        id: 'authorIdentifierScheme',
+        name: 'Author Identifier Scheme',
+        definition: 'The system that issued or manages the author identifier.',
+        type: 'Controlled Vocabulary',
+        required: false,
+        repeatable: true,
+        example: 'ORCID',
+      },
+      {
+        id: 'otherId',
         name: 'Other Identifier',
-        fields: [
-          {
-            id: 'otherId',
-            name: 'Other Identifier',
-            summary: 'Identifier assigned to the dataset by another system.',
-            description: 'An identifier other than the repository primary identifier.',
-            type: 'Text',
-            required: false,
-            repeatable: true,
-            example: 'doi:10.1234/example',
-            aliases: ['alternate identifier'],
-          },
-          {
-            id: 'otherIdAgency',
-            name: 'Other Identifier Agency',
-            summary: 'Organization that issued the other identifier.',
-            description: 'The agency responsible for assigning the related identifier.',
-            type: 'Text',
-            required: false,
-            repeatable: true,
-            example: 'DataCite',
-            aliases: ['issuing agency'],
-          },
-        ],
+        definition: 'An identifier other than the repository primary identifier.',
+        type: 'Text',
+        required: false,
+        repeatable: true,
+        example: 'doi:10.1234/example',
+      },
+      {
+        id: 'otherIdAgency',
+        name: 'Other Identifier Agency',
+        definition: 'The agency responsible for assigning the related identifier.',
+        type: 'Text',
+        required: false,
+        repeatable: true,
+        example: 'DataCite',
       },
     ],
   },
@@ -84,34 +62,24 @@ const blocks: MetadataBlock[] = [
     id: 'geospatial',
     name: 'Geospatial Metadata',
     description: 'Spatial coverage and geographic boundaries associated with a dataset.',
-    groups: [
+    fields: [
       {
         id: 'geographicCoverage',
         name: 'Geographic Coverage',
-        fields: [
-          {
-            id: 'geographicCoverage',
-            name: 'Geographic Coverage',
-            summary: 'Place or region represented by the dataset.',
-            description: 'A named geographic area covered by the data.',
-            type: 'Text',
-            required: false,
-            repeatable: true,
-            example: 'Chesapeake Bay',
-            aliases: ['location'],
-          },
-          {
-            id: 'westLongitude',
-            name: 'Westernmost Longitude',
-            summary: 'Western edge of the dataset bounding box.',
-            description: 'The westernmost longitude in decimal degrees.',
-            type: 'Number',
-            required: false,
-            repeatable: false,
-            example: '-77.5',
-            aliases: ['west bound'],
-          },
-        ],
+        definition: 'A named geographic area covered by the data.',
+        type: 'Text',
+        required: false,
+        repeatable: true,
+        example: 'Chesapeake Bay',
+      },
+      {
+        id: 'westLongitude',
+        name: 'Westernmost Longitude',
+        definition: 'The westernmost longitude in decimal degrees.',
+        type: 'Number',
+        required: false,
+        repeatable: false,
+        example: '-77.5',
       },
     ],
   },
@@ -172,12 +140,12 @@ describe('MetadataDictionary', () => {
   it('opens the selected field dialog and returns focus to its details button on Escape', async () => {
     const user = userEvent.setup();
     render(<MetadataDictionary blocks={blocks} />);
-    const opener = screen.getByRole('button', { name: 'View details for Identifier' });
+    const opener = screen.getByRole('button', { name: 'View details for Author Identifier' });
 
     await user.click(opener);
 
-    expect(screen.getByRole('dialog', { name: 'Identifier' })).toHaveTextContent(
-      'Citation Metadata › Author › Identifier',
+    expect(screen.getByRole('dialog', { name: 'Author Identifier' })).toHaveTextContent(
+      'Citation Metadata › Author Identifier',
     );
     await user.keyboard('{Escape}');
 
@@ -231,11 +199,11 @@ describe('MetadataDictionary', () => {
   it('restores focus to the explicit details-button opener after an unfocused click', async () => {
     const user = userEvent.setup();
     render(<MetadataDictionary blocks={blocks} />);
-    const opener = screen.getByRole('button', { name: 'View details for Identifier' });
+    const opener = screen.getByRole('button', { name: 'View details for Author Identifier' });
 
     expect(opener).not.toHaveFocus();
     fireEvent.click(opener);
-    expect(screen.getByRole('dialog', { name: 'Identifier' })).toBeInTheDocument();
+    expect(screen.getByRole('dialog', { name: 'Author Identifier' })).toBeInTheDocument();
 
     await user.keyboard('{Escape}');
 
