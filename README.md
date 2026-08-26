@@ -1,6 +1,6 @@
-# Metadata Lookup
+# Dataverse Metadata Field Lookup
 
-Metadata Lookup is a static Astro application for searching and browsing Dataverse-style metadata fields. It renders the complete dictionary by default, narrows each visible block to its matching fields while searching, and exposes full field details in an accessible dialog.
+Dataverse Metadata Field Lookup is a static Astro application for searching and browsing Dataverse-style metadata fields. It renders the complete dictionary by default, narrows each visible block to its matching fields while searching, and exposes full field details in an accessible dialog.
 
 > [!IMPORTANT]
 > The bundled metadata is demonstration data. It is not canonical Dataverse documentation.

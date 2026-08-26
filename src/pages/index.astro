@@ -13,7 +13,7 @@ const metadata = validateMetadata(metadataJson);
 const acknowledgementsHtml = await compiledContent();
 ---
 
-<Layout title="Metadata Lookup" description="Search and browse demonstration Dataverse metadata fields.">
+<Layout title={site.title} description={site.description}>
 	<main class="mx-auto min-h-screen w-full max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
 		<header class="mb-10 flex items-center justify-between gap-4">
 			<div class="max-w-3xl">
