@@ -1,0 +1,214 @@
+[
+  {
+    "id": "citation",
+    "name": "Citation Metadata",
+    "description": "Core information used to identify, describe, and cite a dataset.",
+    "groups": [
+      {
+        "id": "author",
+        "name": "Author",
+        "fields": [
+          {
+            "id": "authorName",
+            "name": "Name",
+            "summary": "Person or organization responsible for creating the dataset.",
+            "description": "The full name of a person or organization credited with creating the dataset. Enter names in the form preferred for citation.",
+            "type": "Text",
+            "required": true,
+            "repeatable": true,
+            "example": "Ada Lovelace",
+            "aliases": ["creator", "contributor"]
+          },
+          {
+            "id": "authorIdentifier",
+            "name": "Identifier",
+            "summary": "Persistent identifier associated with the author.",
+            "description": "A globally unique identifier for the named author, such as an ORCID iD. Use the corresponding scheme in Identifier Scheme.",
+            "type": "Text",
+            "required": false,
+            "repeatable": true,
+            "example": "https://orcid.org/0000-0002-1825-0097",
+            "aliases": ["ORCID", "researcher ID"]
+          },
+          {
+            "id": "authorIdentifierScheme",
+            "name": "Identifier Scheme",
+            "summary": "Scheme used for the author identifier.",
+            "description": "The controlled vocabulary value that identifies which system issued or manages the author identifier.",
+            "type": "Controlled Vocabulary",
+            "required": false,
+            "repeatable": true,
+            "example": "ORCID",
+            "aliases": ["identifier type"]
+          }
+        ]
+      },
+      {
+        "id": "otherIdentifier",
+        "name": "Other Identifier",
+        "fields": [
+          {
+            "id": "otherId",
+            "name": "Other Identifier",
+            "summary": "Identifier assigned to the dataset by another system.",
+            "description": "An identifier other than the repository's primary persistent identifier. Pair it with the organization recorded in Other Identifier Agency.",
+            "type": "Text",
+            "required": false,
+            "repeatable": true,
+            "example": "doi:10.1234/example",
+            "aliases": ["alternate identifier"]
+          },
+          {
+            "id": "otherIdAgency",
+            "name": "Other Identifier Agency",
+            "summary": "Organization that issued the other identifier.",
+            "description": "The name of the agency, archive, or registration service responsible for assigning the related other identifier.",
+            "type": "Text",
+            "required": false,
+            "repeatable": true,
+            "example": "DataCite",
+            "aliases": ["issuing agency"]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "geospatial",
+    "name": "Geospatial Metadata",
+    "description": "Spatial coverage and geographic boundaries associated with a dataset.",
+    "groups": [
+      {
+        "id": "geographicCoverage",
+        "name": "Geographic Coverage",
+        "fields": [
+          {
+            "id": "geographicCoverage",
+            "name": "Geographic Coverage",
+            "summary": "Place or region represented by the dataset.",
+            "description": "A named geographic area covered by the data, ranging from a specific locality to a country or larger region.",
+            "type": "Text",
+            "required": false,
+            "repeatable": true,
+            "example": "Chesapeake Bay",
+            "aliases": ["location", "place"]
+          },
+          {
+            "id": "westLongitude",
+            "name": "Westernmost Longitude",
+            "summary": "Western edge of the dataset's bounding box.",
+            "description": "The westernmost longitude in decimal degrees. West longitudes use negative values.",
+            "type": "Number",
+            "required": false,
+            "repeatable": false,
+            "example": "-77.5",
+            "aliases": ["west bound"]
+          },
+          {
+            "id": "eastLongitude",
+            "name": "Easternmost Longitude",
+            "summary": "Eastern edge of the dataset's bounding box.",
+            "description": "The easternmost longitude in decimal degrees. West longitudes use negative values.",
+            "type": "Number",
+            "required": false,
+            "repeatable": false,
+            "example": "-75.2",
+            "aliases": ["east bound"]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "socialScience",
+    "name": "Social Science Metadata",
+    "description": "Study design and population concepts used in social science research.",
+    "groups": [
+      {
+        "id": "studyDesign",
+        "name": "Study Design",
+        "fields": [
+          {
+            "id": "unitOfAnalysis",
+            "name": "Unit of Analysis",
+            "summary": "Basic entity examined by the study.",
+            "description": "The type of entity about which observations are recorded, such as an individual, household, event, or organization.",
+            "type": "Controlled Vocabulary",
+            "required": false,
+            "repeatable": true,
+            "example": "Individual",
+            "aliases": ["analysis unit"]
+          },
+          {
+            "id": "universe",
+            "name": "Universe",
+            "summary": "Population to which the study applies.",
+            "description": "A description of the population, objects, or events that the study intends to represent.",
+            "type": "Text",
+            "required": false,
+            "repeatable": false,
+            "example": "Adults living in the United States",
+            "aliases": ["population"]
+          },
+          {
+            "id": "timeMethod",
+            "name": "Time Method",
+            "summary": "Temporal structure used by the study.",
+            "description": "The study's relationship to time, such as cross-sectional, longitudinal, or repeated cross-sectional.",
+            "type": "Controlled Vocabulary",
+            "required": false,
+            "repeatable": true,
+            "example": "Longitudinal",
+            "aliases": ["temporal design"]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "astronomy",
+    "name": "Astronomy Metadata",
+    "description": "Observational targets and equipment used to collect astronomy data.",
+    "groups": [
+      {
+        "id": "observation",
+        "name": "Observation",
+        "fields": [
+          {
+            "id": "object",
+            "name": "Object",
+            "summary": "Celestial object targeted by the observation.",
+            "description": "The common name, catalog designation, or other identifier of the astronomical target.",
+            "type": "Text",
+            "required": false,
+            "repeatable": true,
+            "example": "M31",
+            "aliases": ["celestial object", "target"]
+          },
+          {
+            "id": "telescope",
+            "name": "Telescope",
+            "summary": "Telescope used to collect the observation.",
+            "description": "The telescope or observatory facility responsible for gathering the source measurements.",
+            "type": "Text",
+            "required": false,
+            "repeatable": true,
+            "example": "Hubble Space Telescope",
+            "aliases": ["observatory"]
+          },
+          {
+            "id": "instrument",
+            "name": "Instrument",
+            "summary": "Instrument attached to the observing system.",
+            "description": "The detector, camera, spectrograph, or other instrument used to record the observation.",
+            "type": "Text",
+            "required": false,
+            "repeatable": true,
+            "example": "Wide Field Camera 3",
+            "aliases": ["detector"]
+          }
+        ]
+      }
+    ]
+  }
+]
