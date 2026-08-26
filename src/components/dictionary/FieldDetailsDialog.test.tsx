@@ -61,15 +61,6 @@ describe('FieldDetailsDialog', () => {
       'whitespace-normal',
       'break-words',
     );
-    const closeButtons = screen.getAllByRole('button', { name: 'Close' });
-    expect(closeButtons.find((button) => button.dataset.size === 'default')).toHaveClass(
-      'min-h-11',
-      'sm:min-h-8',
-    );
-    expect(closeButtons.find((button) => button.dataset.size === 'icon-sm')).toHaveClass(
-      'size-11',
-      'sm:size-7',
-    );
   });
 
   it('reports dismissal when Escape closes the controlled dialog', async () => {

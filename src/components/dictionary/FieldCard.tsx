@@ -67,7 +67,6 @@ export function FieldCard({ field, match, onSelect }: FieldCardProps) {
         <Button
           variant="outline"
           size="sm"
-          className="min-h-11 px-4 sm:min-h-7 sm:px-2.5"
           onClick={(event) => onSelect(event.currentTarget)}
           aria-label={`View details for ${field.name}`}
         >

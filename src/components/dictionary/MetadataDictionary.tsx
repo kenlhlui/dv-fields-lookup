@@ -51,7 +51,7 @@ export default function MetadataDictionary({ blocks }: { blocks: MetadataBlock[]
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Search names, descriptions, identifiers, and examples…"
-            className="h-11 pl-9 md:h-10"
+            className="h-10 pl-9"
           />
         </div>
         <p role="status" aria-live="polite" className="text-sm text-muted-foreground">
@@ -65,7 +65,7 @@ export default function MetadataDictionary({ blocks }: { blocks: MetadataBlock[]
         <div className="rounded-lg border p-6" aria-label="No search results">
           <p>No metadata fields matched “{view.normalizedQuery}”</p>
           <p className="text-muted-foreground">Try a different search term or clear the current search.</p>
-          <Button className="mt-4 min-h-11 px-4 sm:min-h-8 sm:px-2.5" variant="outline" onClick={clearSearch}>
+          <Button className="mt-4" variant="outline" onClick={clearSearch}>
             Clear search
           </Button>
         </div>

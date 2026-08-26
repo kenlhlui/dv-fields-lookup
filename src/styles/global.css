@@ -151,3 +151,14 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+@media (pointer: coarse) {
+  button,
+  input {
+    min-height: 2.75rem;
+  }
+
+  button {
+    min-width: 2.75rem;
+  }
+}

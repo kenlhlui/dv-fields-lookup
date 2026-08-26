@@ -97,9 +97,7 @@ export function FieldDetailsDialog({ selected, onOpenChange, restoreFocusRef }: 
 
           <DialogFooter>
             <DialogClose asChild>
-              <Button variant="outline" className="min-h-11 px-4 sm:min-h-8 sm:px-2.5">
-                Close
-              </Button>
+              <Button variant="outline">Close</Button>
             </DialogClose>
           </DialogFooter>
         </DialogContent>

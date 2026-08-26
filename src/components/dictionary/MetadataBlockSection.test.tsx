@@ -92,7 +92,6 @@ describe('MetadataBlockSection', () => {
     expect(screen.queryAllByText('Repeatable')).toHaveLength(1);
 
     const detailsButton = screen.getByRole('button', { name: 'View details for Identifier' });
-    expect(detailsButton).toHaveClass('min-h-11', 'sm:min-h-7');
     expect(screen.getByText('Type: Controlled vocabulary')).toHaveClass(
       'h-auto',
       'max-w-full',
