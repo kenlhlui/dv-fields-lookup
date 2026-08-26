@@ -184,6 +184,50 @@ describe('MetadataDictionary', () => {
     expect(opener).toHaveFocus();
   });
 
+  it('filters to one block by clicking its facet chip, and toggles off on a second click', async () => {
+    const user = userEvent.setup();
+    render(<MetadataDictionary blocks={blocks} />);
+
+    const chip = screen.getByRole('button', { name: 'Geospatial Metadata' });
+    await user.click(chip);
+
+    expect(chip).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByRole('status')).toHaveTextContent('2 fields · 1 metadata block');
+    expect(screen.queryByRole('heading', { name: 'Citation Metadata' })).not.toBeInTheDocument();
+
+    await user.click(chip);
+
+    expect(chip).toHaveAttribute('aria-pressed', 'false');
+    expect(screen.getByRole('heading', { name: 'Citation Metadata' })).toBeInTheDocument();
+  });
+
+  it('selects multiple facet chips at once', async () => {
+    const user = userEvent.setup();
+    render(<MetadataDictionary blocks={blocks} />);
+
+    await user.click(screen.getByRole('button', { name: 'Citation Metadata' }));
+    await user.click(screen.getByRole('button', { name: 'Geospatial Metadata' }));
+
+    expect(screen.getByRole('status')).toHaveTextContent('7 fields · 2 metadata blocks');
+    expect(screen.getByRole('heading', { name: 'Citation Metadata' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Geospatial Metadata' })).toBeInTheDocument();
+  });
+
+  it('combines the block facet with an active text search', async () => {
+    const user = userEvent.setup();
+    render(<MetadataDictionary blocks={blocks} />);
+
+    await user.type(screen.getByLabelText('Search metadata fields'), 'ORCID');
+    await user.click(screen.getByRole('button', { name: 'Geospatial Metadata' }));
+
+    expect(screen.getByRole('status')).toHaveTextContent('No metadata fields matched “ORCID”');
+    const clearButton = screen.getByRole('button', { name: 'Clear search' });
+    await user.click(clearButton);
+
+    expect(screen.getByRole('button', { name: 'Geospatial Metadata' })).toHaveAttribute('aria-pressed', 'false');
+    expect(screen.getByRole('status')).toHaveTextContent('7 fields · 2 metadata blocks');
+  });
+
   it('restores focus to the explicit details-button opener after an unfocused click', async () => {
     const user = userEvent.setup();
     render(<MetadataDictionary blocks={blocks} />);
