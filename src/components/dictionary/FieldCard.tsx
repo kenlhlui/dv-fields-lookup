@@ -21,12 +21,22 @@ interface FieldCardProps {
   onSelect(opener: HTMLButtonElement): void;
 }
 
-// GitHub Primer accent colors (accent/danger/done/success), 10% tint w/ tinted text + border.
+// GitHub Primer accent colors (accent/danger/done/neutral), 10% tint w/ tinted text + border.
 const badgeColor = {
   type: 'border-[#0969da]/30 bg-[#0969da]/10 text-[#0969da] dark:border-[#4493f8]/40 dark:bg-[#0969da]/15 dark:text-[#4493f8]',
   repeatable: 'border-[#8250df]/30 bg-[#8250df]/10 text-[#8250df] dark:border-[#a475f9]/40 dark:bg-[#8250df]/15 dark:text-[#a475f9]',
-  bestPractice: 'border-[#1a7f37]/30 bg-[#1a7f37]/10 text-[#1a7f37] dark:border-[#3fb950]/40 dark:bg-[#1a7f37]/15 dark:text-[#3fb950]',
 } as const;
+
+// Best-practice badge tracks the recommendation tier, not a flat color: Recommended gets a
+// done green, Optional gets a neutral gray. Required is never rendered — the "* Required"
+// marker in the top-right corner already says it, and the data never marks a field
+// best-practice-required without also making it schema-required.
+const bestPracticeColor: Record<string, string> = {
+  Recommended:
+    'border-[#1a7f37]/30 bg-[#1a7f37]/10 text-[#1a7f37] dark:border-[#3fb950]/40 dark:bg-[#1a7f37]/15 dark:text-[#3fb950]',
+};
+const bestPracticeColorDefault =
+  'border-[#656d76]/30 bg-[#656d76]/10 text-[#656d76] dark:border-[#9198a1]/40 dark:bg-[#656d76]/15 dark:text-[#9198a1]';
 
 export function FieldCard({ field, match, onSelect }: FieldCardProps) {
   const isMatch = match !== undefined;
@@ -75,10 +85,13 @@ export function FieldCard({ field, match, onSelect }: FieldCardProps) {
             Repeatable
           </Badge>
         )}
-        {field.recommendation && (
+        {field.recommendation && field.recommendation !== 'Required' && (
           <Badge
             variant="outline"
-            className={cn('h-auto max-w-full whitespace-normal break-words text-left', badgeColor.bestPractice)}
+            className={cn(
+              'h-auto max-w-full whitespace-normal break-words text-left',
+              bestPracticeColor[field.recommendation] ?? bestPracticeColorDefault,
+            )}
           >
             Best practice: {field.recommendation}
           </Badge>
