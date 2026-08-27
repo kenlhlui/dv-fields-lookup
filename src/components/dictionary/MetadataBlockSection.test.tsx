@@ -70,7 +70,7 @@ describe('MetadataBlockSection', () => {
     expect(screen.queryByText('Author Identifier Scheme')).not.toBeInTheDocument();
     expect(screen.getByText('Search match')).toBeInTheDocument();
     expect(screen.getAllByRole('button', { name: /view details for/i })).toHaveLength(1);
-    expect(screen.getByText('Type: Identifier')).toBeInTheDocument();
+    expect(screen.getByText('Identifier')).toBeInTheDocument();
 
     const detailsButton = screen.getByRole('button', { name: 'View details for Author Identifier' });
     expect(detailsButton.closest('.grid')).toHaveClass('md:grid-cols-2');
