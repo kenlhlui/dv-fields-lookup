@@ -84,6 +84,17 @@ function rangesFor(matches: ReadonlyArray<FuseResultMatch> | undefined): FieldMa
   return ranges;
 }
 
+// Fields a block should render: narrowed to search matches (if any), then to fieldFilter (facets).
+// Shared by MetadataDictionary (counts) and MetadataBlockSection (rendering) so both agree.
+export function getVisibleFields(
+  result: SearchBlock,
+  fieldFilter?: (field: MetadataField) => boolean,
+): MetadataField[] {
+  const fields =
+    result.matches.size > 0 ? result.block.fields.filter((field) => result.matches.has(field.id)) : result.block.fields;
+  return fieldFilter ? fields.filter(fieldFilter) : fields;
+}
+
 export function createMetadataSearch(blocks: MetadataBlock[]): { search(query: string): SearchView } {
   const records: SearchRecord[] = blocks.flatMap((block, blockIndex) =>
     block.fields.map((field) => ({
