@@ -75,7 +75,7 @@ export function FieldCard({ field, match, onSelect }: FieldCardProps) {
           variant="outline"
           className={cn('h-auto max-w-full whitespace-normal break-words text-left', badgeColor.type)}
         >
-          Type: {field.type}
+          {field.type}
         </Badge>
         {field.repeatable && (
           <Badge
