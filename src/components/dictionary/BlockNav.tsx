@@ -54,7 +54,7 @@ export function BlockNav({ blocks }: { blocks: MetadataBlock[] }) {
     <nav
       aria-label="Metadata blocks"
       className={cn(
-        'fixed top-1/2 left-4 z-40 hidden max-h-[70vh] w-56 -translate-x-4 -translate-y-1/2 overflow-y-auto rounded-lg border border-border bg-background/95 p-2 opacity-0 shadow-lg backdrop-blur pointer-events-none transition-all duration-200 md:block',
+        'fixed top-1/2 left-4 z-40 hidden max-h-[70vh] w-56 -translate-x-4 -translate-y-1/2 overflow-y-auto rounded-lg border border-border bg-background/95 p-2 opacity-0 shadow-lg backdrop-blur pointer-events-none transition-all duration-200 min-[1600px]:block',
         visible && 'translate-x-0 opacity-100 pointer-events-auto',
       )}
     >

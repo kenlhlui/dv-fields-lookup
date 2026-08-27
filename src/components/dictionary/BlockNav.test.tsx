@@ -44,9 +44,12 @@ describe('BlockNav', () => {
     expect(nav.className).toMatch(/opacity-0/);
   });
 
-  it('is hidden below the md breakpoint', () => {
+  it('stays hidden until the viewport has enough left gutter to avoid the cards', () => {
     render(<BlockNav blocks={blocks} />);
-    expect(screen.getByRole('navigation', { name: 'Metadata blocks' }).className).toMatch(/\bhidden\b.*\bmd:block\b/);
+    const nav = screen.getByRole('navigation', { name: 'Metadata blocks' });
+
+    expect(nav.className).toMatch(/\bhidden\b.*\bmin-\[1600px\]:block\b/);
+    expect(nav.className).not.toMatch(/\bmd:block\b/);
   });
 
   it('fades back out after 3 seconds of no further scrolling', () => {
