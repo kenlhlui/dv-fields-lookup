@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import demoMetadata from '@/data/metadata.json';
 import { type MetadataBlock, validateMetadata } from '@/lib/metadata';
-import { createMetadataSearch } from '@/lib/search';
+import { createMetadataSearch, getVisibleFields } from '@/lib/search';
 
 const blocks = validateMetadata(demoMetadata);
 const search = createMetadataSearch(blocks);
@@ -100,5 +100,50 @@ describe('createMetadataSearch', () => {
 
   it('returns an empty block list for no matches', () => {
     expect(search.search('zzzz-no-field').blocks).toEqual([]);
+  });
+});
+
+describe('getVisibleFields', () => {
+  const mixedBlock: MetadataBlock = {
+    id: 'mixed',
+    name: 'Mixed',
+    description: 'A block with a required and an optional field.',
+    fields: [
+      {
+        id: 'required1',
+        name: 'Required Widget',
+        definition: 'A required field.',
+        type: 'Text',
+        required: true,
+        repeatable: false,
+        recommendation: 'Required',
+      },
+      {
+        id: 'optional1',
+        name: 'Optional Widget',
+        definition: 'An optional field.',
+        type: 'Text',
+        required: false,
+        repeatable: false,
+        recommendation: 'Optional',
+      },
+    ],
+  };
+  const mixedSearch = createMetadataSearch([mixedBlock]);
+
+  it('applies fieldFilter on top of the browsing (all-fields) case', () => {
+    const browsing = mixedSearch.search('   ').blocks[0];
+
+    expect(getVisibleFields(browsing, (field) => field.required).map((field) => field.id)).toEqual(['required1']);
+    expect(getVisibleFields(browsing)).toHaveLength(2);
+  });
+
+  it('applies fieldFilter on top of the search-matches case', () => {
+    const searching = mixedSearch.search('widget').blocks[0];
+
+    expect(searching.matches.size).toBe(2);
+    expect(getVisibleFields(searching, (field) => field.recommendation === 'Optional').map((field) => field.id)).toEqual([
+      'optional1',
+    ]);
   });
 });

@@ -3,17 +3,18 @@ import { ChevronDown } from 'lucide-react';
 import { FieldCard } from '@/components/dictionary/FieldCard';
 import { Separator } from '@/components/ui/separator';
 import type { MetadataBlock, MetadataField } from '@/lib/metadata';
-import type { SearchBlock } from '@/lib/search';
+import { getVisibleFields, type SearchBlock } from '@/lib/search';
 
 interface MetadataBlockSectionProps {
   result: SearchBlock;
   onSelectField(block: MetadataBlock, field: MetadataField, opener: HTMLButtonElement): void;
+  fieldFilter?: (field: MetadataField) => boolean;
 }
 
-export function MetadataBlockSection({ result, onSelectField }: MetadataBlockSectionProps) {
+export function MetadataBlockSection({ result, onSelectField, fieldFilter }: MetadataBlockSectionProps) {
   // Searching narrows a block to its matching fields; browsing shows every field (matches is empty).
-  const fields =
-    result.matches.size > 0 ? result.block.fields.filter((field) => result.matches.has(field.id)) : result.block.fields;
+  // fieldFilter then narrows further by facet (required, best practice).
+  const fields = getVisibleFields(result, fieldFilter);
   const fieldCount = fields.length;
 
   return (

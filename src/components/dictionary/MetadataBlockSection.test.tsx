@@ -91,4 +91,16 @@ describe('MetadataBlockSection', () => {
     expect(screen.queryByText('Search match')).not.toBeInTheDocument();
     expect(screen.getAllByRole('button', { name: /view details for/i })).toHaveLength(3);
   });
+
+  it('narrows further by fieldFilter on top of the search matches', () => {
+    const browsing: SearchBlock = { ...result, matches: new Map() };
+
+    render(
+      <MetadataBlockSection result={browsing} onSelectField={vi.fn()} fieldFilter={(field) => field.required} />,
+    );
+
+    expect(screen.getByText('Author Name')).toBeInTheDocument();
+    expect(screen.queryByText('Author Identifier')).not.toBeInTheDocument();
+    expect(screen.queryByText('Author Identifier Scheme')).not.toBeInTheDocument();
+  });
 });

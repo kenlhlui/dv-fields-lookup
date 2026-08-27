@@ -85,6 +85,69 @@ const blocks: MetadataBlock[] = [
   },
 ];
 
+// Dedicated fixture for the required / best-practice facets: covers a required field, both
+// best-practice tiers, and a field with no recommendation at all, spread across two blocks.
+const facetBlocks: MetadataBlock[] = [
+  {
+    id: 'alpha',
+    name: 'Alpha Block',
+    description: 'Alpha block description.',
+    fields: [
+      {
+        id: 'alphaRequired',
+        name: 'Alpha Required',
+        definition: 'A required field.',
+        type: 'Text',
+        required: true,
+        repeatable: false,
+        recommendation: 'Required',
+      },
+      {
+        id: 'alphaRecommended',
+        name: 'Alpha Recommended',
+        definition: 'A recommended field.',
+        type: 'Text',
+        required: false,
+        repeatable: false,
+        recommendation: 'Recommended',
+      },
+      {
+        id: 'alphaOptional',
+        name: 'Alpha Optional',
+        definition: 'An optional field.',
+        type: 'Text',
+        required: false,
+        repeatable: false,
+        recommendation: 'Optional',
+      },
+    ],
+  },
+  {
+    id: 'beta',
+    name: 'Beta Block',
+    description: 'Beta block description.',
+    fields: [
+      {
+        id: 'betaOptional',
+        name: 'Beta Optional',
+        definition: 'Another optional field.',
+        type: 'Text',
+        required: false,
+        repeatable: false,
+        recommendation: 'Optional',
+      },
+      {
+        id: 'betaPlain',
+        name: 'Beta Plain',
+        definition: 'A field with no best-practice recommendation.',
+        type: 'Text',
+        required: false,
+        repeatable: false,
+      },
+    ],
+  },
+];
+
 describe('MetadataDictionary', () => {
   it('renders the full dictionary with an accessible search input and summary', () => {
     render(<MetadataDictionary blocks={blocks} />);
@@ -195,6 +258,58 @@ describe('MetadataDictionary', () => {
 
     expect(screen.getByRole('button', { name: 'Geospatial Metadata' })).toHaveAttribute('aria-pressed', 'false');
     expect(screen.getByRole('status')).toHaveTextContent('7 fields · 2 metadata blocks');
+  });
+
+  it('filters to required fields only, and back off on a second click', async () => {
+    const user = userEvent.setup();
+    render(<MetadataDictionary blocks={facetBlocks} />);
+
+    const chip = screen.getByRole('button', { name: 'Required' });
+    await user.click(chip);
+
+    expect(chip).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByRole('status')).toHaveTextContent('1 field · 1 metadata block');
+    expect(screen.getByText('Alpha Required')).toBeInTheDocument();
+    expect(screen.queryByText('Alpha Recommended')).not.toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: 'Beta Block' })).not.toBeInTheDocument();
+
+    await user.click(chip);
+
+    expect(chip).toHaveAttribute('aria-pressed', 'false');
+    expect(screen.getByRole('status')).toHaveTextContent('5 fields · 2 metadata blocks');
+  });
+
+  it('filters by best-practice tier and combines with the block facet', async () => {
+    const user = userEvent.setup();
+    render(<MetadataDictionary blocks={facetBlocks} />);
+
+    await user.click(screen.getByRole('button', { name: 'Optional' }));
+
+    expect(screen.getByRole('status')).toHaveTextContent('2 fields · 2 metadata blocks');
+    expect(screen.getByText('Alpha Optional')).toBeInTheDocument();
+    expect(screen.getByText('Beta Optional')).toBeInTheDocument();
+    expect(screen.queryByText('Alpha Required')).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'Alpha Block' }));
+
+    expect(screen.getByRole('status')).toHaveTextContent('1 field · 1 metadata block');
+    expect(screen.queryByRole('heading', { name: 'Beta Block' })).not.toBeInTheDocument();
+  });
+
+  it('shows a filters-only empty state and clears it without touching an active search', async () => {
+    const user = userEvent.setup();
+    render(<MetadataDictionary blocks={facetBlocks} />);
+
+    await user.click(screen.getByRole('button', { name: 'Required' }));
+    await user.click(screen.getByRole('button', { name: 'Recommended' }));
+
+    expect(screen.getByRole('status')).toHaveTextContent('No metadata fields match the selected filters');
+    const clearButton = screen.getByRole('button', { name: 'Clear filters' });
+    await user.click(clearButton);
+
+    expect(screen.getByRole('status')).toHaveTextContent('5 fields · 2 metadata blocks');
+    expect(screen.getByRole('button', { name: 'Required' })).toHaveAttribute('aria-pressed', 'false');
+    expect(screen.getByRole('button', { name: 'Recommended' })).toHaveAttribute('aria-pressed', 'false');
   });
 
   it('restores focus to the explicit details-button opener after an unfocused click', async () => {
