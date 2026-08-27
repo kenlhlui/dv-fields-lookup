@@ -6,6 +6,7 @@ import { FieldDetailsDialog, type SelectedField } from '@/components/dictionary/
 import { MetadataBlockSection } from '@/components/dictionary/MetadataBlockSection';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Separator } from '@/components/ui/separator';
 import type { MetadataBlock, MetadataField } from '@/lib/metadata';
 import { createMetadataSearch, getVisibleFields } from '@/lib/search';
 
@@ -91,44 +92,56 @@ export default function MetadataDictionary({ blocks }: { blocks: MetadataBlock[]
             </Button>
           )}
         </div>
-        <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by metadata block">
-          {blocks.map((block) => (
-            <Button
-              key={block.id}
-              type="button"
-              variant={blockFilter.has(block.id) ? 'default' : 'outline'}
-              size="sm"
-              aria-pressed={blockFilter.has(block.id)}
-              onClick={() => setBlockFilter((current) => toggleInSet(current, block.id))}
-            >
-              {block.name}
-            </Button>
-          ))}
+        <div className="space-y-2">
+          <p className="text-xs font-medium text-muted-foreground">Metadata block</p>
+          <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by metadata block">
+            {blocks.map((block) => (
+              <Button
+                key={block.id}
+                type="button"
+                variant={blockFilter.has(block.id) ? 'default' : 'outline'}
+                size="sm"
+                aria-pressed={blockFilter.has(block.id)}
+                onClick={() => setBlockFilter((current) => toggleInSet(current, block.id))}
+              >
+                {block.name}
+              </Button>
+            ))}
+          </div>
         </div>
-        <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by required">
-          <Button
-            type="button"
-            variant={requiredOnly ? 'default' : 'outline'}
-            size="sm"
-            aria-pressed={requiredOnly}
-            onClick={() => setRequiredOnly((current) => !current)}
-          >
-            Required
-          </Button>
-        </div>
-        <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by best practice">
-          {bestPracticeTiers.map((tier) => (
-            <Button
-              key={tier}
-              type="button"
-              variant={bestPracticeFilter.has(tier) ? 'default' : 'outline'}
-              size="sm"
-              aria-pressed={bestPracticeFilter.has(tier)}
-              onClick={() => setBestPracticeFilter((current) => toggleInSet(current, tier))}
-            >
-              {tier}
-            </Button>
-          ))}
+        <Separator />
+        <div className="flex flex-wrap gap-x-6 gap-y-3">
+          <div className="space-y-2">
+            <p className="text-xs font-medium text-muted-foreground">Required</p>
+            <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by required">
+              <Button
+                type="button"
+                variant={requiredOnly ? 'default' : 'outline'}
+                size="sm"
+                aria-pressed={requiredOnly}
+                onClick={() => setRequiredOnly((current) => !current)}
+              >
+                Required
+              </Button>
+            </div>
+          </div>
+          <div className="space-y-2">
+            <p className="text-xs font-medium text-muted-foreground">Best practice</p>
+            <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by best practice">
+              {bestPracticeTiers.map((tier) => (
+                <Button
+                  key={tier}
+                  type="button"
+                  variant={bestPracticeFilter.has(tier) ? 'default' : 'outline'}
+                  size="sm"
+                  aria-pressed={bestPracticeFilter.has(tier)}
+                  onClick={() => setBestPracticeFilter((current) => toggleInSet(current, tier))}
+                >
+                  {tier}
+                </Button>
+              ))}
+            </div>
+          </div>
         </div>
         <p role="status" aria-live="polite" className="text-sm text-muted-foreground">
           {isEmpty
