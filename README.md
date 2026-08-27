@@ -35,6 +35,13 @@ pnpm check
 pnpm build
 ```
 
+## Release
+This repository uses [release-it](https://github.com/release-it/release-it) to automate versioning and changelog generation. To create a new release, run:
+
+```bash
+pnpm release
+```
+
 ## Data and deployment
 
 The site deploys to GitHub Pages under the `/dv-fields-lookup/` base path. Astro validates `src/data/metadata.json` during rendering, so real metadata can replace the demonstration dataset later without changing the application shell as long as it satisfies the validated metadata shape in `src/lib/metadata.ts`.
