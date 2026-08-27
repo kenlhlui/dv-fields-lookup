@@ -11,26 +11,26 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 
-interface AcknowledgementsDialogProps {
-  // pre-rendered from src/content/acknowledgements.md via Astro's markdown compiler
+interface InformationDialogProps {
+  // pre-rendered from src/content/information.md via Astro's markdown compiler
   html: string;
 }
 
-export default function AcknowledgementsDialog({ html }: AcknowledgementsDialogProps) {
+export default function InformationDialog({ html }: InformationDialogProps) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="icon" aria-label="Acknowledgements">
+        <Button variant="ghost" size="icon" aria-label="Information">
           <Info />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Acknowledgements</DialogTitle>
+          <DialogTitle>Information</DialogTitle>
         </DialogHeader>
         <div
           className="space-y-3 text-sm text-muted-foreground [&_a:hover]:text-foreground [&_a]:underline [&_a]:underline-offset-3 [&_ol]:list-decimal [&_ol]:pl-5 [&_strong]:font-medium [&_strong]:text-foreground [&_ul]:list-disc [&_ul]:pl-5"
-          // eslint-disable-next-line react/no-danger -- trusted, build-time content from src/content/acknowledgements.md
+          // eslint-disable-next-line react/no-danger -- trusted, build-time content from src/content/information.md
           dangerouslySetInnerHTML={{ __html: html }}
         />
         <DialogFooter>

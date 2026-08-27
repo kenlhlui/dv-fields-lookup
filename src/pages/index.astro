@@ -1,5 +1,5 @@
 ---
-import AcknowledgementsDialog from '@/components/AcknowledgementsDialog';
+import InformationDialog from '@/components/InformationDialog';
 import MetadataDictionary from '@/components/dictionary/MetadataDictionary';
 import ThemeToggle from '@/components/ThemeToggle';
 import Footer from '@/components/Footer.astro';
@@ -7,10 +7,10 @@ import metadataJson from '@/data/metadata.json';
 import Layout from '@/layouts/Layout.astro';
 import { validateMetadata } from '@/lib/metadata';
 import { site } from '@/site.config';
-import { compiledContent } from '@/content/acknowledgements.md';
+import { compiledContent } from '@/content/information.md';
 
 const metadata = validateMetadata(metadataJson);
-const acknowledgementsHtml = await compiledContent();
+const InformationHtml = await compiledContent();
 ---
 
 <Layout title={site.title} description={site.description}>
@@ -24,7 +24,7 @@ const acknowledgementsHtml = await compiledContent();
 				</p>
 			</div>
 			<div class="flex items-center gap-1">
-				<AcknowledgementsDialog html={acknowledgementsHtml} client:load />
+				<InformationDialog html={InformationHtml} client:load />
 				<ThemeToggle client:load />
 			</div>
 		</header>
