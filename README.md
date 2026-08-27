@@ -44,3 +44,6 @@ Deployment runs via [`.github/workflows/deploy.yml`](.github/workflows/deploy.ym
 
 ## Acknowledgments
 The bestPracticeDefinition text is from the [Dataverse North Metadata Best Practices Guide v 3.0](https://doi.org/10.5281/zenodo.5668945), license under CC-BY 4.0.
+
+## License
+[Apache License 2.0](LICENSE)
