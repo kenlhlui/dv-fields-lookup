@@ -18,7 +18,7 @@ const metadataFieldSchema = z.object({
 const metadataBlockSchema = z.object({
   id: nonempty,
   name: nonempty,
-  description: nonempty,
+  description: nonempty.optional(),
   fields: z.array(metadataFieldSchema).min(1),
 });
 
