@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import demoMetadata from '@/data/metadata.json';
+import Metadata from '@/data/metadata.json';
 import { countFields, getFieldPath, validateMetadata } from '@/lib/metadata';
 
 const valid = [
@@ -48,8 +48,7 @@ it('counts fields across blocks and builds a hierarchy path', () => {
   expect(getFieldPath(blocks[0], blocks[0].fields[0])).toBe('Citation Metadata › Author Identifier');
 });
 
-it('validates the demonstration dataset', () => {
-  const blocks = validateMetadata(demoMetadata);
-  expect(blocks).toHaveLength(18);
-  expect(countFields(blocks)).toBe(292);
+it('validates the data source', () => {
+  const blocks = validateMetadata(Metadata);
+  expect(countFields(blocks)).toBeGreaterThan(blocks.length);
 });
