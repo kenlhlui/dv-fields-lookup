@@ -44,16 +44,17 @@ pnpm release
 
 ## Data and deployment
 
-The site deploys to GitHub Pages under the `/dv-fields-lookup/` base path. Astro validates `src/data/metadata.json` during rendering, so real metadata can replace the demonstration dataset later without changing the application shell as long as it satisfies the validated metadata shape in `src/lib/metadata.ts`.
+The site deploys to GitHub Pages under the `/dv-fields-lookup/` base path via [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml), on every push to `main` and on manual workflow dispatch. One repository setting is required, once: in **Settings → Pages**, set **Source** to **GitHub Actions**.
 
-Deployment runs via [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) on every push to `main` and on manual workflow dispatch. The one required one-time repository setting: in **Settings → Pages**, set **Source** to **GitHub Actions**.
+### Metadata schema
 
-To test the metadata (data source) validity before build or deployment, run:
+Astro validates `src/data/metadata.json` at render time, so real metadata can replace the demonstration dataset without touching the application shell, as long as it matches the expected shape. See [docs/schema.md](docs/schema.md) for that schema, or [src/lib/metadata.ts](src/lib/metadata.ts) for the TypeScript types.
+
+To check the data before a build or deployment:
 
 ```bash
 pnpm test src/lib/metadata.test.ts
 ```
-
 
 ## Acknowledgments
 The bestPracticeDefinition text is from the [Dataverse North Metadata Best Practices Guide v 3.0](https://doi.org/10.5281/zenodo.5668945), license under CC-BY 4.0.

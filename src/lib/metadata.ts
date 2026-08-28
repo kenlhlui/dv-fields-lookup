@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 const nonempty = z.string().trim().min(1);
 
-const metadataFieldSchema = z.object({
+export const metadataFieldSchema = z.object({
   id: nonempty,
   name: nonempty,
   definition: nonempty,
@@ -15,7 +15,7 @@ const metadataFieldSchema = z.object({
   values: z.array(nonempty).optional(),
 });
 
-const metadataBlockSchema = z.object({
+export const metadataBlockSchema = z.object({
   id: nonempty,
   name: nonempty,
   description: nonempty.optional(),

@@ -15,7 +15,8 @@
     "check": "astro check",
     "astro": "astro",
     "prepare": "husky",
-    "release": "release-it"
+    "release": "release-it",
+    "docs:schema": "node scripts/schema-doc.ts"
   },
   "dependencies": {
     "@astrojs/react": "^6.0.4",
