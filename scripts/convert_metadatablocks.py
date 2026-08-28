@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Convert src/data/metadatablocks.json (raw Dataverse /api/metadatablocks export)
-into the flat shape used by src/data/metadata.json (see metadata.schema.json).
+into the flat shape used by src/data/metadata.json (see src/lib/metadata.ts for
+the validated shape).
 
 Compound fields (typeClass "compound") are not emitted themselves; their
 childFields are flattened into the output in place, matching how metadata.json
