@@ -1,0 +1,3 @@
+# Generate schema documentation if the metadata.ts file has been modified
+git diff --cached --name-only | grep -q '^src/lib/metadata.ts$' || exit 0
+pnpm docs:schema && git add docs/schema.md
