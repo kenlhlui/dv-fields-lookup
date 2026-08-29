@@ -4,12 +4,13 @@ import MetadataDictionary from '@/components/dictionary/MetadataDictionary';
 import ThemeToggle from '@/components/ThemeToggle';
 import Footer from '@/components/Footer.astro';
 import metadataJson from '@/data/metadata.json';
+import metadataOverridesJson from '@/data/metadata.overrides.json';
 import Layout from '@/layouts/Layout.astro';
 import { validateMetadata } from '@/lib/metadata';
 import { site } from '@/site.config';
 import { compiledContent } from '@/content/information.md';
 
-const metadata = validateMetadata(metadataJson);
+const metadata = validateMetadata(metadataJson, metadataOverridesJson);
 const InformationHtml = await compiledContent();
 ---
 

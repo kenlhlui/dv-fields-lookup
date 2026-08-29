@@ -1,10 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
 import demoMetadata from '@/data/metadata.json';
+import demoOverrides from '@/data/metadata.overrides.json';
 import { type MetadataBlock, validateMetadata } from '@/lib/metadata';
 import { createMetadataSearch, getVisibleFields } from '@/lib/search';
 
-const blocks = validateMetadata(demoMetadata);
+const blocks = validateMetadata(demoMetadata, demoOverrides);
 const search = createMetadataSearch(blocks);
 
 describe('createMetadataSearch', () => {

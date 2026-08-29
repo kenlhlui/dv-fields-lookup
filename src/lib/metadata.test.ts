@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import demoMetadata from '@/data/metadata.json';
+import demoOverrides from '@/data/metadata.overrides.json';
 import { countFields, getFieldPath, validateMetadata } from '@/lib/metadata';
 
 const valid = [
@@ -52,4 +53,11 @@ it('validates the demonstration dataset', () => {
   const blocks = validateMetadata(demoMetadata);
   expect(blocks).toHaveLength(18);
   expect(countFields(blocks)).toBe(292);
+});
+
+it('merges the demonstration overrides by field id', () => {
+  const blocks = validateMetadata(demoMetadata, demoOverrides);
+  const title = blocks.find((block) => block.id === 'citation')?.fields.find((field) => field.id === 'title');
+  expect(title?.bestPracticeDefinition).toBeDefined();
+  expect(title?.example).toBeDefined();
 });
