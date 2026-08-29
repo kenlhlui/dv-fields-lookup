@@ -1,9 +1,19 @@
 # Dataverse Metadata Field Lookup
 
-Dataverse Metadata Field Lookup is a static Astro application for searching and browsing Dataverse-style metadata fields. It renders the complete dictionary by default, narrows each visible block to its matching fields while searching, and exposes full field details in an accessible dialog.
+![Screenshot of the tool](docs/demo.png)
 
-> [!IMPORTANT]
-> The bundled metadata is demonstration data. It is not canonical Dataverse documentation.
+Dataverse Metadata Field Lookup is a static Astro application for searching and browsing metadata blocks and fields in a Dataverse installation, with specifications and context.
+
+The audience of this tool is primarily:
+1. Researchers - to understand the available fields when depositing data, and to learn best practices for using them.
+2. Curators - to understand the available fields when curating/reviewing datasets.
+
+## Features
+- Search the definitions of metadata fields and blocks in a Dataverse installation.
+- Full-text search across each field's added context, including best practices and examples.
+- Browse available metadata fields by block.
+- Filter fields by metadata block, required-only, and best practice tier (Recommended/Optional).
+
 
 ## Prerequisites
 
