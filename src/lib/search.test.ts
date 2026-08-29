@@ -1,11 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
+import { blockDescriptions } from '@/data/block-descriptions';
 import demoMetadata from '@/data/metadata.json';
 import { metadataOverrides as demoOverrides } from '@/data/metadata.overrides';
-import { type MetadataBlock, validateMetadata } from '@/lib/metadata';
+import { buildMetadata, type MetadataBlock } from '@/lib/metadata';
 import { createMetadataSearch, getVisibleFields } from '@/lib/search';
 
-const blocks = validateMetadata(demoMetadata, demoOverrides);
+const blocks = buildMetadata(demoMetadata, demoOverrides, blockDescriptions);
 const search = createMetadataSearch(blocks);
 
 describe('createMetadataSearch', () => {
@@ -13,26 +14,16 @@ describe('createMetadataSearch', () => {
     const view = search.search('   ');
 
     expect(view.isSearching).toBe(false);
-    expect(view.matchingFieldCount).toBe(292);
+    expect(view.matchingFieldCount).toBe(155);
     expect(view.blocks.map(({ block }) => block.id)).toEqual([
-      'citation',
       'geospatial',
-      'socialscience',
       'astrophysics',
       'biomedical',
       'journal',
-      'customMRA',
-      'customGSD',
-      'customARCS',
-      'customPSRI',
-      'customPSI',
-      'customCHIA',
-      'customDigaai',
-      'customSAEF',
+      'socialscience',
+      'citation',
       'computationalworkflow',
-      'LocalContextsCVoc',
       '3dobjects',
-      'heal',
     ]);
   });
 
@@ -45,13 +36,16 @@ describe('createMetadataSearch', () => {
     expect(view.blocks[0].block.fields.map((field) => field.id)).toEqual(
       blocks.find((block) => block.id === 'citation')?.fields.map((field) => field.id),
     );
-    expect([...view.blocks[0].matches.keys()].sort()).toEqual(['timePeriodCoveredEnd', 'timePeriodCoveredStart']);
+    expect([...view.blocks[0].matches.keys()].sort()).toEqual([
+      'timePeriodCovered.timePeriodCoveredEnd',
+      'timePeriodCovered.timePeriodCoveredStart',
+    ]);
   });
 
   it('searches identifiers, definitions, best-practice definitions, and examples', () => {
-    expect(search.search('authorAffiliation').blocks[0].matches.get('authorAffiliation')).toBeDefined();
+    expect(search.search('authorAffiliation').blocks[0].matches.get('author.authorAffiliation')).toBeDefined();
     const affiliationMatches = search.search('avoid abbreviations').blocks[0].matches;
-    expect(affiliationMatches.has('authorAffiliation')).toBe(true);
+    expect(affiliationMatches.has('author.authorAffiliation')).toBe(true);
     expect(search.search('Ada Lovelace').matchingFieldCount).toBe(0);
   });
 
@@ -60,7 +54,7 @@ describe('createMetadataSearch', () => {
   });
 
   it('returns normalized inclusive name ranges for a direct name match', () => {
-    const match = search.search('authorAffiliation').blocks[0].matches.get('authorAffiliation');
+    const match = search.search('authorAffiliation').blocks[0].matches.get('author.authorAffiliation');
 
     expect(match?.ranges.name).toEqual([
       [0, 5],

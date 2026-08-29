@@ -1,0 +1,34 @@
+# Block-level descriptions, keyed by block id (the raw API's block "name").
+# Not present in the Dataverse /api/metadatablocks response (which only has field
+# descriptions), so curated here by hand. Sourced from the Dataverse North Metadata
+# Best Practices Guide v3.0.
+citation: >-
+  The core metadata needed to publish a dataset in a Dataverse repository. The
+  required fields in this block are used to create the citation for the
+  dataset. Compliant with DDI Lite, DDI 2.5 Codebook, DataCite 3.1, and Dublin
+  Core's DCMI Metadata Terms. The Language field uses ISO 639-1 controlled
+  vocabulary.
+geospatial: >-
+  Describes maps, GIS files, or other location-based data. Any dataset that
+  relates to a location(s) or geographic area(s) (i.e., has a spatial extent)
+  should include geospatial metadata in addition to the general citation
+  metadata block. Compliant with DDI Lite, DDI 2.5 Codebook, DataCite, and
+  Dublin Core. The Country / Nation field uses ISO 3166-1 controlled
+  vocabulary.
+socialscience: >-
+  Describes data that falls within the domain of social science and the
+  humanities, such as survey data and related datasets. Compliant with DDI
+  Lite, DDI 2.5 Codebook, and Dublin Core.
+astrophysics: >-
+  Allows for description of astronomical or astrophysical data. Most fields
+  are based on the Virtual Observatory (VO) Discovery and Provenance Metadata
+  recommendation, an implementation of the IVOA's Resource Metadata for the
+  Virtual Observatory, Version 1.12 (2007) specification, referred to as
+  IVOA-RM. Mappable to the VO Discovery and Provenance Metadata; fields not
+  part of IVOA-RM are noted below.
+biomedical: Describes data from the life sciences domain. Compliant with ISA-Tab Specification.
+journal: Describes data related to journal publications, such as pre-prints and replication data.
+computationalworkflow: >-
+  Describes computational workflows: sequences of computational tasks that are
+  connected by dataflow dependencies.
+3dobjects: Describes 3D object files, such as those produced by 3D scanning or modelling.

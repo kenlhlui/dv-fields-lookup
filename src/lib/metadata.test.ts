@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
+import { blockDescriptions } from '@/data/block-descriptions';
 import demoMetadata from '@/data/metadata.json';
 import { metadataOverrides as demoOverrides } from '@/data/metadata.overrides';
-import { countFields, getFieldPath, validateMetadata } from '@/lib/metadata';
+import { buildMetadata, countFields, getFieldPath, validateMetadata } from '@/lib/metadata';
 
 const valid = [
   {
@@ -49,17 +50,17 @@ it('counts fields across blocks and builds a hierarchy path', () => {
   expect(getFieldPath(blocks[0], blocks[0].fields[0])).toBe('Citation Metadata › Author Identifier');
 });
 
-it('validates the demonstration dataset', () => {
-  const blocks = validateMetadata(demoMetadata);
-  expect(blocks).toHaveLength(18);
-  expect(countFields(blocks)).toBe(292);
+it('builds the real dataset from the raw API export', () => {
+  const blocks = buildMetadata(demoMetadata, undefined, blockDescriptions);
+  expect(blocks).toHaveLength(8);
+  expect(countFields(blocks)).toBe(155);
 });
 
 it('merges the demonstration overrides by field id', () => {
-  const blocks = validateMetadata(demoMetadata, demoOverrides);
+  const blocks = buildMetadata(demoMetadata, demoOverrides, blockDescriptions);
   const field = blocks
     .find((block) => block.id === 'citation')
-    ?.fields.find((f) => f.id === 'authorAffiliation');
+    ?.fields.find((f) => f.id === 'author.authorAffiliation');
   expect(field?.bestPracticeDefinition).toBeDefined();
   expect(field?.example).toBeDefined();
 });

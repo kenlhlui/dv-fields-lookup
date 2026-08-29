@@ -2,6 +2,41 @@ import { z } from 'zod';
 
 const nonempty = z.string().trim().min(1);
 
+// Shape of res/metadatablocks.json / src/data/metadata.json, the raw Dataverse
+// `/api/metadatablocks` export.
+const rawFieldSchema: z.ZodType<RawField> = z.lazy(() =>
+  z.object({
+    name: nonempty,
+    displayName: nonempty,
+    description: nonempty,
+    type: nonempty,
+    multiple: z.boolean(),
+    isRequired: z.boolean(),
+    controlledVocabularyValues: z.array(nonempty).optional(),
+    childFields: z.record(nonempty, rawFieldSchema).optional(),
+  }),
+);
+interface RawField {
+  name: string;
+  displayName: string;
+  description: string;
+  type: string;
+  multiple: boolean;
+  isRequired: boolean;
+  controlledVocabularyValues?: string[];
+  childFields?: Record<string, RawField>;
+}
+
+const rawBlockSchema = z.object({
+  name: nonempty,
+  displayName: nonempty,
+  fields: z.record(nonempty, rawFieldSchema),
+});
+
+const rawMetadataSchema = z.object({ data: z.array(rawBlockSchema).min(1) });
+
+const blockDescriptionsSchema = z.record(nonempty, nonempty);
+
 const nativeFieldSchema = z.object({
   id: nonempty,
   name: nonempty,
@@ -64,11 +99,53 @@ export function validateMetadata(input: unknown, overridesInput?: unknown): Meta
 
   const blocks = z.array(nativeBlockSchema).min(1).parse(input);
   const overrides = overridesSchema.parse(overridesInput);
+  // Override keys are the field's leaf name (e.g. "authorAffiliation"), not its
+  // possibly-prefixed id (e.g. "author.authorAffiliation"), since overrides are
+  // authored once per Dataverse field regardless of which compound it lives in.
+  const leafName = (id: string) => id.split('.').at(-1)!;
   const merged = blocks.map((block) => ({
     ...block,
-    fields: block.fields.map((field) => ({ ...field, ...overrides[field.id] })),
+    fields: block.fields.map((field) => ({ ...field, ...overrides[leafName(field.id)] })),
   }));
   return metadataSchema.parse(merged);
+}
+
+// Compound fields (those with childFields) aren't emitted themselves; each child
+// becomes its own leaf entry, id-prefixed by the parent's name (e.g.
+// "author.authorName") to keep ids unique and traceable back to the raw field.
+function flattenRawField(field: RawField, id: string): z.infer<typeof nativeFieldSchema>[] {
+  const own = {
+    id,
+    name: field.displayName,
+    definition: field.description,
+    type: field.type,
+    required: field.isRequired,
+    repeatable: field.multiple,
+    ...(field.controlledVocabularyValues?.length ? { values: field.controlledVocabularyValues } : {}),
+  };
+
+  if (!field.childFields) return [own];
+  return Object.values(field.childFields).flatMap((child) => flattenRawField(child, `${id}.${child.name}`));
+}
+
+/** Builds validated MetadataBlock[] straight from the raw Dataverse API export, merging
+ * in field overrides (keyed by leaf field name) and block descriptions (keyed by block id). */
+export function buildMetadata(rawInput: unknown, overridesInput: unknown, blockDescriptionsInput: unknown): MetadataBlock[] {
+  const raw = rawMetadataSchema.parse(rawInput);
+  const blockDescriptions = blockDescriptionsSchema.parse(blockDescriptionsInput);
+
+  const flattened = raw.data.map((block) => {
+    const description = blockDescriptions[block.name];
+    if (!description) throw new Error(`No description configured for block "${block.name}"`);
+    return {
+      id: block.name,
+      name: block.displayName,
+      description,
+      fields: Object.values(block.fields).flatMap((field) => flattenRawField(field, field.name)),
+    };
+  });
+
+  return validateMetadata(flattened, overridesInput);
 }
 
 export function countFields(blocks: MetadataBlock[]): number {

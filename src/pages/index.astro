@@ -3,14 +3,15 @@ import InformationDialog from '@/components/InformationDialog';
 import MetadataDictionary from '@/components/dictionary/MetadataDictionary';
 import ThemeToggle from '@/components/ThemeToggle';
 import Footer from '@/components/Footer.astro';
+import { blockDescriptions } from '@/data/block-descriptions';
 import metadataJson from '@/data/metadata.json';
 import { metadataOverrides } from '@/data/metadata.overrides';
 import Layout from '@/layouts/Layout.astro';
-import { validateMetadata } from '@/lib/metadata';
+import { buildMetadata } from '@/lib/metadata';
 import { site } from '@/site.config';
 import { compiledContent } from '@/content/information.md';
 
-const metadata = validateMetadata(metadataJson, metadataOverrides);
+const metadata = buildMetadata(metadataJson, metadataOverrides, blockDescriptions);
 const InformationHtml = await compiledContent();
 ---
 
