@@ -7,6 +7,7 @@ const nonempty = z.string().trim().min(1);
 export const metadataFieldSchema = z.object({
   id: nonempty.describe('Dataverse `#datasetField name`. Identifies the field and maps directly to the field name used by Solr. Alphanumeric or underscore characters only, and must not start with a digit.'),
   name: nonempty.describe('Dataverse `#datasetField title`. Brief label displayed for the field.'),
+  parent: nonempty.optional().describe('Display name of the compound field this field is a child of, i.e. the Dataverse `#datasetField` whose `childFields` contain it. Absent for top-level fields.'),
   definition: nonempty.describe('Dataverse `#datasetField description`. Free-text explanation of the field.'),
   bestPracticeDefinition: nonempty.optional().describe('Definition from the Dataverse North Metadata Best Practices Guide. Not a Dataverse property.'),
   recommendation: nonempty.optional().describe('Guidance on when to fill the field in, e.g. `Required`, `Recommended`, `Optional`. Not a Dataverse property.'),
@@ -112,10 +113,11 @@ const rawMetadataSchema = z.object({
 // Compound fields (those with childFields) aren't emitted themselves; each child
 // becomes its own leaf entry, id-prefixed by the parent's name (e.g.
 // "author.authorName") to keep ids unique and traceable back to the raw field.
-function flattenRawField(field: RawField, id: string): MetadataField[] {
+function flattenRawField(field: RawField, id: string, parent?: string): MetadataField[] {
   const own: MetadataField = {
     id,
     name: field.displayName,
+    ...(parent ? { parent } : {}),
     definition: field.description,
     type: field.type,
     required: field.isRequired,
@@ -124,7 +126,9 @@ function flattenRawField(field: RawField, id: string): MetadataField[] {
   };
 
   if (!field.childFields) return [own];
-  return Object.values(field.childFields).flatMap((child) => flattenRawField(child, `${id}.${child.name}`));
+  return Object.values(field.childFields).flatMap((child) =>
+    flattenRawField(child, `${id}.${child.name}`, field.displayName),
+  );
 }
 
 /** Builds validated MetadataBlock[] straight from the raw Dataverse API export, merging
@@ -161,5 +165,5 @@ export function countFields(blocks: MetadataBlock[]): number {
 }
 
 export function getFieldPath(block: MetadataBlock, field: MetadataField): string {
-  return `${block.name} › ${field.name}`;
+  return [block.name, field.parent, field.name].filter(Boolean).join(' › ');
 }

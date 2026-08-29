@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -58,6 +58,23 @@ const result: SearchBlock = {
 };
 
 describe('MetadataBlockSection', () => {
+  it('groups children of a compound field under their parent', () => {
+    const withParent: SearchBlock = {
+      ...result,
+      matches: new Map(),
+      block: {
+        ...block,
+        fields: block.fields.map((field, index) => (index === 0 ? field : { ...field, parent: 'Author' })),
+      },
+    };
+    render(<MetadataBlockSection result={withParent} onSelectField={vi.fn()} />);
+
+    const group = screen.getByRole('region', { name: 'Author' });
+    expect(within(group).getByText('Compound field · 2 sub-fields')).toBeInTheDocument();
+    expect(within(group).getByText('Author Identifier')).toBeInTheDocument();
+    expect(within(group).queryByText('Author Name')).not.toBeInTheDocument();
+  });
+
   it('shows only matching fields while searching, with match state and selection details', async () => {
     const user = userEvent.setup();
     const onSelectField = vi.fn();
