@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.0](https://github.com/kenlhlui/dv-fields-lookup/compare/v0.1.0...v0.2.0) (2026-08-29)
+
+### Features
+
+* allow customizing the header ([#20](https://github.com/kenlhlui/dv-fields-lookup/issues/20)) ([1d6adb0](https://github.com/kenlhlui/dv-fields-lookup/commit/1d6adb01c390746bd0c394d5fb6a2add7873fa45))
+* restrucutre the reading of metadata ([#19](https://github.com/kenlhlui/dv-fields-lookup/issues/19)) ([14e7a8c](https://github.com/kenlhlui/dv-fields-lookup/commit/14e7a8cbacf6e95e0a5687806ea994919347963d))
+* update schema ([#18](https://github.com/kenlhlui/dv-fields-lookup/issues/18)) ([9d089ec](https://github.com/kenlhlui/dv-fields-lookup/commit/9d089ec74ee8910dffb910ad1d830dc0ca91cb1b))
+
 ## 0.1.0 (2026-08-27)
 
 ### Features
