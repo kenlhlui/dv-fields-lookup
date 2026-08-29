@@ -2,8 +2,8 @@ import { z } from 'zod';
 
 const nonempty = z.string().trim().min(1);
 
-// Shape of res/metadatablocks.json / src/data/metadata.json, the raw Dataverse
-// `/api/metadatablocks` export.
+// Shape of src/data/metadata.json, the raw Dataverse `/api/metadatablocks`
+// export.
 const rawFieldSchema: z.ZodType<RawField> = z.lazy(() =>
   z.object({
     name: nonempty,

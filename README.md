@@ -52,7 +52,7 @@ The field dictionary is built at render time from three files under [`src/data/`
 
 | File | What it is | How to update it |
 | --- | --- | --- |
-| `metadata.json` | The raw Dataverse API export — a straight copy of `res/metadatablocks.json`, no hand edits. | Fetch `/api/metadatablocks?returnDatasetFieldTypes=true` from a Dataverse instance and copy the response over this file. |
+| `metadata.json` | The raw Dataverse API export, no hand edits. | Fetch `/api/metadatablocks?returnDatasetFieldTypes=true` from a Dataverse instance and copy the response over this file. |
 | `metadata.overrides.yaml` | Curated, per-field additions: `bestPracticeDefinition`, `recommendation`, `example`. Keyed by each field's **leaf name** (e.g. `authorAffiliation`, not `author.authorAffiliation`), so one entry applies wherever that field name appears. | Edit by hand. Add or change a top-level key matching the field's leaf name; any of the three properties may be omitted. |
 | `block-descriptions.yaml` | One description per metadata block, keyed by block id (e.g. `citation`, `geospatial`). Not present in the API response, and also sets the display order of blocks on the page. | Edit by hand. A block missing here falls back to its API `displayName` as the description, and is sorted after every block that *is* listed. |
 
