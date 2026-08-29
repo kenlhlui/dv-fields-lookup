@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import demoMetadata from '@/data/metadata.json';
-import demoOverrides from '@/data/metadata.overrides.json';
+import { metadataOverrides as demoOverrides } from '@/data/metadata.overrides';
 import { type MetadataBlock, validateMetadata } from '@/lib/metadata';
 import { createMetadataSearch, getVisibleFields } from '@/lib/search';
 
@@ -50,7 +50,7 @@ describe('createMetadataSearch', () => {
 
   it('searches identifiers, definitions, best-practice definitions, and examples', () => {
     expect(search.search('authorAffiliation').blocks[0].matches.get('authorAffiliation')).toBeDefined();
-    const affiliationMatches = search.search('organization with which the author is affiliated').blocks[0].matches;
+    const affiliationMatches = search.search('avoid abbreviations').blocks[0].matches;
     expect(affiliationMatches.has('authorAffiliation')).toBe(true);
     expect(search.search('Ada Lovelace').matchingFieldCount).toBe(0);
   });
