@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.3.0](https://github.com/kenlhlui/dv-fields-lookup/compare/v0.2.0...v0.3.0) (2026-08-29)
+
+### Features
+
+* grouping of compound fields ([#21](https://github.com/kenlhlui/dv-fields-lookup/issues/21)) ([27da609](https://github.com/kenlhlui/dv-fields-lookup/commit/27da609b30c04ed202aa110c0366162c67f01285))
+
 ## [0.2.0](https://github.com/kenlhlui/dv-fields-lookup/compare/v0.1.0...v0.2.0) (2026-08-29)
 
 ### Features
