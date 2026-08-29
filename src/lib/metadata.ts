@@ -45,12 +45,22 @@ const metadataSchema = z.array(metadataBlockSchema).min(1).superRefine((blocks, 
 export type MetadataField = z.infer<typeof metadataFieldSchema>;
 export type MetadataBlock = z.infer<typeof metadataBlockSchema>;
 
+// Override entries are a subset of the display-only metadataFieldSchema fields,
+// authored by hand per Dataverse field (keyed by leaf name) in metadata.overrides.yaml.
+const overrideEntrySchema = z.object({
+  bestPracticeDefinition: nonempty.optional(),
+  recommendation: nonempty.optional(),
+  example: nonempty.optional(),
+});
+const overridesSchema = z.record(nonempty, overrideEntrySchema);
+const blockDescriptionsSchema = z.record(nonempty, nonempty);
+
 export function validateMetadata(input: unknown, overridesInput?: unknown): MetadataBlock[] {
   if (overridesInput === undefined) {
     return metadataSchema.parse(input);
   }
 
-  const blocks = z.array(nativeBlockSchema).min(1).parse(input);
+  const blocks = z.array(metadataBlockSchema).min(1).parse(input);
   const overrides = overridesSchema.parse(overridesInput);
   // Override keys are the field's leaf name (e.g. "authorAffiliation"), not its
   // possibly-prefixed id (e.g. "author.authorAffiliation"), since overrides are
@@ -63,11 +73,47 @@ export function validateMetadata(input: unknown, overridesInput?: unknown): Meta
   return metadataSchema.parse(merged);
 }
 
+// Shape of one field entry in the raw Dataverse /api/metadatablocks response.
+// Compound fields (childFields present) carry no useful data of their own.
+type RawField = {
+  name: string;
+  displayName: string;
+  description: string;
+  type: string;
+  isRequired: boolean;
+  multiple: boolean;
+  controlledVocabularyValues?: string[];
+  childFields?: Record<string, RawField>;
+};
+
+const rawFieldSchema: z.ZodType<RawField> = z.lazy(() =>
+  z.object({
+    name: nonempty,
+    displayName: nonempty,
+    description: nonempty,
+    type: nonempty,
+    isRequired: z.boolean(),
+    multiple: z.boolean(),
+    controlledVocabularyValues: z.array(nonempty).optional(),
+    childFields: z.record(nonempty, rawFieldSchema).optional(),
+  }),
+);
+
+const rawBlockSchema = z.object({
+  name: nonempty,
+  displayName: nonempty,
+  fields: z.record(nonempty, rawFieldSchema),
+});
+
+const rawMetadataSchema = z.object({
+  data: z.array(rawBlockSchema).min(1),
+});
+
 // Compound fields (those with childFields) aren't emitted themselves; each child
 // becomes its own leaf entry, id-prefixed by the parent's name (e.g.
 // "author.authorName") to keep ids unique and traceable back to the raw field.
-function flattenRawField(field: RawField, id: string): z.infer<typeof nativeFieldSchema>[] {
-  const own = {
+function flattenRawField(field: RawField, id: string): MetadataField[] {
+  const own: MetadataField = {
     id,
     name: field.displayName,
     definition: field.description,
