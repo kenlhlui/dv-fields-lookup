@@ -64,3 +64,36 @@ it('merges the demonstration overrides by field id', () => {
   expect(field?.bestPracticeDefinition).toBeDefined();
   expect(field?.example).toBeDefined();
 });
+
+describe('buildMetadata block ordering', () => {
+  const rawField = (name: string) => ({
+    name,
+    displayName: name,
+    description: 'A field.',
+    type: 'TEXT',
+    multiple: false,
+    isRequired: false,
+  });
+  const rawBlock = (name: string) => ({
+    name,
+    displayName: name,
+    fields: { [name]: rawField(name) },
+  });
+
+  it('orders blocks by their position in block-descriptions.yaml, unlisted blocks last', () => {
+    const raw = { data: [rawBlock('third'), rawBlock('unlisted'), rawBlock('first'), rawBlock('second')] };
+    const descriptions = { first: 'First block.', second: 'Second block.', third: 'Third block.' };
+
+    const blocks = buildMetadata(raw, undefined, descriptions);
+
+    expect(blocks.map((block) => block.id)).toEqual(['first', 'second', 'third', 'unlisted']);
+  });
+
+  it('falls back to the block displayName when it has no block-descriptions.yaml entry', () => {
+    const raw = { data: [rawBlock('undocumented')] };
+
+    const blocks = buildMetadata(raw, undefined, {});
+
+    expect(blocks[0].description).toBe('undocumented');
+  });
+});

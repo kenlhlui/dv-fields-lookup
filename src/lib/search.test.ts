@@ -16,12 +16,12 @@ describe('createMetadataSearch', () => {
     expect(view.isSearching).toBe(false);
     expect(view.matchingFieldCount).toBe(155);
     expect(view.blocks.map(({ block }) => block.id)).toEqual([
+      'citation',
       'geospatial',
+      'socialscience',
       'astrophysics',
       'biomedical',
       'journal',
-      'socialscience',
-      'citation',
       'computationalworkflow',
       '3dobjects',
     ]);

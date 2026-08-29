@@ -133,19 +133,28 @@ function flattenRawField(field: RawField, id: string): z.infer<typeof nativeFiel
 export function buildMetadata(rawInput: unknown, overridesInput: unknown, blockDescriptionsInput: unknown): MetadataBlock[] {
   const raw = rawMetadataSchema.parse(rawInput);
   const blockDescriptions = blockDescriptionsSchema.parse(blockDescriptionsInput);
+  // block-descriptions.yaml's key order is the desired display order; blocks it
+  // doesn't mention sort after all listed ones, keeping their relative API order.
+  const displayOrder = Object.keys(blockDescriptions);
 
-  const flattened = raw.data.map((block) => {
-    const description = blockDescriptions[block.name];
-    if (!description) throw new Error(`No description configured for block "${block.name}"`);
-    return {
-      id: block.name,
-      name: block.displayName,
-      description,
-      fields: Object.values(block.fields).flatMap((field) => flattenRawField(field, field.name)),
+  const flattened = raw.data.map((block) => ({
+    id: block.name,
+    name: block.displayName,
+    // Falls back to the API's own displayName when block-descriptions.yaml has no
+    // entry for this block yet, rather than failing the whole build over it.
+    description: blockDescriptions[block.name] ?? block.displayName,
+    fields: Object.values(block.fields).flatMap((field) => flattenRawField(field, field.name)),
+  }));
+
+  const sorted = flattened.toSorted((a, b) => {
+    const rank = (id: string) => {
+      const index = displayOrder.indexOf(id);
+      return index === -1 ? displayOrder.length : index;
     };
+    return rank(a.id) - rank(b.id);
   });
 
-  return validateMetadata(flattened, overridesInput);
+  return validateMetadata(sorted, overridesInput);
 }
 
 export function countFields(blocks: MetadataBlock[]): number {
