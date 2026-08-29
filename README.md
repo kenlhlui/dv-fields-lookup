@@ -51,10 +51,7 @@ This repository uses [release-it](https://github.com/release-it/release-it) to a
 ```bash
 pnpm release
 ```
-
-## Data and deployment
-
-The site deploys to GitHub Pages under the `/dv-fields-lookup/` base path via [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml), on every push to `main` and on manual workflow dispatch. One repository setting is required, once: in **Settings → Pages**, set **Source** to **GitHub Actions**.
+## Data
 
 ### Metadata schema
 
@@ -66,8 +63,61 @@ To check the data before a build or deployment:
 pnpm test src/lib/metadata.test.ts
 ```
 
+## Deployment
+
+You can deploy the application to any static hosting service. For example, to deploy to GitHub Pages:
+
+1. Fork this repository.
+
+2. Change the `site` value in [`astro.config.mjs`](astro.config.mjs) to your GitHub Pages URL:
+
+    ```js
+    export default defineConfig({
+      site: 'https://<your-github-username>.github.io',
+      // ...
+    });
+    ```
+
+3. Change the relevant values in [`src/site.config.ts`](src/site.config.ts), especially `description`, `dataverseName`, `dataverseURL`, and `githubUrl`:
+
+    ```ts
+    export const site = {
+      description: 'Search and explore metadata fields in {YOUR-DATAVERSE-NAME}, with specifications and best practices in context.',
+      dataverseName: '{YOUR-DATAVERSE-NAME}',
+      dataverseURL: '{YOUR-DATAVERSE-URL}',
+      githubUrl: 'https://github.com/{YOUR-GITHUB-USERNAME}/dv-fields-lookup',
+      // ...
+    };
+    ```
+
+4. Replace [`src/data/metadata.json`](src/data/metadata.json) with the JSON exported from your Dataverse installation via the `/api/metadatablocks?returnDatasetFieldTypes=true` endpoint.
+
+5. Add best practice definitions and examples for individual fields in [`src/data/metadata.overrides.yaml`](src/data/metadata.overrides.yaml). Look up the field's `name` in `src/data/metadata.json`, then add an entry keyed by that name:
+
+    ```yaml
+    alternativeTitle:
+      bestPracticeDefinition: 'Tip: Acronym, short form, or translation of full title.'
+      recommendation: Optional
+      example: Youth Social Media Survey
+    ```
+
+6. Add metadata block names and descriptions in [`src/data/block-descriptions.yaml`](src/data/block-descriptions.yaml). The block names are the `name` values in `src/data/metadata.json`:
+
+    ```yaml
+    citation: >-
+    The core metadata needed to publish a dataset in a Dataverse repository. The
+    required fields in this block are used to create the citation for the
+    dataset. Compliant with DDI Lite, DDI 2.5 Codebook, DataCite 3.1, and Dublin
+    Core's DCMI Metadata Terms. The Language field uses ISO 639-1 controlled
+    vocabulary.
+    ```
+
+    The order of the blocks determines their display order in the application. Blocks with no description are displayed last, without a description.
+
+7. Commit and push your changes. Make sure the repository's Pages settings are set to deploy from GitHub Actions.
+
 ## Acknowledgments
-The bestPracticeDefinition text is from the [Dataverse North Metadata Best Practices Guide v 3.0](https://doi.org/10.5281/zenodo.5668945), license under CC-BY 4.0.
+The bestPracticeDefinition text is from the [Dataverse North Metadata Best Practices Guide v 3.0](https://doi.org/10.5281/zenodo.5668945), license under [CC-BY 4.0](https://creativecommons.org/licenses/by/4.0/).
 
 ## License
 [Apache License 2.0](LICENSE)
