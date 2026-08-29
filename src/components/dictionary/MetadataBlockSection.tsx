@@ -93,7 +93,11 @@ export function MetadataBlockSection({ result, onSelectField, fieldFilter }: Met
                 {cards(group)}
               </section>
             ) : (
-              <div key={group.fields[0].id}>{cards(group)}</div>
+              // Same padding as a compound group, minus the visible box, so standalone
+              // cards line up with grouped ones instead of sitting 1rem wider.
+              <div key={group.fields[0].id} className="rounded-lg border border-transparent p-4">
+                {cards(group)}
+              </div>
             );
           })}
         </div>
