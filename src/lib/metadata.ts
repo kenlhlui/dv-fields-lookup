@@ -45,8 +45,115 @@ const metadataSchema = z.array(metadataBlockSchema).min(1).superRefine((blocks, 
 export type MetadataField = z.infer<typeof metadataFieldSchema>;
 export type MetadataBlock = z.infer<typeof metadataBlockSchema>;
 
-export function validateMetadata(input: unknown): MetadataBlock[] {
-  return metadataSchema.parse(input);
+// Override entries are a subset of the display-only metadataFieldSchema fields,
+// authored by hand per Dataverse field (keyed by leaf name) in metadata.overrides.yaml.
+const overrideEntrySchema = z.object({
+  bestPracticeDefinition: nonempty.optional(),
+  recommendation: nonempty.optional(),
+  example: nonempty.optional(),
+});
+const overridesSchema = z.record(nonempty, overrideEntrySchema);
+const blockDescriptionsSchema = z.record(nonempty, nonempty);
+
+export function validateMetadata(input: unknown, overridesInput?: unknown): MetadataBlock[] {
+  if (overridesInput === undefined) {
+    return metadataSchema.parse(input);
+  }
+
+  const blocks = z.array(metadataBlockSchema).min(1).parse(input);
+  const overrides = overridesSchema.parse(overridesInput);
+  // Override keys are the field's leaf name (e.g. "authorAffiliation"), not its
+  // possibly-prefixed id (e.g. "author.authorAffiliation"), since overrides are
+  // authored once per Dataverse field regardless of which compound it lives in.
+  const leafName = (id: string) => id.split('.').at(-1)!;
+  const merged = blocks.map((block) => ({
+    ...block,
+    fields: block.fields.map((field) => ({ ...field, ...overrides[leafName(field.id)] })),
+  }));
+  return metadataSchema.parse(merged);
+}
+
+// Shape of one field entry in the raw Dataverse /api/metadatablocks response.
+// Compound fields (childFields present) carry no useful data of their own.
+type RawField = {
+  name: string;
+  displayName: string;
+  description: string;
+  type: string;
+  isRequired: boolean;
+  multiple: boolean;
+  controlledVocabularyValues?: string[];
+  childFields?: Record<string, RawField>;
+};
+
+const rawFieldSchema: z.ZodType<RawField> = z.lazy(() =>
+  z.object({
+    name: nonempty,
+    displayName: nonempty,
+    description: nonempty,
+    type: nonempty,
+    isRequired: z.boolean(),
+    multiple: z.boolean(),
+    controlledVocabularyValues: z.array(nonempty).optional(),
+    childFields: z.record(nonempty, rawFieldSchema).optional(),
+  }),
+);
+
+const rawBlockSchema = z.object({
+  name: nonempty,
+  displayName: nonempty,
+  fields: z.record(nonempty, rawFieldSchema),
+});
+
+const rawMetadataSchema = z.object({
+  data: z.array(rawBlockSchema).min(1),
+});
+
+// Compound fields (those with childFields) aren't emitted themselves; each child
+// becomes its own leaf entry, id-prefixed by the parent's name (e.g.
+// "author.authorName") to keep ids unique and traceable back to the raw field.
+function flattenRawField(field: RawField, id: string): MetadataField[] {
+  const own: MetadataField = {
+    id,
+    name: field.displayName,
+    definition: field.description,
+    type: field.type,
+    required: field.isRequired,
+    repeatable: field.multiple,
+    ...(field.controlledVocabularyValues?.length ? { values: field.controlledVocabularyValues } : {}),
+  };
+
+  if (!field.childFields) return [own];
+  return Object.values(field.childFields).flatMap((child) => flattenRawField(child, `${id}.${child.name}`));
+}
+
+/** Builds validated MetadataBlock[] straight from the raw Dataverse API export, merging
+ * in field overrides (keyed by leaf field name) and block descriptions (keyed by block id). */
+export function buildMetadata(rawInput: unknown, overridesInput: unknown, blockDescriptionsInput: unknown): MetadataBlock[] {
+  const raw = rawMetadataSchema.parse(rawInput);
+  const blockDescriptions = blockDescriptionsSchema.parse(blockDescriptionsInput);
+  // block-descriptions.yaml's key order is the desired display order; blocks it
+  // doesn't mention sort after all listed ones, keeping their relative API order.
+  const displayOrder = Object.keys(blockDescriptions);
+
+  const flattened = raw.data.map((block) => ({
+    id: block.name,
+    name: block.displayName,
+    // Falls back to the API's own displayName when block-descriptions.yaml has no
+    // entry for this block yet, rather than failing the whole build over it.
+    description: blockDescriptions[block.name] ?? block.displayName,
+    fields: Object.values(block.fields).flatMap((field) => flattenRawField(field, field.name)),
+  }));
+
+  const sorted = flattened.toSorted((a, b) => {
+    const rank = (id: string) => {
+      const index = displayOrder.indexOf(id);
+      return index === -1 ? displayOrder.length : index;
+    };
+    return rank(a.id) - rank(b.id);
+  });
+
+  return validateMetadata(sorted, overridesInput);
 }
 
 export function countFields(blocks: MetadataBlock[]): number {

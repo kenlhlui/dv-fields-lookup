@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
+import { blockDescriptions } from '@/data/block-descriptions';
 import Metadata from '@/data/metadata.json';
-import { countFields, getFieldPath, validateMetadata } from '@/lib/metadata';
+import { metadataOverrides } from '@/data/metadata.overrides';
+import { buildMetadata, countFields, getFieldPath, validateMetadata } from '@/lib/metadata';
 
 const valid = [
   {
@@ -49,6 +51,6 @@ it('counts fields across blocks and builds a hierarchy path', () => {
 });
 
 it('validates the data source', () => {
-  const blocks = validateMetadata(Metadata);
+  const blocks = buildMetadata(Metadata, metadataOverrides, blockDescriptions);
   expect(countFields(blocks)).toBeGreaterThan(blocks.length);
 });
