@@ -1,0 +1,1757 @@
+# Dataverse metadata blocks, mapped from res/metadatablocks.json (Dataverse API
+# export) against res/Dataverse_metadata_best_practices_guide_v3.0_ENG.pdf
+# (Portage Network / Dataverse North Metadata Best Practices Guide, v3.0,
+# September 2021).
+#
+# Shape follows src/lib/metadata.ts (MetadataBlock[] / MetadataField):
+#   id, name, description, fields[]
+#   field: id, name, definition, bestPracticeDefinition?, recommendation?,
+#          type, required, repeatable, example?, values?
+#
+# Field notes:
+# - id / name / type / required / repeatable come from metadatablocks.json.
+#   Compound fields (e.g. Author, Point of Contact) are flattened: each
+#   JSON child field becomes its own entry, id-prefixed by the parent
+#   field's JSON name (e.g. author.authorName) to keep ids unique and
+#   traceable back to the JSON source.
+# - definition is the field's short definition as written in Dataverse
+#   itself (metadatablocks.json "description"), which is also the plain
+#   sentence in the PDF's "Definition with tips" column before any "Tip:"/
+#   "Note:" lines.
+# - bestPracticeDefinition preserves the "Tip:"/"Note:" guidance from the
+#   PDF's "Definition with tips" column verbatim (format retained), where
+#   present. Omitted where the PDF has no tip/note for that row.
+# - recommendation is the PDF's Usage column: RQ = Required, R = Recommended,
+#   O = Optional (Citation/Geospatial/SS&H/Astro/LifeSci); Journal block
+#   carries no usage codes in the guide and is left unset.
+# - repeatable is the JSON "multiple" flag, cross-checked against the PDF's
+#   Repeatable column (they agree everywhere checked).
+# - example is the PDF's Example column, condensed to plain text (bullet
+#   lists joined with "; ").
+# - The Computational Workflow and 3D Objects blocks are not covered by
+#   this guide (out of scope for v3.0); their fields carry only the JSON
+#   "description" as definition, with no PDF-sourced tips/recommendation/
+#   example.
+
+- id: citation
+  name: Citation Metadata
+  description: >-
+    The core metadata needed to publish a dataset in a Dataverse repository.
+    The required fields in this block are used to create the citation for
+    the dataset. Compliant with DDI Lite, DDI 2.5 Codebook, DataCite 3.1,
+    and Dublin Core's DCMI Metadata Terms. The Language field uses ISO
+    639-1 controlled vocabulary.
+  fields:
+    - id: title
+      name: Title
+      definition: Full title by which the Dataset is known.
+      type: TEXT
+      required: true
+      repeatable: false
+      example: "Social Media Use Among Teens, 2015 [Canada]"
+
+    - id: subtitle
+      name: Subtitle
+      definition: A secondary title used to amplify or state certain limitations on the main title.
+      bestPracticeDefinition: >-
+        Tip: The subtitle is not included in the auto-generated citation. If
+        you want the subtitle to be included in the citation, then you must
+        add it to the Title field in addition to the Subtitle field.
+      recommendation: Optional
+      type: TEXT
+      required: false
+      repeatable: false
+      example: Main Survey
+
+    - id: alternativeTitle
+      name: Alternative Title
+      definition: A title by which the work is commonly referred, or an abbreviation of the title.
+      bestPracticeDefinition: "Tip: Acronym, short form, or translation of full title."
+      recommendation: Optional
+      type: TEXT
+      required: false
+      repeatable: true
+      example: Youth Social Media Survey
+
+    - id: alternativeURL
+      name: Alternative URL
+      definition: A URL where the dataset can be viewed, such as a personal or project website.
+      recommendation: Optional
+      type: URL
+      required: false
+      repeatable: false
+      example: "https://youthsocialmedia.org"
+
+    - id: otherId.otherIdAgency
+      name: "Other Identifier: Agency"
+      definition: Name of agency which generated this identifier.
+      recommendation: Optional
+      type: TEXT
+      required: false
+      repeatable: true
+      example: "Youth Communication Development Project, Education Department, Queen's University"
+
+    - id: otherId.otherIdValue
+      name: "Other Identifier: Identifier"
+      definition: Other identifier that corresponds to this Dataset.
+      recommendation: Optional
+      type: TEXT
+      required: false
+      repeatable: true
+      example: "2202"
+
+    - id: author.authorName
+      name: "Author: Name"
+      definition: The author's Family Name, Given Name or the name of the organization responsible for this Dataset.
+      recommendation: Required
+      type: TEXT
+      required: true
+      repeatable: true
+      example: "Doe, Jane"
+
+    - id: author.authorAffiliation
+      name: "Author: Affiliation"
+      definition: The organization with which the author is affiliated.
+      bestPracticeDefinition: "Tip: Use the full official name of the organization; avoid abbreviations."
+      recommendation: Recommended
+      type: TEXT
+      required: false
+      repeatable: true
+      example: "Queen's University"
+
+    - id: author.authorIdentifierScheme
+      name: "Author: Identifier Scheme"
+      definition: Name of the identifier scheme (ORCID, ISNI).
+      bestPracticeDefinition: "Note: This field is a drop-down list; select one."
+      recommendation: Recommended
+      type: TEXT
+      required: false
+      repeatable: true
+      example: ORCID
+
+    - id: author.authorIdentifier
+      name: "Author: Identifier"
+      definition: Uniquely identifies an individual author or organization, according to various schemes.
+      recommendation: Recommended
+      type: TEXT
+      required: false
+      repeatable: true
+      example: "https://orcid.org/0000-0002-1825-0097"
+
+    - id: datasetContact.datasetContactName
+      name: "Point of Contact: Name"
+      definition: The contact's Family Name, Given Name or the name of the organization.
+      recommendation: Recommended
+      type: TEXT
+      required: false
+      repeatable: true
+      example: "Doe, Jane"
+
+    - id: datasetContact.datasetContactAffiliation
+      name: "Point of Contact: Affiliation"
+      definition: The organization with which the contact is affiliated.
+      bestPracticeDefinition: "Tip: use the full official name of the organization; avoid abbreviations."
+      recommendation: Recommended
+      type: TEXT
+      required: false
+      repeatable: true
+      example: "Queen's University"
+
+    - id: datasetContact.datasetContactEmail
+      name: "Point of Contact: E-mail"
+      definition: The e-mail address(es) of the contact(s) for the Dataset. This will not be displayed.
+      recommendation: Required
+      type: EMAIL
+      required: true
+      repeatable: true
+      example: jdoe@email.com
+
+    - id: dsDescription.dsDescriptionValue
+      name: "Description: Text"
+      definition: A summary describing the purpose, nature, and scope of the Dataset.
+      bestPracticeDefinition: "Tip: A good description will identify the content of the dataset and help a user determine if they have the technical ability to use it."
+      recommendation: Required
+      type: TEXTBOX
+      required: true
+      repeatable: true
+      example: >-
+        The Social Media Use Among Teens survey was conducted by the Youth
+        Communication Development Project to understand social media
+        communication behaviours among youth in Canada. The survey
+        collected responses from Canadian youth using an online
+        questionnaire that asks about social media use including, platform
+        type, frequency of use, activity type, and location of use. This
+        information is supplemented with the respondent's demographic and
+        household characteristics.
+
+    - id: dsDescription.dsDescriptionDate
+      name: "Description: Date"
+      definition: >-
+        In cases where a Dataset contains more than one description (for
+        example, one might be supplied by the data producer and another
+        prepared by the data repository where the data are deposited), the
+        date attribute is used to distinguish between the two descriptions.
+        The date attribute follows the ISO convention of YYYY-MM-DD.
+      recommendation: Optional
+      type: DATE
+      required: false
+      repeatable: true
+      example: "2018-01-18"
+
+    - id: subject
+      name: Subject
+      definition: Domain-specific Subject Categories that are topically relevant to the Dataset.
+      bestPracticeDefinition: "Note: This field is a drop-down list; select all that apply.\nTip: Select one or more Subject terms to represent the broad domain or domains the dataset relates to."
+      recommendation: Required
+      type: TEXT
+      required: true
+      repeatable: true
+      example: Social Sciences
+
+    - id: keyword.keywordValue
+      name: "Keyword: Term"
+      definition: >-
+        Key terms that describe important aspects of the Dataset. Can be
+        used for building keyword indexes and for classification and
+        retrieval purposes. A controlled vocabulary can be employed. The
+        vocab attribute is provided for specification of the controlled
+        vocabulary in use, such as LCSH, MeSH, or others. The vocabURI
+        attribute specifies the location for the full controlled
+        vocabulary.
+      bestPracticeDefinition: >-
+        Tip: The Keyword field is repeatable. Put each keyword in its own
+        field by pressing the "+" button.
+        Tip: In Dataverse metadata, keywords are case sensitive. Use
+        sentence case for free text terms (i.e., capitalize the first word
+        and proper nouns).
+        Tip: Use free-text terms or terms from a controlled vocabulary in
+        this field to represent specific or granular topics associated
+        with the dataset. Think of them like tags.
+        Tip: FAST and RVMFAST are good, general-purpose controlled
+        vocabularies adapted from Library of Congress Subject Headings
+        (LCSH).
+        Tip: Geographic place names should be entered in the Geospatial
+        metadata section.
+      recommendation: Recommended
+      type: TEXT
+      required: false
+      repeatable: true
+      example: "Social media; Communication"
+
+    - id: keyword.keywordVocabulary
+      name: "Keyword: Vocabulary"
+      definition: For the specification of the keyword controlled vocabulary in use, such as LCSH, MeSH, or others.
+      bestPracticeDefinition: "Tip: Use this field when the Keyword term is from a controlled vocabulary."
+      recommendation: Optional
+      type: TEXT
+      required: false
+      repeatable: true
+      example: Government of Canada Core Subject Thesaurus
+
+    - id: keyword.keywordVocabularyURI
+      name: "Keyword: Vocabulary URL"
+      definition: >-
+        Keyword vocabulary URL points to the web presence that describes
+        the keyword vocabulary, if appropriate. Enter an absolute URL where
+        the keyword vocabulary web site is found, such as http://www.my.org.
+      bestPracticeDefinition: "Tip: Use this field when the Keyword term is from a controlled vocabulary."
+      recommendation: Optional
+      type: URL
+      required: false
+      repeatable: true
+      example: "https://canada.multites.net/"
+
+    - id: topicClassification.topicClassValue
+      name: "Topic Classification: Term"
+      definition: Topic or Subject term that is relevant to this Dataset.
+      bestPracticeDefinition: >-
+        Tip: The Keyword field is repeatable. Put each keyword in its own
+        field by pressing the "+" button.
+        Tip: In Dataverse metadata, keywords are case sensitive. Use
+        sentence case for free text terms (i.e., capitalize the first word
+        and proper nouns).
+        Tip: Use free-text terms or terms from a controlled vocabulary in
+        this field to represent specific or granular topics associated
+        with the dataset. Think of them like tags.
+        Tip: FAST and RVMFAST are good, general-purpose controlled
+        vocabularies adapted from Library of Congress Subject Headings
+        (LCSH).
+        Tip: Geographic place names should be entered in the Geospatial
+        metadata section.
+      recommendation: Optional
+      type: TEXT
+      required: false
+      repeatable: true
+      example: Society and Culture
+
+    - id: topicClassification.topicClassVocab
+      name: "Topic Classification: Vocabulary"
+      definition: Provided for specification of the controlled vocabulary in use, e.g., LCSH, MeSH, etc.
+      bestPracticeDefinition: "Tip: Use this field when the Topic Classification term is from a controlled vocabulary."
+      recommendation: Optional
+      type: TEXT
+      required: false
+      repeatable: true
+      example: Government of Canada Core Subject Thesaurus
+
+    - id: topicClassification.topicClassVocabURI
+      name: "Topic Classification: Vocabulary URL"
+      definition: Specifies the URL location for the full controlled vocabulary.
+      bestPracticeDefinition: "Tip: Use this field when the Topic Classification term is from a controlled vocabulary."
+      recommendation: Optional
+      type: URL
+      required: false
+      repeatable: true
+      example: "https://canada.multites.net/"
+
+    - id: publication.publicationCitation
+      name: "Related Publication: Citation"
+      definition: The full bibliographic citation for this related publication.
+      bestPracticeDefinition: >-
+        Publications that use the data from this Dataset. The full list of
+        Related Publications will be displayed on the metadata tab.
+        Tip: Use this field for publications that are based on the data,
+        e.g., a publication that cites the data.
+      recommendation: Recommended
+      type: TEXTBOX
+      required: false
+      repeatable: true
+      example: "Doe, Jane. (2017). Teen use of social media: analysis of self-reported communication behaviours. Journal of Social Media Use. Vol 1. Iss. 1, 2017."
+
+    - id: publication.publicationIDType
+      name: "Related Publication: ID Type"
+      definition: The type of digital identifier used for this publication (e.g., Digital Object Identifier (DOI)).
+      bestPracticeDefinition: >-
+        Note: This field is a drop-down list; select one.
+        Tip: Use a persistent identifier where possible (e.g., DOI, handle,
+        ISBN). If only a URL is available, select the type "url" and enter
+        the URL into both the ID Number and URL fields.
+      recommendation: Recommended
+      type: TEXT
+      required: false
+      repeatable: true
+      example: doi
+
+    - id: publication.publicationIDNumber
+      name: "Related Publication: ID Number"
+      definition: The identifier for the selected ID type.
+      bestPracticeDefinition: 'Tip: If using ID Type "url", enter the URL into both this field and the URL field.'
+      recommendation: Recommended
+      type: TEXT
+      required: false
+      repeatable: true
+      example: "10.0000/SP/TEST"
+
+    - id: publication.publicationURL
+      name: "Related Publication: URL"
+      definition: Link to the publication web page (e.g., journal article page, archive record page, or other).
+      bestPracticeDefinition: >-
+        Tip: This field is only used for display purposes in the Dataverse
+        interface. For interoperability, ensure that the ID Type and ID
+        Number fields are also completed.
+      recommendation: Recommended
+      type: URL
+      required: false
+      repeatable: true
+      example: "https://doi.org/10.0000/SP/TEST"
+
+    - id: notesText
+      name: Notes
+      definition: Additional important information about the Dataset.
+      recommendation: Optional
+      type: TEXTBOX
+      required: false
+      repeatable: true
+      example: >-
+        This survey was administered online. Mode of interview has been
+        found to impact results, therefore it is not recommended that these
+        results are compared with other survey results where the interview
+        mode was telephone based.
+
+    - id: language
+      name: Language
+      definition: Language of the Dataset.
+      bestPracticeDefinition: "Note: This field is a drop-down list; select all that apply."
+      recommendation: Optional
+      type: TEXT
+      required: false
+      repeatable: true
+      example: English
+
+    - id: producer.producerName
+      name: "Producer: Name"
+      definition: Producer name.
+      bestPracticeDefinition: Person or organization with the financial or administrative responsibility over this Dataset.
+      recommendation: Recommended
+      type: TEXT
+      required: false
+      repeatable: true
+      example: Youth Communication Development Project
+
+    - id: producer.producerAffiliation
+      name: "Producer: Affiliation"
+      definition: The organization with which the producer is affiliated.
+      recommendation: Recommended
+      type: TEXT
+      required: false
+      repeatable: true
+      example: "Queen's University"
+
+    - id: producer.producerAbbreviation
+      name: "Producer: Abbreviation"
+      definition: "The abbreviation by which the producer is commonly known (ex. IQSS, ICPSR)."
+      recommendation: Optional
+      type: TEXT
+      required: false
+      repeatable: true
+      example: YCDP
+
+    - id: producer.producerURL
+      name: "Producer: URL"
+      definition: "Producer URL points to the producer's web presence, if appropriate. Enter an absolute URL where the producer's web site is found, such as http://www.my.org."
+      recommendation: Optional
+      type: URL
+      required: false
+      repeatable: true
+      example: "https://youthsocialmedia.org"
+
+    - id: producer.producerLogoURL
+      name: "Producer: Logo URL"
+      definition: "URL for the producer's logo, which points to this producer's web-accessible logo image. Enter an absolute URL where the producer's logo image is found, such as http://www.my.org/images/logo.gif."
+      recommendation: Optional
+      type: URL
+      required: false
+      repeatable: true
+      example: "https://youthsocialmedia.org/image.png"
+
+    - id: productionDate
+      name: Production Date
+      definition: Date when the data collection or other materials were produced (not distributed, published or archived).
+      bestPracticeDefinition: "Tip: Date when dataset was finalized and ready for analysis or distribution."
+      recommendation: Recommended
+      type: DATE
+      required: false
+      repeatable: false
+      example: "2016-01-11"
+
+    - id: productionPlace
+      name: Production Location
+      definition: The location where the data collection and any other related materials were produced.
+      bestPracticeDefinition: "Tip: Include an institution if relevant. Avoid abbreviations."
+      recommendation: Optional
+      type: TEXT
+      required: false
+      repeatable: true
+      example: "Kingston, Ontario, Canada"
+
+    - id: contributor.contributorType
+      name: "Contributor: Type"
+      definition: The type of contributor of the resource.
+      bestPracticeDefinition: >-
+        The organization or person responsible for either collecting,
+        managing, or otherwise contributing in some form to the development
+        of the resource.
+        Note: This field is a drop-down list; select one.
+      recommendation: Optional
+      type: TEXT
+      required: false
+      repeatable: true
+      example: Researcher
+
+    - id: contributor.contributorName
+      name: "Contributor: Name"
+      definition: The Family Name, Given Name or organization name of the contributor.
+      recommendation: Optional
+      type: TEXT
+      required: false
+      repeatable: true
+      example: "Doe, Jane"
+
+    - id: grantNumber.grantNumberAgency
+      name: "Funding Information: Grant Agency"
+      definition: Grant Number Agency.
+      bestPracticeDefinition: "Tip: The name of the funder or grant agency supporting the research."
+      recommendation: Optional
+      type: TEXT
+      required: false
+      repeatable: true
+      example: "Social Sciences and Humanities Research Council (SSHRC)"
+
+    - id: grantNumber.grantNumberValue
+      name: "Funding Information: Grant Number"
+      definition: The grant or contract number of the project that sponsored the effort.
+      recommendation: Optional
+      type: TEXT
+      required: false
+      repeatable: true
+      example: CCB123456
+
+    - id: distributor.distributorName
+      name: "Distributor: Name"
+      definition: Distributor name.
+      bestPracticeDefinition: >-
+        The organization designated by the author or producer to generate
+        copies of the particular work including any necessary editions or
+        revisions.
+      recommendation: Optional
+      type: TEXT
+      required: false
+      repeatable: true
+      example: Data Services
+
+    - id: distributor.distributorAffiliation
+      name: "Distributor: Affiliation"
+      definition: The organization with which the distributor contact is affiliated.
+      recommendation: Optional
+      type: TEXT
+      required: false
+      repeatable: true
+      example: "Queen's University Library"
+
+    - id: distributor.distributorAbbreviation
+      name: "Distributor: Abbreviation"
+      definition: "The abbreviation by which this distributor is commonly known (e.g., IQSS, ICPSR)."
+      recommendation: Optional
+      type: TEXT
+      required: false
+      repeatable: true
+      example: QUL
+
+    - id: distributor.distributorURL
+      name: "Distributor: URL"
+      definition: "Distributor URL points to the distributor's web presence, if appropriate. Enter an absolute URL where the distributor's web site is found, such as http://www.my.org."
+      recommendation: Optional
+      type: URL
+      required: false
+      repeatable: true
+      example: "https://library.queensu.ca/search/data-statistics"
+
+    - id: distributor.distributorLogoURL
+      name: "Distributor: Logo URL"
+      definition: "URL of the distributor's logo, which points to this distributor's web-accessible logo image. Enter an absolute URL where the distributor's logo image is found, such as http://www.my.org/images/logo.gif."
+      recommendation: Optional
+      type: URL
+      required: false
+      repeatable: true
+      example: "https://www.queensu.ca/encyclopedia/sites/webpublish.queensu.ca.qencwww/files/images/l/logo/QueensLogo_colour.png"
+
+    - id: distributionDate
+      name: Distribution Date
+      definition: Date that the work was made available for distribution/presentation.
+      bestPracticeDefinition: "Tip: This field may be the same as the Deposit Date. Use Distribution Date only if data was previously distributed."
+      recommendation: Optional
+      type: DATE
+      required: false
+      repeatable: false
+      example: "2018-01-22"
+
+    - id: depositor
+      name: Depositor
+      definition: The person (Family Name, Given Name) or the name of the organization that deposited this Dataset to the repository.
+      bestPracticeDefinition: "Tip: The name of the person/institution who provided the dataset(s) to the archive (i.e., not necessarily the person preparing the Dataverse repository submission)."
+      recommendation: Recommended
+      type: TEXT
+      required: false
+      repeatable: false
+      example: "Doe, Jane"
+
+    - id: dateOfDeposit
+      name: Deposit Date
+      definition: Date that the Dataset was deposited into the repository.
+      bestPracticeDefinition: "Tip: Deposit Date is pre-populated with the date of upload to the Dataverse repository. It can be edited to reflect the date when the data was received by an external or mediated data repository service."
+      recommendation: Recommended
+      type: DATE
+      required: false
+      repeatable: false
+      example: "2018-01-15"
+
+    - id: timePeriodCovered.timePeriodCoveredStart
+      name: "Time Period: Start"
+      definition: Start date which reflects the time period covered by the data, not the dates of coding or making documents machine-readable or the dates the data were collected.
+      bestPracticeDefinition: >-
+        Time period to which the data refer. This item reflects the time
+        period covered by the data, not the dates of coding or making
+        documents machine-readable or the dates the data were collected.
+        Also known as span.
+      recommendation: Recommended
+      type: DATE
+      required: false
+      repeatable: true
+      example: "2015-03-20"
+
+    - id: timePeriodCovered.timePeriodCoveredEnd
+      name: "Time Period: End"
+      definition: End date which reflects the time period covered by the data, not the dates of coding or making documents machine-readable or the dates the data were collected.
+      recommendation: Recommended
+      type: DATE
+      required: false
+      repeatable: true
+      example: "2015-06-21"
+
+    - id: dateOfCollection.dateOfCollectionStart
+      name: "Date of Collection: Start"
+      definition: Date when the data collection started.
+      bestPracticeDefinition: "Contains the date(s) when the data were collected."
+      recommendation: Recommended
+      type: DATE
+      required: false
+      repeatable: true
+      example: "2015-03-20"
+
+    - id: dateOfCollection.dateOfCollectionEnd
+      name: "Date of Collection: End"
+      definition: Date when the data collection ended.
+      recommendation: Recommended
+      type: DATE
+      required: false
+      repeatable: true
+      example: "2015-06-21"
+
+    - id: kindOfData
+      name: Data Type
+      definition: "Type of data included in the file: survey data, census/enumeration data, aggregate data, clinical data, event/transaction data, program source code, machine-readable text, administrative records data, experimental data, psychological test, textual data, coded documents, time budget diaries, observation data/ratings, process-produced data, or other."
+      recommendation: Recommended
+      type: TEXT
+      required: false
+      repeatable: true
+      example: Survey data
+
+    - id: series.seriesName
+      name: "Series: Name"
+      definition: Name of the dataset series to which the Dataset belongs.
+      bestPracticeDefinition: "Information about the Dataset series."
+      recommendation: Optional
+      type: TEXT
+      required: false
+      repeatable: false
+      example: Social Media Use Among Teens
+
+    - id: series.seriesInformation
+      name: "Series: Information"
+      definition: History of the series and summary of those features that apply to the series as a whole.
+      recommendation: Optional
+      type: TEXTBOX
+      required: false
+      repeatable: false
+      example: "Established in 2005, the Youth Communication Development Project aims to gather key research and data about youth development and social media use through a series of independent, annual, cross-sectional surveys titled Social Media Use Among Teens. The overall objective of the program is to gather data on youth and social media trends in order to monitor changes in the well-being of young Canadians, and to provide information on specific social policy issues."
+
+    - id: software.softwareName
+      name: "Software: Name"
+      definition: Name of software used to generate the Dataset.
+      bestPracticeDefinition: >-
+        Information about the software used to generate the Dataset.
+        Tip: Useful for specialized software or instruments.
+      recommendation: Optional
+      type: TEXT
+      required: false
+      repeatable: true
+      example: SPSS
+
+    - id: software.softwareVersion
+      name: "Software: Version"
+      definition: Version of the software used to generate the Dataset.
+      recommendation: Optional
+      type: TEXT
+      required: false
+      repeatable: true
+      example: "24"
+
+    - id: relatedMaterial
+      name: Related Material
+      definition: Any material related to this Dataset.
+      bestPracticeDefinition: "Tip: This is secondary materials in relation to the study description, such as technical documentation or a website detailing more information about the study."
+      recommendation: Optional
+      type: TEXTBOX
+      required: false
+      repeatable: true
+      example: "Youth Social Media Trends: 2015 Report [Canada]. YCDP, Queen's University, 2016. Access URL: http://dataverse.scholarsportal.info/queensu/2016report.pdf"
+
+    - id: relatedDatasets
+      name: Related Dataset
+      definition: Any Datasets that are related to this Dataset, such as previous research on this subject.
+      bestPracticeDefinition: "Tip: This would include previous versions of the data (rounds or waves) or other collections generated by the same data."
+      recommendation: Optional
+      type: TEXTBOX
+      required: false
+      repeatable: true
+      example: "Social Media Use Among Teens, 2010 [Canada]. YCDP, Queen's University, 2011. DOI. Access URL: http://dataverse.scholarsportal.info/queensu/2010data.xhtml"
+
+    - id: otherReferences
+      name: Other Reference
+      definition: Any references that would serve as background or supporting material to this Dataset.
+      bestPracticeDefinition: "Tip: This includes documentation such as codebooks, questionnaires, methodology, coding files, etc."
+      recommendation: Optional
+      type: TEXT
+      required: false
+      repeatable: true
+      example: "Social Media Use Among Teens: Survey Questionnaire, 2015 [Canada]. YCDP, Queen's University, 2016. DOI. Access URL: http://dataverse.scholarsportal.info/queensu/2016questionnaire.pdf"
+
+    - id: dataSources
+      name: Data Source
+      definition: "List of books, articles, serials, or machine-readable data files that served as the sources of the data collection."
+      recommendation: Optional
+      type: TEXTBOX
+      required: false
+      repeatable: true
+      example: "Statistics Canada. National Household Survey, 2011: Median Household Income by Census Tracts, Census Metropolitan Areas. NHS 2011, Statistics Canada. Access URL: https://www12.statcan.gc.ca/nhs-enm/2011/dp-pd/prof/index.cfm?Lang=E"
+
+    - id: originOfSources
+      name: Origin of Historical Sources
+      definition: For historical materials, information about the origin of the sources and the rules followed in establishing the sources should be specified.
+      recommendation: Optional
+      type: TEXTBOX
+      required: false
+      repeatable: false
+      example: "National Household Survey, 2011. https://www23.statcan.gc.ca/imdb/p2SV.pl?Function=getSurvey&SDDS=5178"
+
+    - id: characteristicOfSources
+      name: Characteristic of Sources
+      definition: Assessment of characteristics and source material.
+      bestPracticeDefinition: "Tip: Describes noteworthy aspects of the data collected."
+      recommendation: Optional
+      type: TEXTBOX
+      required: false
+      repeatable: false
+
+    - id: accessToSources
+      name: Documentation and Access to Sources
+      definition: Level of documentation of the original sources.
+      bestPracticeDefinition: "Tip: May be used to explain any restrictions or access to source data documentation."
+      recommendation: Optional
+      type: TEXTBOX
+      required: false
+      repeatable: false
+      example: Open
+
+- id: geospatial
+  name: Geospatial Metadata
+  description: >-
+    Describes maps, GIS files, or other location-based data. Any dataset
+    that relates to a location(s) or geographic area(s) (i.e., has a
+    spatial extent) should include geospatial metadata in addition to the
+    general citation metadata block. Compliant with DDI Lite, DDI 2.5
+    Codebook, DataCite, and Dublin Core. The Country / Nation field uses
+    ISO 3166-1 controlled vocabulary.
+  fields:
+    - id: geographicCoverage
+      name: Geographic Coverage
+      definition: Information on the geographic coverage of the data. Includes the total geographic scope of the data.
+      bestPracticeDefinition: "Tip: For consistency, use the GeoNames.org database to check the form and spelling of place names."
+      type: NONE
+      required: false
+      repeatable: true
+
+    - id: geographicCoverage.country
+      name: "Geographic Coverage: Country / Nation"
+      definition: The country or nation that the Dataset is about.
+      bestPracticeDefinition: >-
+        Note: This field is a drop-down list; select one.
+        Tip: Select from drop-down list of names from ISO-3166. If the
+        dataset covers multiple countries, list all of them.
+      recommendation: Recommended
+      type: TEXT
+      required: false
+      repeatable: true
+      example: Canada
+
+    - id: geographicCoverage.state
+      name: "Geographic Coverage: State / Province"
+      definition: The state or province that the Dataset is about. Use GeoNames for correct spelling and avoid abbreviations.
+      bestPracticeDefinition: "Tip: If using this field, also include Country to disambiguate."
+      recommendation: Recommended
+      type: TEXT
+      required: false
+      repeatable: true
+      example: British Columbia
+
+    - id: geographicCoverage.city
+      name: "Geographic Coverage: City"
+      definition: The name of the city that the Dataset is about. Use GeoNames for correct spelling and avoid abbreviations.
+      bestPracticeDefinition: "Tip: If using this field, also include Country AND, if possible, State/Province to disambiguate."
+      recommendation: Recommended
+      type: TEXT
+      required: false
+      repeatable: true
+      example: Vancouver
+
+    - id: geographicCoverage.otherGeographicCoverage
+      name: "Geographic Coverage: Other"
+      definition: Other information on the geographic coverage of the data.
+      bestPracticeDefinition: "Tip: Use for geographical names that are not a country, state/province, or city, e.g., regions, water bodies, astronomy names. If applicable, disambiguate by including City AND/OR State/Province AND/OR Country."
+      recommendation: Optional
+      type: TEXT
+      required: false
+      repeatable: true
+      example: Jericho Beach Park
+
+    - id: geographicUnit
+      name: Geographic Unit
+      definition: "Lowest level of geographic aggregation covered by the Dataset, e.g., village, county, region."
+      bestPracticeDefinition: "Tip: Use when the lowest geographic level that can be analyzed in the dataset is different from the dataset's entire area (e.g., when a dataset about parks in Vancouver can be faceted by the individual parks)."
+      recommendation: Optional
+      type: TEXT
+      required: false
+      repeatable: true
+      example: park
+
+    - id: geographicBoundingBox
+      name: Geographic Bounding Box
+      definition: >-
+        The fundamental geometric description for any Dataset that models
+        geography is the geographic bounding box. It describes the minimum
+        box, defined by west and east longitudes and north and south
+        latitudes, which includes the largest geographic extent of the
+        Dataset's geographic coverage. This element is used in the first
+        pass of a coordinate-based search. Inclusion of this element in the
+        codebook is recommended, but is required if the bound polygon box
+        is included.
+      bestPracticeDefinition: "Tip: To determine the bounding box, use: http://boundingbox.klokantech.com/ (export results as CSV or TSV format)."
+      type: NONE
+      required: false
+      repeatable: true
+
+    - id: geographicBoundingBox.westLongitude
+      name: "Geographic Bounding Box: West Longitude"
+      definition: "Westernmost coordinate delimiting the geographic extent of the Dataset. A valid range of values, expressed in decimal degrees, is -180.0 <= West Bounding Longitude Value <= 180.0."
+      recommendation: Recommended
+      type: TEXT
+      required: false
+      repeatable: true
+      example: "-123.265"
+
+    - id: geographicBoundingBox.eastLongitude
+      name: "Geographic Bounding Box: East Longitude"
+      definition: "Easternmost coordinate delimiting the geographic extent of the Dataset. A valid range of values, expressed in decimal degrees, is -180.0 <= East Bounding Longitude Value <= 180.0."
+      recommendation: Recommended
+      type: TEXT
+      required: false
+      repeatable: true
+      example: "-123.115"
+
+    - id: geographicBoundingBox.northLatitude
+      name: "Geographic Bounding Box: North Latitude"
+      definition: "Northernmost coordinate delimiting the geographic extent of the Dataset. A valid range of values, expressed in decimal degrees, is -90.0 <= North Bounding Latitude Value <= 90.0."
+      recommendation: Recommended
+      type: TEXT
+      required: false
+      repeatable: true
+      example: "49.314"
+
+    - id: geographicBoundingBox.southLatitude
+      name: "Geographic Bounding Box: South Latitude"
+      definition: "Southernmost coordinate delimiting the geographic extent of the Dataset. A valid range of values, expressed in decimal degrees, is -90.0 <= South Bounding Latitude Value <= 90.0."
+      recommendation: Recommended
+      type: TEXT
+      required: false
+      repeatable: true
+      example: "49.226"
+
+- id: socialscience
+  name: Social Science and Humanities Metadata
+  description: >-
+    Describes data that falls within the domain of social science and the
+    humanities, such as survey data and related datasets. Compliant with
+    DDI Lite, DDI 2.5 Codebook, and Dublin Core.
+  fields:
+    - id: unitOfAnalysis
+      name: Unit of Analysis
+      definition: "Basic unit of analysis or observation that this Dataset describes, such as individuals, families/households, groups, institutions/organizations, administrative units, and more. For information about the DDI's controlled vocabulary for this element, please refer to the DDI web page at http://www.ddialliance.org/controlled-vocabularies."
+      recommendation: Recommended
+      type: TEXTBOX
+      required: false
+      repeatable: true
+      example: "Individual; Family; Household"
+
+    - id: universe
+      name: Universe
+      definition: >-
+        Description of the population covered by the data in the file; the
+        group of people or other elements that are the object of the study
+        and to which the study results refer. Age, nationality, and
+        residence commonly help to delineate a given universe, but any
+        number of other factors may be used, such as age limits, sex,
+        marital status, race, ethnic group, nationality, income, veteran
+        status, criminal convictions, and more. The universe may consist of
+        elements other than persons, such as housing units, court cases,
+        deaths, countries, and so on. In general, it should be possible to
+        tell from the description of the universe whether a given
+        individual or element is a member of the population under study.
+        Also known as the universe of interest, population of interest, and
+        target population.
+      recommendation: Recommended
+      type: TEXTBOX
+      required: false
+      repeatable: true
+      example: "Canadians aged 12-30 (Source: https://doi.org/10.5683/SP/HY2H1A); Queen's University 2nd year medical students who were part of the 2016 Critical Enquiry Course in the School of Medicine and agreed to participate in the study. (Source: https://doi.org/10.5683/SP/D6NISS)"
+
+    - id: timeMethod
+      name: Time Method
+      definition: "The time method or time dimension of the data collection, such as panel, cross-sectional, trend, time-series, or other."
+      recommendation: Optional
+      type: TEXT
+      required: false
+      repeatable: false
+      example: "Longitudinal; Time series; Longitudinal: Panel"
+
+    - id: dataCollector
+      name: Data Collector
+      definition: Individual, agency or organization responsible for administering the questionnaire or interview or compiling the data.
+      recommendation: Recommended
+      type: TEXT
+      required: false
+      repeatable: false
+      example: "Trained student interviewers, both anglophone and francophone. (Source: https://hdl.handle.net/10864/ZJ17A)"
+
+    - id: collectorTraining
+      name: Collector Training
+      definition: Type of training provided to the data collector.
+      recommendation: Optional
+      type: TEXT
+      required: false
+      repeatable: false
+      example: >-
+        The interviews were conducted by professional interviewers under
+        the supervision of the Institute for Social Science Research.
+        (Source: https://doi.org/10.7910/DVN/SRVIO4); From the
+        documentation: "Each staff member was thoroughly trained prior to
+        beginning work on the survey. Interviewers received about three
+        days of classroom training plus self-training materials.
+        Additional study materials and classroom training were planned
+        throughout the interviewing period. Quality control measures,
+        such as editing returns, observing interviews and re-interviewing
+        selected households were employed throughout the survey."
+        (Source: https://doi.org/10.7910/DVN/YT09KD)
+
+    - id: frequencyOfDataCollection
+      name: Frequency
+      definition: "If the data collected includes more than one point in time, indicate the frequency with which the data was collected; that is, monthly, quarterly, or other."
+      recommendation: Optional
+      type: TEXT
+      required: false
+      repeatable: false
+      example: "Annual; Hourly; Data was collected at baseline and at one month follow-up. (Source: https://doi.org/10.7939/DVN/10889)"
+
+    - id: samplingProcedure
+      name: Sampling Procedure
+      definition: Type of sample and sample design used to select the survey respondents to represent the population. May include reference to the target sample size and the sampling fraction.
+      recommendation: Recommended
+      type: TEXTBOX
+      required: false
+      repeatable: false
+      example: "Canadian adults randomly selected from Angus Reid Forum panel members. (Source: https://hdl.handle.net/10864/11510); Probability (Source: https://ddialliance.org/Specification/DDI-CV/SamplingProcedure_1.1.html)"
+
+    - id: targetSampleSize.targetSampleActualSize
+      name: "Target Sample Size: Actual"
+      definition: Actual sample size.
+      bestPracticeDefinition: "Tip: The research study's actual sample size may be stated in this numeric field for reference purposes."
+      recommendation: Optional
+      type: NONE
+      required: false
+      repeatable: false
+      example: "1015"
+
+    - id: targetSampleSize.targetSampleSizeFormula
+      name: "Target Sample Size: Formula"
+      definition: Formula used to determine target sample size.
+      bestPracticeDefinition: "Tip: A plain-text, general description of a sample size formula may be stated here for reference purposes. This may include particular methodologies, practices, and outcomes from existing scholarly literature."
+      recommendation: Optional
+      type: NONE
+      required: false
+      repeatable: false
+      example: "Eligible employees who lived within the following FSAs: K6V, K7A, K7C, K7G, K7H, K7K, K7L, K7M, K7N, K7P, K7R, K8N, K8P, K8R, K8V, K0E, K0G, K0H, K0K."
+
+    - id: deviationsFromSampleDesign
+      name: Major Deviations for Sample Design
+      definition: Show correspondence as well as discrepancies between the sampled units (obtained) and available statistics for the population (age, sex-ratio, marital status, etc.) as a whole.
+      recommendation: Optional
+      type: TEXT
+      required: false
+      repeatable: false
+      example: >-
+        The suitability of Ohio as a research site reflected its
+        similarity to the United States as a whole. The evidence extended
+        by Tuchfarber (1988) shows that Ohio is representative of the
+        United States in several ways: percent urban and rural, percent
+        of the population that is African American, median age, per
+        capita income, percent living below the poverty level, and
+        unemployment rate. Although results generated from an Ohio sample
+        are not empirically generalizable to the United States, they may
+        be suggestive of what might be expected nationally. (Source:
+        https://ddialliance.org/Specification/DDI-Codebook/2.5/XMLSchema/field_level_documentation_files/schemas/codebook_xsd_elements/deviat.html);
+        Oversample of persons 50 and older Source:
+        https://doi.org/10.7910/DVN/FGTJGO
+
+    - id: collectionMode
+      name: Collection Mode
+      definition: "Method used to collect the data; instrumentation characteristics (e.g., telephone interview, mail questionnaire, or other)."
+      recommendation: Recommended
+      type: TEXTBOX
+      required: false
+      repeatable: true
+      example: "Interview; Paper and online questionnaire; Coded from psychiatric hospital files, court records, and police agencies. (Source: https://hdl.handle.net/10864/12053)"
+
+    - id: researchInstrument
+      name: Type of Research Instrument
+      definition: >-
+        Type of data collection instrument used. Structured indicates an
+        instrument in which all respondents are asked the same
+        questions/tests, possibly with precoded answers. If a small
+        portion of such a questionnaire includes open-ended questions,
+        provide appropriate comments. Semi-structured indicates that the
+        research instrument contains mainly open-ended questions.
+        Unstructured indicates that in-depth interviews were conducted.
+      recommendation: Recommended
+      type: TEXT
+      required: false
+      repeatable: false
+      example: "Questionnaire; Structured; Technical instrument: Static Chamber, Vaisala Humicap HM70 relative humidity/temperature probe, Vaisala Carbocap GMP343 infrared analyzer, Hobo Pro v2 U23-003 temperature logger, Kestrel 3500 weather meter, Taylor 9878 thermometer. (Source: https://hdl.handle.net/10864/12053)"
+
+    - id: dataCollectionSituation
+      name: Characteristics of Data Collection Situation
+      definition: "Description of noteworthy aspects of the data collection situation. Includes information on factors such as cooperativeness of respondents, duration of interviews, number of call backs, or similar."
+      recommendation: Optional
+      type: TEXTBOX
+      required: false
+      repeatable: false
+      example: >-
+        There were 1,419 respondents who answered questions in telephone
+        interviews lasting approximately 35 minutes each. Clarifications
+        to survey questions were limited and respondents were directed to
+        provide a response based on the information provided as to not
+        allow interviewer bias/assumptions to influence the survey
+        results. (Source: https://hdl.handle.net/10864/ZJ17A)
+
+    - id: actionsToMinimizeLoss
+      name: Actions to Minimize Losses
+      definition: "Summary of actions taken to minimize data loss. Include information on actions such as follow-up visits, supervisory checks, historical matching, estimation, and so on."
+      recommendation: Optional
+      type: TEXT
+      required: false
+      repeatable: false
+      example: "Reminder e-mails were distributed to target population. (Source: https://doi.org/10.5683/SP/L1H3SS); Cards reminding parents about the follow-up visit were given out. (Source: https://doi.org/10.7939/DVN/10889)"
+
+    - id: controlOperations
+      name: Control Operations
+      definition: Methods to facilitate data control performed by the primary investigator or by the data archive.
+      recommendation: Optional
+      type: TEXT
+      required: false
+      repeatable: false
+      example: "Field validation is built into REDCap data collection forms. (Source: https://doi.org/10.7939/DVN/10907); Blinded double data entry and third person cross-validation were used. (Source: https://doi.org/10.7939/DVN/10900)"
+
+    - id: weighting
+      name: Weighting
+      definition: >-
+        The use of sampling procedures might make it necessary to apply
+        weights to produce accurate statistical results. Describes the
+        criteria for using weights in analysis of a collection. If a
+        weighting formula or coefficient was developed, the formula is
+        provided, its elements are defined, and it is indicated how the
+        formula was applied to the data.
+      recommendation: Recommended
+      type: TEXTBOX
+      required: false
+      repeatable: false
+      example: >-
+        Rim weighting is used with this file. By region, the file was
+        weighted to census targets on sex (wtsex), age (Wtage), and
+        education (Wtedu) using the 2011 census. For this file, a
+        religion weight (wtreligion) was also included based on the 2011
+        National Household Survey (NHS). The wtg2 variable includes all
+        of these weights within it. (Source:
+        https://doi.org/10.5683/SP/78RONJ); The final sample obtained for
+        each area is not proportional to the Alberta population it makes
+        up. For instance, Edmonton is over-sampled as shown by TABLE 1.
+        Edmonton makes up only 24% of the Alberta population but has 43%
+        of the interviews. Therefore, in order to combine the samples for
+        a provincial sample weighting is necessary. The weighting factors
+        used for the 1987 survey are as follows: Edmonton 0.558439,
+        Calgary 1.151521, and Other Alberta 1.471173. (Source:
+        https://doi.org/10.7939/DVN/10567); wtx used to correctly weight
+        respondents against Stats Canada Alberta population estimates
+        (Source: https://doi.org/10.7939/DVN/10813)
+
+    - id: cleaningOperations
+      name: Cleaning Operations
+      definition: "Methods used to clean the data collection, such as consistency checking, wildcode checking, or other."
+      recommendation: Optional
+      type: TEXT
+      required: false
+      repeatable: false
+      example: >-
+        For income data, all respondents are matched to the tax data file
+        unless they refuse to have their information linked. Data
+        obtained from the tax file are complete and do not require
+        imputation. Income figures are imputed only in the absence of tax
+        data. Donor imputation by the nearest neighbour method is
+        generally used and is performed primarily with Statistics
+        Canada's Census Edit and Imputation System (CANCEIS). However,
+        amounts received through certain government programs such as the
+        universal childcare benefit and child tax benefits are derived
+        from other information (e.g., number of children in the
+        household) using a deductive imputation method. (Source:
+        http://hdl.handle.net/11272/10619); Physiological data was
+        reviewed for outliers. Individual breaths with tidal volume (VT),
+        respiratory rate (RR) or minute ventilation (VE) that lay outside
+        the 95% confidence interval for all infants were removed as
+        outliers; 99.7% of all measured breaths were included in the
+        final analyses. (Source: https://doi.org/10.7939/DVN/10910)
+
+    - id: datasetLevelErrorNotes
+      name: Study Level Error Notes
+      definition: Note element used for any information annotating or clarifying the methodology and processing of the study.
+      recommendation: Optional
+      type: TEXT
+      required: false
+      repeatable: false
+      example: >-
+        The computerized questionnaire contains many features designed to
+        maximize the quality of the data collected. Many edits are built
+        into the questionnaire to compare the reported data with unusual
+        values and detect logical inconsistencies. When an edit fails,
+        the interviewer is prompted to correct the information (with the
+        respondent's help, if necessary). Once the data are transmitted
+        to Head Office, a comprehensive series of processing steps are
+        undertaken for the purpose of detailed verification of each
+        questionnaire. Invalid responses are corrected or flagged for
+        imputation. Edits were applied at a micro level. Deterministic
+        edits and consistency edits were also performed at the micro
+        level. Data was checked for outliers and extreme values and were
+        corrected at a micro level when required. (Source:
+        http://hdl.handle.net/11272/10619)
+
+    - id: responseRate
+      name: Response Rate
+      definition: Percentage of sample members who provided information.
+      recommendation: Recommended
+      type: TEXTBOX
+      required: false
+      repeatable: false
+      example: >-
+        Based on 100km radius, the survey response rate is 1874/3994
+        (46.9%), and the survey completion rate is 1732/3994 (43.4%).
+        Based on FSAs for locations served by Kingston Transit, the
+        survey response rate is 1469/3151 (46.6%), and the survey
+        completion rate is 1356/3151 (43.0%). (Source:
+        https://doi.org/10.5683/SP/CNXSVN); At one-month follow-up: 60.2%
+        (n=136/226). (Source: https://doi.org/10.7939/DVN/10889)
+
+    - id: samplingErrorEstimates
+      name: Estimates of Sampling Error
+      definition: Measure of how precisely one can estimate a population value from a given sample.
+      bestPracticeDefinition: "Tip: Examples include confidence intervals, non-response, response bias."
+      recommendation: Recommended
+      type: TEXT
+      required: false
+      repeatable: false
+      example: >-
+        In SFS 2016, the 95% confidence interval for the average net
+        worth of Canadian families had a width of $38,500. (Source:
+        http://hdl.handle.net/11272/10619); + or - 2.5%; design effect of
+        weighting not calculated (Source:
+        https://doi.org/10.7910/DVN/FGTJGO)
+
+    - id: otherDataAppraisal
+      name: Other Forms of Data Appraisal
+      definition: "Other issues pertaining to the data appraisal. Describe issues such as response variance, nonresponse rate and testing for bias, interviewer and response bias, confidence levels, question bias, or similar."
+      recommendation: Optional
+      type: TEXT
+      required: false
+      repeatable: false
+      example: "OSBD is subject to interpretation since it is an indirect behavioral measure of perceived distress. (Source: https://doi.org/10.7939/DVN/10841)"
+
+    - id: socialScienceNotes.socialScienceNotesType
+      name: "Notes: Type"
+      definition: Type of note.
+      bestPracticeDefinition: "General notes about this Dataset. Tip: Includes notes related to fields in the Social Science and Humanities section."
+      recommendation: Optional
+      type: NONE
+      required: false
+      repeatable: false
+      example: Processing note
+
+    - id: socialScienceNotes.socialScienceNotesSubject
+      name: "Notes: Subject"
+      definition: Note subject.
+      recommendation: Optional
+      type: NONE
+      required: false
+      repeatable: false
+      example: Variable corrections
+
+    - id: socialScienceNotes.socialScienceNotesText
+      name: "Notes: Text"
+      definition: Text for this note.
+      recommendation: Optional
+      type: NONE
+      required: false
+      repeatable: false
+      example: "Info (Misc) v2 note: Corrections were made to variables: PAS1MRG1, PAS1MRG2, PASRDPO1, PASRDPO2, PASRDPO3, PASRDPO4, PASRDPO5 and VERDATE. (Source: http://hdl.handle.net/11272/10619)"
+
+- id: astrophysics
+  name: Astronomy and Astrophysics Metadata
+  description: >-
+    Allows for description of astronomical or astrophysical data. Most
+    fields are based on the Virtual Observatory (VO) Discovery and
+    Provenance Metadata recommendation, an implementation of the IVOA's
+    Resource Metadata for the Virtual Observatory, Version 1.12 (2007)
+    specification, referred to as IVOA-RM. Mappable to the VO Discovery and
+    Provenance Metadata; fields not part of IVOA-RM are noted below.
+  fields:
+    - id: astroType
+      name: Type
+      definition: The nature or genre of the content of the files in the dataset.
+      bestPracticeDefinition: >-
+        Note: This field is a drop-down list; select all that apply. Most
+        of the types originate in the Virtual Observatory (VO) Discovery
+        and Provenance Metadata specification. Type values include: Image,
+        Mosaic (mosaic of multiple 2-D images), EventList, Spectrum (1-D
+        spectra), Cube (3-D data cubes), Table (table of values, at least
+        two columns), Catalog (collection of derived data, primarily
+        tabular), LightCurve, Simulation (theoretical simulation or
+        model), Figure, Artwork (artists' renderings of astronomical
+        phenomena or objects), Animation, PrettyPicture, Documentation,
+        Other (a data object not described by any of the other types),
+        Library (collection of published materials), Press Release,
+        Facsimile (digitized facsimile of historical document), Historical
+        (historical information about astronomical objects), Observation
+        (collection of data objects associated with one or more
+        observations), Object (collection of data objects associated with
+        one or more celestial objects), Value (single value), ValuePair
+        (keyword-value pair), Survey (collection of observations covering
+        substantial and contiguous areas of the sky).
+      recommendation: Recommended
+      type: TEXT
+      required: false
+      repeatable: true
+      example: "Survey; Catalog"
+
+    - id: astroFacility
+      name: Facility
+      definition: The observatory or facility where the data was obtained.
+      bestPracticeDefinition: "Tip: For theoretical data, identify the computational facility where it was obtained. Repeat the element when naming more than one facility."
+      recommendation: Recommended
+      type: TEXT
+      required: false
+      repeatable: true
+      example: "Apache Point Observatory, Sloan 2.5-m Telescope"
+
+    - id: astroInstrument
+      name: Instrument
+      definition: The instrument used to collect the data.
+      bestPracticeDefinition: "Tip: Identify a specific instrument or an instrument type for observational data. Provide the name of the computer code for theoretical data."
+      recommendation: Recommended
+      type: TEXT
+      required: false
+      repeatable: true
+      example: Five-band clocked CCD camera
+
+    - id: astroObject
+      name: Object
+      definition: "Astronomical Objects represented in the data (Given as SIMBAD recognizable names preferred)."
+      bestPracticeDefinition: "Note: The SIMBAD database provides a concordance for different name schemes. For the non-specialist, it is somewhat difficult to use."
+      recommendation: Recommended
+      type: TEXT
+      required: false
+      repeatable: true
+      example: "HD 1234 (or GEN# +1.00001234)"
+
+    - id: resolution.Spatial
+      name: Spatial Resolution
+      definition: "The spatial (angular) resolution that is typical of the observations, in decimal degrees."
+      recommendation: Recommended
+      type: TEXT
+      required: false
+      repeatable: false
+      example: "0.00028"
+
+    - id: resolution.Spectral
+      name: Spectral Resolution
+      definition: "The spectral resolution that is typical of the observations, given as the ratio λ/Δλ."
+      bestPracticeDefinition: "Tip: The spectral resolution may also be given as the difference between velocities Δv, calculated by using the Doppler effect, that can be distinguished in a line of the spectrum."
+      recommendation: Recommended
+      type: TEXT
+      required: false
+      repeatable: false
+      example: "5000 (given here as λ/Δλ); 0.15 km/s (given here as Δv)"
+
+    - id: resolution.Temporal
+      name: Time Resolution
+      definition: "The temporal resolution that is typical of the observations, given in seconds."
+      recommendation: Recommended
+      type: TEXT
+      required: false
+      repeatable: false
+      example: "120"
+
+    - id: coverage.Spectral.Bandpass
+      name: Bandpass
+      definition: Conventional bandpass name.
+      bestPracticeDefinition: "Tip: Specific bandpass names include: optical bandpasses (U, V, B, R, I); and narrow line filters (H-alpha, [OIII])."
+      recommendation: Recommended
+      type: TEXT
+      required: false
+      repeatable: true
+      example: "u', g', r', i', z'; U, B, V, JHK, 450"
+
+    - id: coverage.Spectral.CentralWavelength
+      name: Central Wavelength (m)
+      definition: "The central wavelength of the spectral bandpass, in meters."
+      bestPracticeDefinition: "Note: This is not an IVOA-RM element."
+      type: FLOAT
+      required: false
+      repeatable: true
+      example: "1420.405"
+
+    - id: coverage.Spectral.Wavelength
+      name: Wavelength Range
+      definition: The minimum and maximum wavelength of the spectral bandpass.
+      type: NONE
+      required: false
+      repeatable: true
+
+    - id: coverage.Spectral.Wavelength.Minimum
+      name: "Wavelength Range: Minimum (m)"
+      definition: "The minimum wavelength of the spectral bandpass, in meters."
+      recommendation: Optional
+      type: FLOAT
+      required: false
+      repeatable: true
+      example: "400.e-9"
+
+    - id: coverage.Spectral.Wavelength.Maximum
+      name: "Wavelength Range: Maximum (m)"
+      definition: "The maximum wavelength of the spectral bandpass, in meters."
+      recommendation: Optional
+      type: FLOAT
+      required: false
+      repeatable: true
+      example: "850.e-9"
+
+    - id: coverage.Temporal
+      name: Dataset Date Range
+      definition: Time period covered by the data.
+      bestPracticeDefinition: "Tip: When using this field, best practice is to supply a date range that includes date and time, and, in addition, to supply the date range again in the 'Time Period Covered' field in the Citation block."
+      type: NONE
+      required: false
+      repeatable: true
+
+    - id: coverage.Temporal.StartTime
+      name: "Dataset Date Range: Start"
+      definition: Dataset Start Date.
+      bestPracticeDefinition: "Tip: Provide a date or date/time (preferred) in ISO 8601 format (e.g., YYYY-MM-DDHH:MM:SSZ)."
+      recommendation: Recommended
+      type: DATE
+      required: false
+      repeatable: true
+      example: "1999-12-25; 2020-01-08T15:16:23Z"
+
+    - id: coverage.Temporal.StopTime
+      name: "Dataset Date Range: End"
+      definition: Dataset End Date.
+      bestPracticeDefinition: "Tip: Provide a date or date/time (preferred) in ISO 8601 format (e.g., YYYY-MM-DDHH:MM:SSZ)."
+      recommendation: Recommended
+      type: DATE
+      required: false
+      repeatable: true
+      example: "2001-07-15; 2021-03-09T19:26:00+05:00"
+
+    - id: coverage.Spatial
+      name: Sky Coverage
+      definition: The sky coverage of the data object.
+      bestPracticeDefinition: "Note: Follow the syntax found in the Space-Time Coordinate (STC) Metadata Recommendation."
+      recommendation: Recommended
+      type: TEXT
+      required: false
+      repeatable: true
+      example: "PositionInterval FK5 145.17 -1.25 235.9 1.25 PositionInterval FK5 250.71 52.15 267.0 66.29 PositionInterval FK5 350.43 -1.25 359.99 1.17 PositionInterval 0.0 -1.25 56.37 1.17"
+
+    - id: coverage.Depth
+      name: Depth Coverage
+      definition: "The (typical) depth coverage, or sensitivity, of the data object in Jy."
+      bestPracticeDefinition: "Tip: This is the faintest flux of energy that can be perceived (units: Jensky (Jy))."
+      recommendation: Recommended
+      type: FLOAT
+      required: false
+      repeatable: false
+      example: "3.e-6"
+
+    - id: coverage.ObjectDensity
+      name: Object Density
+      definition: "The (typical) density of objects, catalog entries, telescope pointings, etc., on the sky, in number per square degree."
+      bestPracticeDefinition: "Tip: Objects could be stars, galaxies, planets, star clusters, asteroids, etc."
+      recommendation: Optional
+      type: FLOAT
+      required: false
+      repeatable: false
+      example: "6.e4"
+
+    - id: coverage.ObjectCount
+      name: Object Count
+      definition: "The total number of objects, catalog entries, etc., in the data object."
+      bestPracticeDefinition: "Tip: Objects could be stars, galaxies, planets, star clusters, asteroids, etc."
+      recommendation: Optional
+      type: INT
+      required: false
+      repeatable: false
+      example: "2.e7"
+
+    - id: coverage.SkyFraction
+      name: Fraction of Sky
+      definition: "The fraction of the sky represented in the observations, ranging from 0 to 1."
+      recommendation: Optional
+      type: FLOAT
+      required: false
+      repeatable: false
+      example: "0.01"
+
+    - id: coverage.Polarization
+      name: Polarization
+      definition: The polarization coverage.
+      bestPracticeDefinition: "Note: This is not an IVOA-RM element."
+      recommendation: Recommended
+      type: TEXT
+      required: false
+      repeatable: false
+
+    - id: redshiftType
+      name: RedshiftType
+      definition: >-
+        RedshiftType string C "Redshift"; or "Optical" or "Radio"
+        definitions of Doppler velocity used in the data object.
+      bestPracticeDefinition: >-
+        Note: This is not an IVOA-RM element.
+        Tip: The light coming from an object moving away from you is
+        redshifted (Doppler effect), which means that the frequency of
+        that light is shifted to a lower value. The speed of an object
+        can be computed by measuring the shifts in frequencies of peaks
+        in its spectra. Since the Universe is expanding, the more distant
+        an object is, the more it is redshifted. For that reason,
+        redshift is used as a unit of distance for the most distant
+        objects. This field RedshiftType serves to indicate which part of
+        the spectra was used to measure the redshift.
+      recommendation: Optional
+      type: TEXT
+      required: false
+      repeatable: false
+
+    - id: resolution.Redshift
+      name: Redshift Resolution
+      definition: "The resolution in redshift (unitless) or Doppler velocity (km/s) in the data object."
+      bestPracticeDefinition: "Note: This is not an IVOA-RM element."
+      recommendation: Optional
+      type: FLOAT
+      required: false
+      repeatable: false
+
+    - id: coverage.RedshiftValue
+      name: Redshift Value
+      definition: "The value of the redshift (unitless) or Doppler velocity (km/s) in the data object."
+      bestPracticeDefinition: "Consists of 2 subfields."
+      type: FLOAT
+      required: false
+      repeatable: true
+
+    - id: coverage.RedshiftValue.Minimum
+      name: "Redshift Value: Minimum"
+      definition: "The minimum value of the redshift (unitless) or Doppler velocity (km/s) in the data object."
+      bestPracticeDefinition: "Note: This is not an IVOA-RM element."
+      recommendation: Optional
+      type: FLOAT
+      required: false
+      repeatable: true
+
+    - id: coverage.RedshiftValue.Maximum
+      name: "Redshift Value: Maximum"
+      definition: "The maximum value of the redshift (unitless) or Doppler velocity (km/s) in the data object."
+      bestPracticeDefinition: "Note: This is not an IVOA-RM element."
+      recommendation: Optional
+      type: FLOAT
+      required: false
+      repeatable: true
+
+- id: biomedical
+  name: Life Sciences Metadata
+  description: >-
+    Describes scientific research in multiple domains that focus on the
+    study of living organisms, including biology, zoology, microbiology,
+    physiology, biochemistry, and related subjects. Based on the ISA-Tab
+    Specification, along with controlled vocabulary from subsets of the OBI
+    Ontology and the NCBI Taxonomy for Organisms.
+  fields:
+    - id: studyDesignType
+      name: Design Type
+      definition: Design types that are based on the overall experimental design.
+      bestPracticeDefinition: "Note: This field is a drop-down list; select all that apply. If there is no appropriate option, select Other and use the Other Design Type field."
+      recommendation: Recommended
+      type: TEXT
+      required: false
+      repeatable: true
+      example: "Case control; Randomized controlled trial; Technological design"
+
+    - id: studyOtherDesignType
+      name: Other Design Type
+      definition: If Other was selected in Design Type, list any other design types that were used in this Dataset.
+      recommendation: Optional
+      type: TEXT
+      required: false
+      repeatable: true
+
+    - id: studyFactorType
+      name: Factor Type
+      definition: Factors used in the Dataset.
+      bestPracticeDefinition: "Note: This field is a drop-down list; select all that apply. If there is no appropriate option, select Other and use the Other Factor Type field."
+      recommendation: Optional
+      type: TEXT
+      required: false
+      repeatable: true
+      example: "Age; Disease state; Strain"
+
+    - id: studyOtherFactorType
+      name: Other Factor Type
+      definition: If Other was selected in Factor Type, list any other factor types that were used in this Dataset.
+      recommendation: Optional
+      type: TEXT
+      required: false
+      repeatable: true
+
+    - id: studyAssayOrganism
+      name: Organism
+      definition: The taxonomic name of the organism used in the Dataset or from which the starting biological material derives.
+      bestPracticeDefinition: "Note: This field is a drop-down list; select all that apply. If there is no appropriate option, select Other and use the Other Organism field."
+      recommendation: Recommended
+      type: TEXT
+      required: false
+      repeatable: true
+      example: "Homo sapiens; Mus musculus; Oryza sativa"
+
+    - id: studyAssayOtherOrganism
+      name: Other Organism
+      definition: "If Other was selected in Organism, list any other organisms that were used in this Dataset. Terms from the NCBI Taxonomy are recommended."
+      recommendation: Optional
+      type: TEXT
+      required: false
+      repeatable: true
+
+    - id: studyAssayMeasurementType
+      name: Measurement Type
+      definition: "A term to qualify the endpoint, or what is being measured (e.g., gene expression profiling; protein identification)."
+      bestPracticeDefinition: "Note: This field is a drop-down list; select all that apply. If there is no appropriate option, select Other and use the Other Measurement Type field."
+      recommendation: Recommended
+      type: TEXT
+      required: false
+      repeatable: true
+      example: "Cell counting; Hematology; Targeted sequencing"
+
+    - id: studyAssayOtherMeasurmentType
+      name: Other Measurement Type
+      definition: "If Other was selected in Measurement Type, list any other measurement types that were used. Terms from NCBO Bioportal are recommended."
+      bestPracticeDefinition: "Tip: NCBO Bioportal is a searchable registry of hundreds of ontologies. Users can select an ontology and download the most recent version to see terms. New users may wish to either seek further guidance or disregard this recommended registry."
+      recommendation: Optional
+      type: TEXT
+      required: false
+      repeatable: true
+
+    - id: studyAssayTechnologyType
+      name: Technology Type
+      definition: "A term to identify the technology used to perform the measurement (e.g., DNA microarray; mass spectrometry)."
+      bestPracticeDefinition: "Note: This field is a drop-down list; select all that apply. If there is no appropriate option, select Other and use the Other Technology Type field."
+      recommendation: Recommended
+      type: TEXT
+      required: false
+      repeatable: true
+      example: "DNA microarray; Flow cytometry; Gel electrophoresis"
+
+    - id: studyAssayOtherTechnologyType
+      name: Other Technology Type
+      definition: "If Other was selected in Technology Type, list any other technology types that were used in this Dataset."
+      recommendation: Optional
+      type: TEXT
+      required: false
+      repeatable: true
+
+    - id: studyAssayPlatform
+      name: Technology Platform
+      definition: "The manufacturer and name of the technology platform used in the assay (e.g., Bruker AVANCE)."
+      bestPracticeDefinition: "Note: This field is a drop-down list; select all that apply. If there is no appropriate option, select Other and use the Other Technology Platform field."
+      recommendation: Recommended
+      type: TEXT
+      required: false
+      repeatable: true
+      example: "Affymetrix; AQI Biosciences; BD BACTEC MGIT 320"
+
+    - id: studyAssayOtherPlatform
+      name: Other Technology Platform
+      definition: "If Other was selected in Technology Platform, list any other technology platforms that were used in this Dataset."
+      recommendation: Optional
+      type: TEXT
+      required: false
+      repeatable: true
+
+    - id: studyAssayCellType
+      name: Cell Type
+      definition: The name of the cell line from which the source or sample derives.
+      bestPracticeDefinition: "Tip: Terms from Cell Ontology are recommended."
+      recommendation: Optional
+      type: TEXT
+      required: false
+      repeatable: true
+      example: "Collar cell; Scleral cell; Unimodal nociceptor"
+
+- id: journal
+  name: Journal Metadata
+  description: >-
+    Used only by journals using a Dataverse repository as its data
+    repository. Identifies the journal volume, issue, and article type
+    that a dataset is associated with, describing the journal's content
+    linked to the data (distinct from the Citation block's Related
+    Publication field, which is for publications related to the dataset
+    generally). Based on the Journal Archiving and Interchange Tag Set
+    (JATS), version 1.2.
+  fields:
+    - id: journalVolumeIssue
+      name: Journal
+      definition: "Indicates the volume, issue and date of a journal, which this Dataset is associated with."
+      type: NONE
+      required: false
+      repeatable: true
+      example: "https://doi.org/10.7910/DVN/XKMNAO"
+
+    - id: journalVolumeIssue.journalVolume
+      name: "Journal: Volume"
+      definition: "The journal volume which this Dataset is associated with (e.g., Volume 4)."
+      type: TEXT
+      required: false
+      repeatable: true
+      example: "113"
+
+    - id: journalVolumeIssue.journalIssue
+      name: "Journal: Issue"
+      definition: "The journal issue number which this Dataset is associated with (e.g., Number 2, Autumn)."
+      type: TEXT
+      required: false
+      repeatable: true
+      example: "2"
+
+    - id: journalVolumeIssue.journalPubDate
+      name: "Journal: Publication Date"
+      definition: "The publication date for this journal volume/issue, which this Dataset is associated with (e.g., 1999)."
+      bestPracticeDefinition: "Tip: The date attribute follows the ISO convention of YYYY-MM-DD."
+      type: DATE
+      required: false
+      repeatable: true
+      example: "2019"
+
+    - id: journalArticleType
+      name: Type of Article
+      definition: "Indicates what kind of article this is, for example, a research article, a commentary, a book or product review, a case report, a calendar, etc. (based on JATS)."
+      bestPracticeDefinition: "Note: This field is a drop-down list; select one article type."
+      type: TEXT
+      required: false
+      repeatable: true
+      example: research article
+
+- id: computationalworkflow
+  name: Computational Workflow Metadata
+  description: >-
+    Not covered by the Dataverse North Metadata Best Practices Guide v3.0
+    (added to Dataverse after this guide's publication); definitions below
+    are sourced directly from metadatablocks.json only.
+  fields:
+    - id: workflowType
+      name: Computational Workflow Type
+      definition: The kind of Computational Workflow, which is designed to compose and execute a series of computational or data manipulation steps in a scientific application.
+      type: TEXT
+      required: false
+      repeatable: true
+
+    - id: workflowCodeRepository
+      name: External Code Repository URL
+      definition: "A link to the repository where the un-compiled, human readable code and related code is located (e.g. GitHub, GitLab, SVN)."
+      type: URL
+      required: false
+      repeatable: true
+
+    - id: workflowDocumentation
+      name: Documentation
+      definition: A link (URL) to the documentation or text describing the Computational Workflow and its use.
+      type: TEXTBOX
+      required: false
+      repeatable: true
+
+- id: 3dobjects
+  name: 3D Objects Metadata
+  description: >-
+    Not covered by the Dataverse North Metadata Best Practices Guide v3.0
+    (added to Dataverse after this guide's publication); definitions below
+    are sourced directly from metadatablocks.json only.
+  fields:
+    - id: 3d3DTechnique
+      name: 3D Technique
+      definition: The technique used for capturing the 3D data.
+      type: TEXT
+      required: false
+      repeatable: true
+
+    - id: 3dEquipment
+      name: Equipment
+      definition: The equipment used for capturing the 3D data.
+      type: TEXT
+      required: false
+      repeatable: false
+
+    - id: 3dLightingSetup
+      name: Lighting Setup
+      definition: The lighting used while capturing the 3D data.
+      type: TEXT
+      required: false
+      repeatable: true
+
+    - id: 3dMasterFilePolygonCount
+      name: Master File Polygon Count
+      definition: The high-resolution polygon count.
+      type: TEXT
+      required: false
+      repeatable: false
+
+    - id: 3dExportedFilePolygonCount
+      name: Exported File Polygon Count
+      definition: The exported mesh polygon count.
+      type: TEXT
+      required: false
+      repeatable: true
+
+    - id: 3dExportedFileFormat
+      name: Exported File Format
+      definition: The format of the exported mesh.
+      type: TEXT
+      required: false
+      repeatable: true
+
+    - id: 3dAltText
+      name: Alt-Text
+      definition: A physical description of the object modeled.
+      type: TEXTBOX
+      required: false
+      repeatable: false
+
+    - id: 3dMaterialComposition
+      name: Material Composition
+      definition: "The material used to create the object, e.g. stone."
+      type: TEXT
+      required: false
+      repeatable: true
+
+    - id: 3dObjectDimensions
+      name: Object Dimensions
+      definition: The general measurements of the physical object.
+      type: NONE
+      required: false
+      repeatable: false
+
+    - id: 3dHandling
+      name: Instructions
+      definition: Safety and special handling instructions for the object.
+      type: TEXTBOX
+      required: false
+      repeatable: false
