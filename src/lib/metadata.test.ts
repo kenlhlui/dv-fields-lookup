@@ -1,9 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { blockDescriptions } from '@/data/block-descriptions';
-import demoMetadata from '@/data/metadata.json';
-import { metadataOverrides as demoOverrides } from '@/data/metadata.overrides';
-import { buildMetadata, countFields, getFieldPath, validateMetadata } from '@/lib/metadata';
+import Metadata from '@/data/metadata.json';
+import { countFields, getFieldPath, validateMetadata } from '@/lib/metadata';
 
 const valid = [
   {
@@ -50,50 +48,7 @@ it('counts fields across blocks and builds a hierarchy path', () => {
   expect(getFieldPath(blocks[0], blocks[0].fields[0])).toBe('Citation Metadata › Author Identifier');
 });
 
-it('builds the real dataset from the raw API export', () => {
-  const blocks = buildMetadata(demoMetadata, undefined, blockDescriptions);
-  expect(blocks).toHaveLength(8);
-  expect(countFields(blocks)).toBe(155);
-});
-
-it('merges the demonstration overrides by field id', () => {
-  const blocks = buildMetadata(demoMetadata, demoOverrides, blockDescriptions);
-  const field = blocks
-    .find((block) => block.id === 'citation')
-    ?.fields.find((f) => f.id === 'author.authorAffiliation');
-  expect(field?.bestPracticeDefinition).toBeDefined();
-  expect(field?.example).toBeDefined();
-});
-
-describe('buildMetadata block ordering', () => {
-  const rawField = (name: string) => ({
-    name,
-    displayName: name,
-    description: 'A field.',
-    type: 'TEXT',
-    multiple: false,
-    isRequired: false,
-  });
-  const rawBlock = (name: string) => ({
-    name,
-    displayName: name,
-    fields: { [name]: rawField(name) },
-  });
-
-  it('orders blocks by their position in block-descriptions.yaml, unlisted blocks last', () => {
-    const raw = { data: [rawBlock('third'), rawBlock('unlisted'), rawBlock('first'), rawBlock('second')] };
-    const descriptions = { first: 'First block.', second: 'Second block.', third: 'Third block.' };
-
-    const blocks = buildMetadata(raw, undefined, descriptions);
-
-    expect(blocks.map((block) => block.id)).toEqual(['first', 'second', 'third', 'unlisted']);
-  });
-
-  it('falls back to the block displayName when it has no block-descriptions.yaml entry', () => {
-    const raw = { data: [rawBlock('undocumented')] };
-
-    const blocks = buildMetadata(raw, undefined, {});
-
-    expect(blocks[0].description).toBe('undocumented');
-  });
+it('validates the data source', () => {
+  const blocks = validateMetadata(Metadata);
+  expect(countFields(blocks)).toBeGreaterThan(blocks.length);
 });

@@ -44,32 +44,17 @@ pnpm release
 
 ## Data and deployment
 
-The site deploys to GitHub Pages under the `/dv-fields-lookup/` base path.
+The site deploys to GitHub Pages under the `/dv-fields-lookup/` base path via [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml), on every push to `main` and on manual workflow dispatch. One repository setting is required, once: in **Settings → Pages**, set **Source** to **GitHub Actions**.
 
-### Metadata source files
+### Metadata schema
 
-The field dictionary is built at render time from three files under [`src/data/`](src/data/), via `buildMetadata()` in [`src/lib/metadata.ts`](src/lib/metadata.ts):
+Astro validates `src/data/metadata.json` at render time, so real metadata can replace the demonstration dataset without touching the application shell, as long as it matches the expected shape. See [docs/schema.md](docs/schema.md) for that schema, or [src/lib/metadata.ts](src/lib/metadata.ts) for the TypeScript types.
 
-| File | What it is | How to update it |
-| --- | --- | --- |
-| `metadata.json` | The raw Dataverse API export, no hand edits. | Fetch `/api/metadatablocks?returnDatasetFieldTypes=true` from a Dataverse instance and copy the response over this file. |
-| `metadata.overrides.yaml` | Curated, per-field additions: `bestPracticeDefinition`, `recommendation`, `example`. Keyed by each field's **leaf name** (e.g. `authorAffiliation`, not `author.authorAffiliation`), so one entry applies wherever that field name appears. | Edit by hand. Add or change a top-level key matching the field's leaf name; any of the three properties may be omitted. |
-| `block-descriptions.yaml` | One description per metadata block, keyed by block id (e.g. `citation`, `geospatial`). Not present in the API response, and also sets the display order of blocks on the page. | Edit by hand. A block missing here falls back to its API `displayName` as the description, and is sorted after every block that *is* listed. |
-
-Both `.yaml` files are loaded through a matching `.ts` wrapper (`metadata.overrides.ts`, `block-descriptions.ts`) that parses them once at import time — no build step to run after editing either yaml file.
-
-Blocks are displayed in the order their keys appear in `block-descriptions.yaml`; reorder the keys there to reorder the page. Any block the API returns that isn't listed is appended at the end, in its original API order.
-
-Astro validates the merged result against the schema in `src/lib/metadata.ts`, so a malformed edit to any of the three files fails the build loudly rather than rendering bad data.
-
-Deployment runs via [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) on every push to `main` and on manual workflow dispatch. The one required one-time repository setting: in **Settings → Pages**, set **Source** to **GitHub Actions**.
-
-To test the metadata (data source) validity before build or deployment, run:
+To check the data before a build or deployment:
 
 ```bash
 pnpm test src/lib/metadata.test.ts
 ```
-
 
 ## Acknowledgments
 The bestPracticeDefinition text is from the [Dataverse North Metadata Best Practices Guide v 3.0](https://doi.org/10.5281/zenodo.5668945), license under CC-BY 4.0.
