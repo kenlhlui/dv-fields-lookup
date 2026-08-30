@@ -62,11 +62,18 @@ export function validateMetadata(input: unknown, overridesInput?: unknown): Meta
   }
 
   const blocks = z.array(metadataBlockSchema).min(1).parse(input);
-  const overrides = overridesSchema.parse(overridesInput);
+  const rawOverrides = z.record(nonempty, z.record(nonempty, z.unknown())).parse(overridesInput);
   // Override keys are the field's leaf name (e.g. "authorAffiliation"), not its
   // possibly-prefixed id (e.g. "author.authorAffiliation"), since overrides are
   // authored once per Dataverse field regardless of which compound it lives in.
   const leafName = (id: string) => id.split('.').at(-1)!;
+  // ponytail: an override key with no matching field (typo, removed field) is just
+  // stale data, not a build-breaking error, so it's dropped before shape-validating
+  // the rest rather than failing the whole parse over it.
+  const leafNames = new Set(blocks.flatMap((block) => block.fields.map((field) => leafName(field.id))));
+  const overrides = overridesSchema.parse(
+    Object.fromEntries(Object.entries(rawOverrides).filter(([key]) => leafNames.has(key))),
+  );
   const merged = blocks.map((block) => ({
     ...block,
     fields: block.fields.map((field) => ({ ...field, ...overrides[leafName(field.id)] })),

@@ -42,6 +42,16 @@ describe('validateMetadata', () => {
     const duplicateField = { ...valid[0], id: 'second' };
     expect(() => validateMetadata([...valid, duplicateField])).toThrow(/duplicate field id: authorIdentifier/i);
   });
+
+  it('ignores override keys that match no field, even with the wrong shape', () => {
+    const overrides = { noSuchField: { example: true } };
+    expect(validateMetadata(valid, overrides)).toEqual(valid);
+  });
+
+  it('still applies overrides that do match a field', () => {
+    const overrides = { authorIdentifier: { recommendation: 'Required' } };
+    expect(validateMetadata(valid, overrides)[0].fields[0].recommendation).toBe('Required');
+  });
 });
 
 it('counts fields across blocks and builds a hierarchy path', () => {
