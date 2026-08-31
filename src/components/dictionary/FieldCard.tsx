@@ -69,6 +69,12 @@ export function FieldCard({ field, match, onSelect }: FieldCardProps) {
         <CardDescription>
           <HighlightText text={field.definition} ranges={match?.ranges.definition} />
         </CardDescription>
+        {field.bestPracticeDefinition && match?.ranges.bestPracticeDefinition && (
+          <CardDescription>
+            <span className="font-medium text-foreground">Best practice: </span>
+            <HighlightText text={field.bestPracticeDefinition} ranges={match.ranges.bestPracticeDefinition} />
+          </CardDescription>
+        )}
       </CardHeader>
       <CardContent className="flex flex-1 flex-wrap content-start gap-2">
         <Badge
