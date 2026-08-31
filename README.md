@@ -1,6 +1,8 @@
 # Dataverse Metadata Field Lookup
 
-![Screenshot of the tool](docs/demo.png)
+<p align="center">
+  <img src="docs/demo.png" alt="Image Description" width="600">
+</p>
 
 Dataverse Metadata Field Lookup is a static Astro application for searching and browsing metadata blocks and fields in a Dataverse installation, with specifications and context.
 
