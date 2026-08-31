@@ -117,7 +117,7 @@ You can deploy the application to any static hosting service. For example, to de
 7. Commit and push your changes. Make sure the repository's Pages settings are set to deploy from GitHub Actions.
 
 ## Acknowledgments
-The bestPracticeDefinition text is from the [Dataverse North Metadata Best Practices Guide v 3.0](https://doi.org/10.5281/zenodo.5668945), license under [CC-BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+The best practice definitions, recommendations, and examples (see [`src/data/metadata.overrides.yaml`](src/data/metadata.overrides.yaml)) are from the [Dataverse North Metadata Best Practices Guide v 3.0](https://doi.org/10.5281/zenodo.5668945), license under [CC-BY 4.0](https://creativecommons.org/licenses/by/4.0/).
 
 ## License
 [Apache License 2.0](LICENSE)
