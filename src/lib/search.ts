@@ -112,7 +112,7 @@ export function createMetadataSearch(blocks: MetadataBlock[]): { search(query: s
     includeScore: true,
     ignoreLocation: true,
     minMatchCharLength: 2,
-    threshold: 0.32,
+    threshold: 0.2,
     keys: searchKeys,
   });
 
