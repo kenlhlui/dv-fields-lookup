@@ -90,7 +90,11 @@ You can deploy the application to any static hosting service. For example, to de
     };
     ```
 
-4. Replace [`src/data/metadata.json`](src/data/metadata.json) with the JSON exported from your Dataverse installation via the `/api/metadatablocks?returnDatasetFieldTypes=true` endpoint.
+4. Replace [`src/data/metadata.json`](src/data/metadata.json) with the JSON exported from your Dataverse installation with either:
+   1. The `/api/metadatablocks?returnDatasetFieldTypes=true` endpoint, which returns all metadata blocks and fields from the installation, or
+      1. Example: [https://demo.borealisdata.ca/api/metadatablocks?returnDatasetFieldTypes=true](https://borealisdata.ca/api/metadatablocks?returnDatasetFieldTypes=true)
+   2. The `/api/dataverses/{id}/metadatablocks?returnDatasetFieldTypes=true` endpoint, which returns all metadata blocks and fields from a collection.
+      1. Example: [https://demo.borealisdata.ca/api/dataverses/toronto/metadatablocks?returnDatasetFieldTypes=true](https://borealisdata.ca/api/dataverses/toronto/metadatablocks?returnDatasetFieldTypes=true)
 
 5. Add best practice definitions and examples for individual fields in [`src/data/metadata.overrides.yaml`](src/data/metadata.overrides.yaml). Look up the field's `name` in `src/data/metadata.json`, then add an entry keyed by that name:
 
