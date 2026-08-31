@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.4.0](https://github.com/kenlhlui/dv-fields-lookup/compare/v0.3.0...v0.4.0) (2026-08-31)
+
+### Features
+
+* ignore keys in the src/data/metadata.overrides.yaml that does not exist in the metadata.json ([864eee9](https://github.com/kenlhlui/dv-fields-lookup/commit/864eee98eebae84aeae2708faca74bf13f79b828))
+
 ## [0.3.0](https://github.com/kenlhlui/dv-fields-lookup/compare/v0.2.0...v0.3.0) (2026-08-29)
 
 ### Features
