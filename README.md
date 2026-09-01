@@ -59,7 +59,7 @@ pnpm release
 
 ### Metadata schema
 
-Astro validates `src/data/metadata.json` at render time, so real metadata can replace the demonstration dataset without touching the application shell, as long as it matches the expected shape. See [docs/schema.md](docs/schema.md) for that schema, or [src/lib/metadata.ts](src/lib/metadata.ts) for the TypeScript types.
+Astro validates `src/data/metadata.json` at render time. See [docs/schema.md](docs/schema.md) for that schema, or [src/lib/metadata.ts](src/lib/metadata.ts) for the TypeScript types.
 
 To check the data before a build or deployment:
 
