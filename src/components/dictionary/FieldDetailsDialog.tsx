@@ -17,7 +17,10 @@ import type { MetadataBlock, MetadataField } from '@/lib/metadata';
 
 export interface SelectedField {
   block: MetadataBlock;
-  field: MetadataField;
+  // bestPracticeDefinitionHtml is computed at build time (see index.astro), not part of
+  // the data dictionary schema in @/lib/metadata — kept out of it so that schema stays a
+  // pure description of authored/sourced field data.
+  field: MetadataField & { bestPracticeDefinitionHtml?: string };
 }
 
 interface FieldDetailsDialogProps {
@@ -69,12 +72,14 @@ export function FieldDetailsDialog({ selected, onOpenChange, restoreFocusRef }: 
 
           <Separator />
 
-          {selected.field.bestPracticeDefinition ? (
+          {selected.field.bestPracticeDefinitionHtml ? (
             <div className="space-y-2">
               <h3 className="text-sm font-medium">Best practice definition</h3>
-              <p className="whitespace-pre-line text-sm text-muted-foreground">
-                {selected.field.bestPracticeDefinition}
-              </p>
+              <div
+                className="space-y-2 text-sm text-muted-foreground [&_a:hover]:text-foreground [&_a]:underline [&_a]:underline-offset-3 [&_ol]:list-decimal [&_ol]:pl-5 [&_strong]:font-medium [&_strong]:text-foreground [&_ul]:list-disc [&_ul]:pl-5"
+                // eslint-disable-next-line react/no-danger -- trusted, build-time content from metadata.overrides.yaml
+                dangerouslySetInnerHTML={{ __html: selected.field.bestPracticeDefinitionHtml }}
+              />
             </div>
           ) : null}
 

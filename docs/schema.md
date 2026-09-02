@@ -17,7 +17,7 @@
 | `name` | string | yes | Dataverse `#datasetField title`. Brief label displayed for the field. |
 | `parent` | string | no | Display name of the compound field this field is a child of, i.e. the Dataverse `#datasetField` whose `childFields` contain it. Absent for top-level fields. |
 | `definition` | string | yes | Dataverse `#datasetField description`. Free-text explanation of the field. |
-| `bestPracticeDefinition` | string | no | Definition from the Dataverse North Metadata Best Practices Guide. Not a Dataverse property. |
+| `bestPracticeDefinition` | string | no | Definition from the Dataverse North Metadata Best Practices Guide. Not a Dataverse property. Rendered as markdown (links, emphasis, lists); headings render as plain text, so avoid `#`. |
 | `recommendation` | string | no | Guidance on when to fill the field in, e.g. `Required`, `Recommended`, `Optional`. Not a Dataverse property. |
 | `type` | string | yes | Dataverse `#datasetField fieldType`. One of `none`, `date`, `email`, `text`, `textbox`, `string`, `url`, `int`, `float`. |
 | `required` | boolean | yes | Dataverse `#datasetField required`. Whether a value must be supplied. |
