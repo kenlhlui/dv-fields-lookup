@@ -1,4 +1,6 @@
 ---
+import { marked } from 'marked';
+
 import InformationDialog from '@/components/InformationDialog';
 import MetadataDictionary from '@/components/dictionary/MetadataDictionary';
 import ThemeToggle from '@/components/ThemeToggle';
@@ -11,7 +13,16 @@ import { buildMetadata } from '@/lib/metadata';
 import { site } from '@/site.config';
 import { compiledContent } from '@/content/information.md';
 
-const metadata = buildMetadata(metadataJson, metadataOverrides, blockDescriptions);
+// bestPracticeDefinition is hand-authored markdown; render it to HTML here (build time,
+// same as information.md below) so the client never ships a markdown parser.
+const metadata = buildMetadata(metadataJson, metadataOverrides, blockDescriptions).map((block) => ({
+  ...block,
+  fields: block.fields.map((field) =>
+    field.bestPracticeDefinition
+      ? { ...field, bestPracticeDefinitionHtml: marked.parse(field.bestPracticeDefinition, { async: false }) }
+      : field,
+  ),
+}));
 const InformationHtml = await compiledContent();
 // ponytail: defaults for installations that don't set their own name/URL
 const dataverseName = site.dataverseName || 'The Dataverse Project';

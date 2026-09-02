@@ -11,6 +11,8 @@ const field = {
   definition: 'A globally unique identifier associated with the author.',
   bestPracticeDefinition:
     'A globally unique identifier for the named author, such as an ORCID iD. Use the corresponding scheme in Identifier Scheme.',
+  bestPracticeDefinitionHtml:
+    '<p>A globally unique identifier for the named author, such as an ORCID iD. Use the corresponding scheme in Identifier Scheme.</p>',
   recommendation: 'Recommended',
   type: 'Text',
   required: false,
