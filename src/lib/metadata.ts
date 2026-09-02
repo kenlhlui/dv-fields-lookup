@@ -9,7 +9,7 @@ export const metadataFieldSchema = z.object({
   name: nonempty.describe('Dataverse `#datasetField title`. Brief label displayed for the field.'),
   parent: nonempty.optional().describe('Display name of the compound field this field is a child of, i.e. the Dataverse `#datasetField` whose `childFields` contain it. Absent for top-level fields.'),
   definition: nonempty.describe('Dataverse `#datasetField description`. Free-text explanation of the field.'),
-  bestPracticeDefinition: nonempty.optional().describe('Definition from the Dataverse North Metadata Best Practices Guide. Not a Dataverse property.'),
+  bestPracticeDefinition: nonempty.optional().describe('Definition from the Dataverse North Metadata Best Practices Guide. Not a Dataverse property. Rendered as markdown (links, emphasis, lists); headings render as plain text, so avoid `#`.'),
   recommendation: nonempty.optional().describe('Guidance on when to fill the field in, e.g. `Required`, `Recommended`, `Optional`. Not a Dataverse property.'),
   type: nonempty.describe('Dataverse `#datasetField fieldType`. One of `none`, `date`, `email`, `text`, `textbox`, `string`, `url`, `int`, `float`.'),
   required: z.boolean().describe('Dataverse `#datasetField required`. Whether a value must be supplied.'),

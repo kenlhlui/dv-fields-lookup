@@ -1,5 +1,7 @@
+# Note: The bestPracticeDefinition field supports markdown rendering. However, it does not support rendering headers (will remain as plain text).
+
 accessToSources:
-  bestPracticeDefinition: 'Tip: May be used to explain any restrictions or access to source data documentation.'
+  bestPracticeDefinition: "Tip: May be used to explain any restrictions or access to source data documentation."
   recommendation: Optional
   example: Open
 actionsToMinimizeLoss:
@@ -9,7 +11,7 @@ actionsToMinimizeLoss:
     https://doi.org/10.5683/SP/L1H3SS); Cards reminding parents about the follow-up visit were given
     out. (Source: https://doi.org/10.7939/DVN/10889)
 alternativeTitle:
-  bestPracticeDefinition: 'Tip: Acronym, short form, or translation of full title.'
+  bestPracticeDefinition: "Tip: Acronym, short form, or translation of full title."
   recommendation: Optional
   example: Youth Social Media Survey
 alternativeURL:
@@ -51,24 +53,24 @@ astroType:
   recommendation: Recommended
   example: Survey; Catalog
 authorAffiliation:
-  bestPracticeDefinition: 'Tip: Use the full official name of the organization; avoid abbreviations.'
+  bestPracticeDefinition: "Tip: Use the full official name of the organization; avoid abbreviations."
   recommendation: Recommended
   example: Queen's University
 authorIdentifier:
   recommendation: Recommended
   example: https://orcid.org/0000-0002-1825-0097
 authorIdentifierScheme:
-  bestPracticeDefinition: 'Note: This field is a drop-down list; select one.'
+  bestPracticeDefinition: "Note: This field is a drop-down list; select one."
   recommendation: Recommended
   example: ORCID
 authorName:
   recommendation: Required
   example: Doe, Jane
 characteristicOfSources:
-  bestPracticeDefinition: 'Tip: Describes noteworthy aspects of the data collected.'
+  bestPracticeDefinition: "Tip: Describes noteworthy aspects of the data collected."
   recommendation: Optional
 city:
-  bestPracticeDefinition: 'Tip: If using this field, also include Country AND, if possible, State/Province to disambiguate.'
+  bestPracticeDefinition: "Tip: If using this field, also include Country AND, if possible, State/Province to disambiguate."
   recommendation: Recommended
   example: Vancouver
 cleaningOperations:
@@ -125,31 +127,31 @@ country:
   recommendation: Recommended
   example: Canada
 coverage.Depth:
-  bestPracticeDefinition: 'Tip: This is the faintest flux of energy that can be perceived (units: Jensky (Jy)).'
+  bestPracticeDefinition: "Tip: This is the faintest flux of energy that can be perceived (units: Jensky (Jy))."
   recommendation: Recommended
-  example: '3.e-6'
+  example: "3.e-6"
 coverage.ObjectCount:
-  bestPracticeDefinition: 'Tip: Objects could be stars, galaxies, planets, star clusters, asteroids, etc.'
+  bestPracticeDefinition: "Tip: Objects could be stars, galaxies, planets, star clusters, asteroids, etc."
   recommendation: Optional
-  example: '2.e7'
+  example: "2.e7"
 coverage.ObjectDensity:
-  bestPracticeDefinition: 'Tip: Objects could be stars, galaxies, planets, star clusters, asteroids, etc.'
+  bestPracticeDefinition: "Tip: Objects could be stars, galaxies, planets, star clusters, asteroids, etc."
   recommendation: Optional
-  example: '6.e4'
+  example: "6.e4"
 coverage.Polarization:
-  bestPracticeDefinition: 'Note: This is not an IVOA-RM element.'
+  bestPracticeDefinition: "Note: This is not an IVOA-RM element."
   recommendation: Recommended
 coverage.Redshift.MaximumValue:
-  bestPracticeDefinition: 'Note: This is not an IVOA-RM element.'
+  bestPracticeDefinition: "Note: This is not an IVOA-RM element."
   recommendation: Optional
 coverage.Redshift.MinimumValue:
-  bestPracticeDefinition: 'Note: This is not an IVOA-RM element.'
+  bestPracticeDefinition: "Note: This is not an IVOA-RM element."
   recommendation: Optional
 coverage.SkyFraction:
   recommendation: Optional
-  example: '0.01'
+  example: "0.01"
 coverage.Spatial:
-  bestPracticeDefinition: 'Note: Follow the syntax found in the Space-Time Coordinate (STC) Metadata Recommendation.'
+  bestPracticeDefinition: "Note: Follow the syntax found in the Space-Time Coordinate (STC) Metadata Recommendation."
   recommendation: Recommended
   example: >-
     PositionInterval FK5 145.17 -1.25 235.9 1.25 PositionInterval FK5 250.71 52.15 267.0 66.29
@@ -161,20 +163,20 @@ coverage.Spectral.Bandpass:
   recommendation: Recommended
   example: u', g', r', i', z'; U, B, V, JHK, 450
 coverage.Spectral.CentralWavelength:
-  bestPracticeDefinition: 'Note: This is not an IVOA-RM element.'
-  example: '1420.405'
+  bestPracticeDefinition: "Note: This is not an IVOA-RM element."
+  example: "1420.405"
 coverage.Spectral.MaximumWavelength:
   recommendation: Optional
-  example: '850.e-9'
+  example: "850.e-9"
 coverage.Spectral.MinimumWavelength:
   recommendation: Optional
-  example: '400.e-9'
+  example: "400.e-9"
 coverage.Temporal.StartTime:
-  bestPracticeDefinition: 'Tip: Provide a date or date/time (preferred) in ISO 8601 format (e.g., YYYY-MM-DDHH:MM:SSZ).'
+  bestPracticeDefinition: "Tip: Provide a date or date/time (preferred) in ISO 8601 format (e.g., YYYY-MM-DDHH:MM:SSZ)."
   recommendation: Recommended
   example: 1999-12-25; 2020-01-08T15:16:23Z
 coverage.Temporal.StopTime:
-  bestPracticeDefinition: 'Tip: Provide a date or date/time (preferred) in ISO 8601 format (e.g., YYYY-MM-DDHH:MM:SSZ).'
+  bestPracticeDefinition: "Tip: Provide a date or date/time (preferred) in ISO 8601 format (e.g., YYYY-MM-DDHH:MM:SSZ)."
   recommendation: Recommended
   example: 2001-07-15; 2021-03-09T19:26:00+05:00
 dataCollectionSituation:
@@ -197,7 +199,7 @@ dataSources:
     Census Metropolitan Areas. NHS 2011, Statistics Canada. Access URL:
     https://www12.statcan.gc.ca/nhs-enm/2011/dp-pd/prof/index.cfm?Lang=E
 datasetContactAffiliation:
-  bestPracticeDefinition: 'Tip: use the full official name of the organization; avoid abbreviations.'
+  bestPracticeDefinition: "Tip: use the full official name of the organization; avoid abbreviations."
   recommendation: Recommended
   example: Queen's University
 datasetContactEmail:
@@ -220,18 +222,18 @@ datasetLevelErrorNotes:
     and were corrected at a micro level when required. (Source: http://hdl.handle.net/11272/10619)
 dateOfCollectionEnd:
   recommendation: Recommended
-  example: '2015-06-21'
+  example: "2015-06-21"
 dateOfCollectionStart:
   bestPracticeDefinition: Contains the date(s) when the data were collected.
   recommendation: Recommended
-  example: '2015-03-20'
+  example: "2015-03-20"
 dateOfDeposit:
   bestPracticeDefinition: >-
     Tip: Deposit Date is pre-populated with the date of upload to the Dataverse repository. It can
     be edited to reflect the date when the data was received by an external or mediated data
     repository service.
   recommendation: Recommended
-  example: '2018-01-15'
+  example: "2018-01-15"
 depositor:
   bestPracticeDefinition: >-
     Tip: The name of the person/institution who provided the dataset(s) to the archive (i.e., not
@@ -255,7 +257,7 @@ distributionDate:
     Tip: This field may be the same as the Deposit Date. Use Distribution Date only if data was
     previously distributed.
   recommendation: Optional
-  example: '2018-01-22'
+  example: "2018-01-22"
 distributorAbbreviation:
   recommendation: Optional
   example: QUL
@@ -276,7 +278,7 @@ distributorURL:
   example: https://library.queensu.ca/search/data-statistics
 dsDescriptionDate:
   recommendation: Optional
-  example: '2018-01-18'
+  example: "2018-01-18"
 dsDescriptionValue:
   bestPracticeDefinition: >-
     Tip: A good description will identify the content of the dataset and help a user determine if
@@ -290,7 +292,7 @@ dsDescriptionValue:
     information is supplemented with the respondent's demographic and household characteristics.
 eastLongitude:
   recommendation: Recommended
-  example: '-123.115'
+  example: "-123.115"
 frequencyOfDataCollection:
   recommendation: Optional
   example: >-
@@ -304,22 +306,22 @@ geographicUnit:
   recommendation: Optional
   example: park
 grantNumberAgency:
-  bestPracticeDefinition: 'Tip: The name of the funder or grant agency supporting the research.'
+  bestPracticeDefinition: "Tip: The name of the funder or grant agency supporting the research."
   recommendation: Optional
   example: Social Sciences and Humanities Research Council (SSHRC)
 grantNumberValue:
   recommendation: Optional
   example: CCB123456
 journalArticleType:
-  bestPracticeDefinition: 'Note: This field is a drop-down list; select one article type.'
+  bestPracticeDefinition: "Note: This field is a drop-down list; select one article type."
   example: research article
 journalIssue:
-  example: '2'
+  example: "2"
 journalPubDate:
-  bestPracticeDefinition: 'Tip: The date attribute follows the ISO convention of YYYY-MM-DD.'
-  example: '2019'
+  bestPracticeDefinition: "Tip: The date attribute follows the ISO convention of YYYY-MM-DD."
+  example: "2019"
 journalVolume:
-  example: '113'
+  example: "113"
 keywordValue:
   bestPracticeDefinition: >-
     Tip: The Keyword field is repeatable. Put each keyword in its own field by pressing the "+"
@@ -332,23 +334,23 @@ keywordValue:
   recommendation: Recommended
   example: Social media; Communication
 keywordVocabulary:
-  bestPracticeDefinition: 'Tip: Use this field when the Keyword term is from a controlled vocabulary.'
+  bestPracticeDefinition: "Tip: Use this field when the Keyword term is from a controlled vocabulary."
   recommendation: Optional
   example: Government of Canada Core Subject Thesaurus
 keywordVocabularyURI:
-  bestPracticeDefinition: 'Tip: Use this field when the Keyword term is from a controlled vocabulary.'
+  bestPracticeDefinition: "Tip: Use this field when the Keyword term is from a controlled vocabulary."
   recommendation: Optional
   example: https://canada.multites.net/
 kindOfData:
   recommendation: Recommended
   example: Survey data
 language:
-  bestPracticeDefinition: 'Note: This field is a drop-down list; select all that apply.'
+  bestPracticeDefinition: "Note: This field is a drop-down list; select all that apply."
   recommendation: Optional
   example: English
 northLatitude:
   recommendation: Recommended
-  example: '49.314'
+  example: "49.314"
 notesText:
   recommendation: Optional
   example: >-
@@ -377,7 +379,7 @@ otherIdAgency:
   example: Youth Communication Development Project, Education Department, Queen's University
 otherIdValue:
   recommendation: Optional
-  example: '2202'
+  example: "2202"
 otherReferences:
   bestPracticeDefinition: >-
     Tip: This includes documentation such as codebooks, questionnaires, methodology, coding files,
@@ -403,11 +405,11 @@ producerURL:
   recommendation: Optional
   example: https://youthsocialmedia.org
 productionDate:
-  bestPracticeDefinition: 'Tip: Date when dataset was finalized and ready for analysis or distribution.'
+  bestPracticeDefinition: "Tip: Date when dataset was finalized and ready for analysis or distribution."
   recommendation: Recommended
-  example: '2016-01-11'
+  example: "2016-01-11"
 productionPlace:
-  bestPracticeDefinition: 'Tip: Include an institution if relevant. Avoid abbreviations.'
+  bestPracticeDefinition: "Tip: Include an institution if relevant. Avoid abbreviations."
   recommendation: Optional
   example: Kingston, Ontario, Canada
 publicationCitation:
@@ -470,11 +472,11 @@ researchInstrument:
     temperature logger, Kestrel 3500 weather meter, Taylor 9878 thermometer. (Source:
     https://hdl.handle.net/10864/12053)
 resolution.Redshift:
-  bestPracticeDefinition: 'Note: This is not an IVOA-RM element.'
+  bestPracticeDefinition: "Note: This is not an IVOA-RM element."
   recommendation: Optional
 resolution.Spatial:
   recommendation: Recommended
-  example: '0.00028'
+  example: "0.00028"
 resolution.Spectral:
   bestPracticeDefinition: >-
     Tip: The spectral resolution may also be given as the difference between velocities Δv,
@@ -483,7 +485,7 @@ resolution.Spectral:
   example: 5000 (given here as λ/Δλ); 0.15 km/s (given here as Δv)
 resolution.Temporal:
   recommendation: Recommended
-  example: '120'
+  example: "120"
 responseRate:
   recommendation: Recommended
   example: >-
@@ -493,7 +495,7 @@ responseRate:
     (Source: https://doi.org/10.5683/SP/CNXSVN); At one-month follow-up: 60.2% (n=136/226). (Source:
     https://doi.org/10.7939/DVN/10889)
 samplingErrorEstimates:
-  bestPracticeDefinition: 'Tip: Examples include confidence intervals, non-response, response bias.'
+  bestPracticeDefinition: "Tip: Examples include confidence intervals, non-response, response bias."
   recommendation: Recommended
   example: >-
     In SFS 2016, the 95% confidence interval for the average net worth of Canadian families had a
@@ -539,16 +541,16 @@ softwareName:
   example: SPSS
 softwareVersion:
   recommendation: Optional
-  example: '24'
+  example: "24"
 southLatitude:
   recommendation: Recommended
-  example: '49.226'
+  example: "49.226"
 state:
-  bestPracticeDefinition: 'Tip: If using this field, also include Country to disambiguate.'
+  bestPracticeDefinition: "Tip: If using this field, also include Country to disambiguate."
   recommendation: Recommended
   example: British Columbia
 studyAssayCellType:
-  bestPracticeDefinition: 'Tip: Terms from Cell Ontology are recommended.'
+  bestPracticeDefinition: "Tip: Terms from Cell Ontology are recommended."
   recommendation: Optional
   example: Collar cell; Scleral cell; Unimodal nociceptor
 studyAssayMeasurementType:
@@ -623,7 +625,7 @@ targetSampleActualSize:
     Tip: The research study's actual sample size may be stated in this numeric field for reference
     purposes.
   recommendation: Optional
-  example: '1015'
+  example: "1015"
 targetSampleSizeFormula:
   bestPracticeDefinition: >-
     Tip: A plain-text, general description of a sample size formula may be stated here for reference
@@ -635,17 +637,17 @@ targetSampleSizeFormula:
     K7N, K7P, K7R, K8N, K8P, K8R, K8V, K0E, K0G, K0H, K0K.
 timeMethod:
   recommendation: Optional
-  example: 'Longitudinal; Time series; Longitudinal: Panel'
+  example: "Longitudinal; Time series; Longitudinal: Panel"
 timePeriodCoveredEnd:
   recommendation: Recommended
-  example: '2015-06-21'
+  example: "2015-06-21"
 timePeriodCoveredStart:
   bestPracticeDefinition: >-
     Time period to which the data refer. This item reflects the time period covered by the data, not
     the dates of coding or making documents machine-readable or the dates the data were collected.
     Also known as span.
   recommendation: Recommended
-  example: '2015-03-20'
+  example: "2015-03-20"
 title:
   example: Social Media Use Among Teens, 2015 [Canada]
 topicClassValue:
@@ -660,11 +662,11 @@ topicClassValue:
   recommendation: Optional
   example: Society and Culture
 topicClassVocab:
-  bestPracticeDefinition: 'Tip: Use this field when the Topic Classification term is from a controlled vocabulary.'
+  bestPracticeDefinition: "Tip: Use this field when the Topic Classification term is from a controlled vocabulary."
   recommendation: Optional
   example: Government of Canada Core Subject Thesaurus
 topicClassVocabURI:
-  bestPracticeDefinition: 'Tip: Use this field when the Topic Classification term is from a controlled vocabulary.'
+  bestPracticeDefinition: "Tip: Use this field when the Topic Classification term is from a controlled vocabulary."
   recommendation: Optional
   example: https://canada.multites.net/
 unitOfAnalysis:
@@ -693,4 +695,4 @@ weighting:
     https://doi.org/10.7939/DVN/10813)
 westLongitude:
   recommendation: Recommended
-  example: '-123.265'
+  example: "-123.265"
