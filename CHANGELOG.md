@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/kenlhlui/dv-fields-lookup/compare/v0.4.0...v0.5.0) (2026-09-02)
+
+### Features
+
+* add markdown rendering support for bestPracticeDefinition in metadata.overrides.yaml ([#26](https://github.com/kenlhlui/dv-fields-lookup/issues/26)) ([ddee1ef](https://github.com/kenlhlui/dv-fields-lookup/commit/ddee1ef745e8f118bc79054ebe08e6a0f3d95cf2))
+* tweak the full-text search ([#23](https://github.com/kenlhlui/dv-fields-lookup/issues/23)) ([f273135](https://github.com/kenlhlui/dv-fields-lookup/commit/f27313551c91a98911dafbba0d4bd62a24b37b9d))
+
 ## [0.4.0](https://github.com/kenlhlui/dv-fields-lookup/compare/v0.3.0...v0.4.0) (2026-08-31)
 
 ### Features
