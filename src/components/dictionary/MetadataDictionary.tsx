@@ -130,7 +130,11 @@ export default function MetadataDictionary({ blocks }: { blocks: MetadataBlock[]
         <Separator />
         <div className="space-y-1">
           <p className="text-md font-medium text-muted-foreground">Best practice</p>
-          <p className="text-sm text-muted-foreground">{facetDescriptions.bestPractice}</p>
+          {/* ponytail: static, repo-authored yaml, not user input — safe to render as HTML */}
+          <p
+            className="text-sm text-muted-foreground"
+            dangerouslySetInnerHTML={{ __html: facetDescriptions.bestPractice }}
+          />
           <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by best practice">
             {bestPracticeTiers.map((tier) => (
               <Button
