@@ -68,7 +68,7 @@ export default function MetadataDictionary({ blocks }: { blocks: MetadataBlock[]
     <div className="space-y-8">
       <BlockNav blocks={visibleBlocks.map((result) => result.block)} />
       <div className="space-y-3">
-        <label htmlFor="metadata-search" className="text-sm font-medium">
+        <label htmlFor="metadata-search" className="text-lg font-medium">
           Search metadata fields
         </label>
         <div className="flex gap-2">
@@ -93,9 +93,9 @@ export default function MetadataDictionary({ blocks }: { blocks: MetadataBlock[]
             </Button>
           )}
         </div>
-        <div className="space-y-2">
-          <p className="text-xs font-medium text-muted-foreground">Metadata block</p>
-          <p className="text-xs text-muted-foreground">{facetDescriptions.metadataBlock}</p>
+        <div className="space-y-1">
+          <p className="text-md font-medium text-muted-foreground">Metadata block</p>
+          <p className="text-sm text-muted-foreground">{facetDescriptions.metadataBlock}</p>
           <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by metadata block">
             {blocks.map((block) => (
               <Button
@@ -112,9 +112,9 @@ export default function MetadataDictionary({ blocks }: { blocks: MetadataBlock[]
           </div>
         </div>
         <Separator />
-        <div className="space-y-2">
-          <p className="text-xs font-medium text-muted-foreground">Required</p>
-          <p className="text-xs text-muted-foreground">{facetDescriptions.required}</p>
+        <div className="space-y-1">
+          <p className="text-md font-medium text-muted-foreground">Required</p>
+          <p className="text-sm text-muted-foreground">{facetDescriptions.required}</p>
           <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by required">
             <Button
               type="button"
@@ -128,9 +128,9 @@ export default function MetadataDictionary({ blocks }: { blocks: MetadataBlock[]
           </div>
         </div>
         <Separator />
-        <div className="space-y-2">
-          <p className="text-xs font-medium text-muted-foreground">Best practice</p>
-          <p className="text-xs text-muted-foreground">{facetDescriptions.bestPractice}</p>
+        <div className="space-y-1">
+          <p className="text-md font-medium text-muted-foreground">Best practice</p>
+          <p className="text-sm text-muted-foreground">{facetDescriptions.bestPractice}</p>
           <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by best practice">
             {bestPracticeTiers.map((tier) => (
               <Button
