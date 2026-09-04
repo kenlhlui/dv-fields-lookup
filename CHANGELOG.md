@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.6.0](https://github.com/kenlhlui/dv-fields-lookup/compare/v0.5.0...v0.6.0) (2026-09-04)
+
+### Features
+
+* **ui:** add description under facets title ([#29](https://github.com/kenlhlui/dv-fields-lookup/issues/29)) ([5cec941](https://github.com/kenlhlui/dv-fields-lookup/commit/5cec9410ac677d5fc4cae08a828dd28fd3ce94cb))
+
 ## [0.5.0](https://github.com/kenlhlui/dv-fields-lookup/compare/v0.4.0...v0.5.0) (2026-09-02)
 
 ### Features
