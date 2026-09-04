@@ -68,7 +68,7 @@ export default function MetadataDictionary({ blocks }: { blocks: MetadataBlock[]
     <div className="space-y-8">
       <BlockNav blocks={visibleBlocks.map((result) => result.block)} />
       <div className="space-y-3">
-        <label htmlFor="metadata-search" className="text-lg font-medium">
+        <label htmlFor="metadata-search" className="text-xl font-medium gap-1 flex items-center">
           Search metadata fields
         </label>
         <div className="flex gap-2">
