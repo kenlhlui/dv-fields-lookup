@@ -1,0 +1,7 @@
+# Descriptions shown under the "Required" / "Best practice" filter facets
+# in the metadata dictionary UI. Not sourced from the API; curated by hand.
+metadataBlock: |
+  A metadata block groups relevant metadata fields for input and displays
+required: System required fields to publish a dataset
+bestPractice: |
+  Fields that <a href="https://zenodo.org/records/5668945" target="_blank" rel="noopener noreferrer" class="underline">Dataverse North Metadata Best Practices Guide</a> notes as Recommended or Optional

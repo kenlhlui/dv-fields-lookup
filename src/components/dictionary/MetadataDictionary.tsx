@@ -7,6 +7,7 @@ import { MetadataBlockSection } from '@/components/dictionary/MetadataBlockSecti
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
+import { facetDescriptions } from '@/data/facet-descriptions';
 import type { MetadataBlock, MetadataField } from '@/lib/metadata';
 import { createMetadataSearch, getVisibleFields } from '@/lib/search';
 
@@ -67,7 +68,7 @@ export default function MetadataDictionary({ blocks }: { blocks: MetadataBlock[]
     <div className="space-y-8">
       <BlockNav blocks={visibleBlocks.map((result) => result.block)} />
       <div className="space-y-3">
-        <label htmlFor="metadata-search" className="text-sm font-medium">
+        <label htmlFor="metadata-search" className="text-xl font-medium gap-1 flex items-center">
           Search metadata fields
         </label>
         <div className="flex gap-2">
@@ -92,8 +93,9 @@ export default function MetadataDictionary({ blocks }: { blocks: MetadataBlock[]
             </Button>
           )}
         </div>
-        <div className="space-y-2">
-          <p className="text-xs font-medium text-muted-foreground">Metadata block</p>
+        <div className="space-y-1">
+          <p className="text-md font-medium text-muted-foreground">Metadata block</p>
+          <p className="text-sm text-muted-foreground">{facetDescriptions.metadataBlock}</p>
           <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by metadata block">
             {blocks.map((block) => (
               <Button
@@ -110,37 +112,42 @@ export default function MetadataDictionary({ blocks }: { blocks: MetadataBlock[]
           </div>
         </div>
         <Separator />
-        <div className="flex flex-wrap gap-x-6 gap-y-3">
-          <div className="space-y-2">
-            <p className="text-xs font-medium text-muted-foreground">Required</p>
-            <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by required">
-              <Button
-                type="button"
-                variant={requiredOnly ? 'default' : 'outline'}
-                size="sm"
-                aria-pressed={requiredOnly}
-                onClick={() => setRequiredOnly((current) => !current)}
-              >
-                Required
-              </Button>
-            </div>
+        <div className="space-y-1">
+          <p className="text-md font-medium text-muted-foreground">Required</p>
+          <p className="text-sm text-muted-foreground">{facetDescriptions.required}</p>
+          <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by required">
+            <Button
+              type="button"
+              variant={requiredOnly ? 'default' : 'outline'}
+              size="sm"
+              aria-pressed={requiredOnly}
+              onClick={() => setRequiredOnly((current) => !current)}
+            >
+              Required
+            </Button>
           </div>
-          <div className="space-y-2">
-            <p className="text-xs font-medium text-muted-foreground">Best practice</p>
-            <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by best practice">
-              {bestPracticeTiers.map((tier) => (
-                <Button
-                  key={tier}
-                  type="button"
-                  variant={bestPracticeFilter.has(tier) ? 'default' : 'outline'}
-                  size="sm"
-                  aria-pressed={bestPracticeFilter.has(tier)}
-                  onClick={() => setBestPracticeFilter((current) => toggleInSet(current, tier))}
-                >
-                  {tier}
-                </Button>
-              ))}
-            </div>
+        </div>
+        <Separator />
+        <div className="space-y-1">
+          <p className="text-md font-medium text-muted-foreground">Best practice</p>
+          {/* ponytail: static, repo-authored yaml, not user input — safe to render as HTML */}
+          <p
+            className="text-sm text-muted-foreground"
+            dangerouslySetInnerHTML={{ __html: facetDescriptions.bestPractice }}
+          />
+          <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by best practice">
+            {bestPracticeTiers.map((tier) => (
+              <Button
+                key={tier}
+                type="button"
+                variant={bestPracticeFilter.has(tier) ? 'default' : 'outline'}
+                size="sm"
+                aria-pressed={bestPracticeFilter.has(tier)}
+                onClick={() => setBestPracticeFilter((current) => toggleInSet(current, tier))}
+              >
+                {tier}
+              </Button>
+            ))}
           </div>
         </div>
         <p role="status" aria-live="polite" className="text-sm text-muted-foreground">
