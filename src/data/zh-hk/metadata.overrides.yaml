@@ -1,0 +1,47 @@
+# 繁體中文（香港）翻譯，鍵與 src/data/en/metadata.overrides.yaml 相同。
+#
+# 此檔案是「部分覆寫」：只需列出已翻譯的欄位及屬性，其餘會逐鍵沿用英文版本。
+# 例如以下 alternativeTitle 只翻譯了 bestPracticeDefinition，其 recommendation 及
+# example 仍取自英文檔案。
+#
+# 請勿翻譯 `recommendation`：`Required` / `Recommended` / `Optional` 是程式用的固定代碼，
+# 篩選按鈕及標籤顏色都以這些英文字串比對，翻譯會令篩選功能失效。介面顯示的中文由
+# src/i18n/ui.ts 的 tier.* 提供。詳見 src/data/README.md。
+#
+# bestPracticeDefinition 支援 Markdown（標題除外，會以純文字顯示）。
+
+accessToSources:
+  bestPracticeDefinition: "提示：可用於說明原始資料文件的任何存取限制或取用方式。"
+alternativeTitle:
+  bestPracticeDefinition: "提示：完整標題的縮寫、簡稱或譯名。"
+authorAffiliation:
+  bestPracticeDefinition: "提示：請使用機構的正式全名，避免使用縮寫。"
+city:
+  bestPracticeDefinition: "提示：使用此欄位時，請一併填寫「國家／地區」，如可能亦請填寫「州／省」，以免混淆。"
+country:
+  bestPracticeDefinition: >-
+    註：此欄位為下拉式選單，請選擇一項。提示：請從 ISO-3166 的名稱清單中選取。如資料集涵蓋
+    多個國家／地區，請全部列出。
+datasetContactAffiliation:
+  bestPracticeDefinition: "提示：請使用機構的正式全名，避免使用縮寫。"
+dsDescriptionValue:
+  bestPracticeDefinition: "提示：良好的說明能清楚交代資料集的內容，並協助使用者判斷自己是否具備使用該資料的技術能力。"
+keywordValue:
+  bestPracticeDefinition: >-
+    提示：關鍵詞欄位可重複，請按「+」按鈕，將每個關鍵詞分別填入獨立欄位。提示：在 Dataverse
+    元數據中，關鍵詞區分大小寫；自由文字詞彙請使用句首大寫（即首字及專有名詞大寫）。提示：
+    此欄位可填入自由文字詞彙或控制詞彙中的詞彙，用以表示資料集所涉及的具體或細分主題，可視之
+    為標籤。提示：FAST 及 RVMFAST 是改編自美國國會圖書館主題標目（LCSH）的通用控制詞彙，適合
+    一般用途。提示：地理名稱應填入「地理空間」元數據區塊。
+state:
+  bestPracticeDefinition: "提示：使用此欄位時，請一併填寫「國家／地區」，以免混淆。"
+subject:
+  bestPracticeDefinition: >-
+    註：此欄位為下拉式選單，可選擇多項。
+
+
+    提示：請選取一個或多個主題詞，以代表資料集所屬的廣泛範疇。
+subtitle:
+  bestPracticeDefinition: >-
+    提示：副標題不會納入自動生成的引用格式。如希望副標題出現在引用格式中，除「副標題」欄位外，
+    亦須將其加入「標題」欄位。

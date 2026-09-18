@@ -2,6 +2,7 @@ import { ChevronDown } from 'lucide-react';
 
 import { FieldCard } from '@/components/dictionary/FieldCard';
 import { Separator } from '@/components/ui/separator';
+import { plural, useTranslations, type Lang } from '@/i18n/utils';
 import type { MetadataBlock, MetadataField } from '@/lib/metadata';
 import { getVisibleFields, type SearchBlock } from '@/lib/search';
 
@@ -9,6 +10,7 @@ interface MetadataBlockSectionProps {
   result: SearchBlock;
   onSelectField(block: MetadataBlock, field: MetadataField, opener: HTMLButtonElement): void;
   fieldFilter?: (field: MetadataField) => boolean;
+  lang: Lang;
 }
 
 interface FieldGroup {
@@ -32,7 +34,8 @@ function groupByParent(fields: MetadataField[]): FieldGroup[] {
   }, []);
 }
 
-export function MetadataBlockSection({ result, onSelectField, fieldFilter }: MetadataBlockSectionProps) {
+export function MetadataBlockSection({ result, onSelectField, fieldFilter, lang }: MetadataBlockSectionProps) {
+  const t = useTranslations(lang);
   // Searching narrows a block to its matching fields; browsing shows every field (matches is empty).
   // fieldFilter then narrows further by facet (required, best practice).
   const fields = getVisibleFields(result, fieldFilter);
@@ -47,6 +50,7 @@ export function MetadataBlockSection({ result, onSelectField, fieldFilter }: Met
           field={field}
           match={result.matches.get(field.id)}
           onSelect={(opener) => onSelectField(result.block, field, opener)}
+          lang={lang}
         />
       ))}
     </div>
@@ -63,7 +67,12 @@ export function MetadataBlockSection({ result, onSelectField, fieldFilter }: Met
               <h2 id={`metadata-block-${result.block.id}`} className="text-2xl font-semibold tracking-tight">
                 {result.block.name}
               </h2>
-              <p className="text-sm text-muted-foreground">{fieldCount} fields</p>
+              <p className="text-sm text-muted-foreground">
+                {t('block.fieldCount', {
+                  count: fieldCount,
+                  word: plural(t, fieldCount, 'count.field.one', 'count.field.other'),
+                })}
+              </p>
             </div>
             <p className="max-w-3xl text-muted-foreground">{result.block.description}</p>
           </div>
@@ -87,7 +96,10 @@ export function MetadataBlockSection({ result, onSelectField, fieldFilter }: Met
                     {group.parent}
                   </h3>
                   <p className="text-sm text-muted-foreground">
-                    Compound field · {group.fields.length} sub-{group.fields.length === 1 ? 'field' : 'fields'}
+                    {t('block.compound', {
+                      count: group.fields.length,
+                      word: plural(t, group.fields.length, 'count.subfield.one', 'count.subfield.other'),
+                    })}
                   </p>
                 </div>
                 {cards(group)}

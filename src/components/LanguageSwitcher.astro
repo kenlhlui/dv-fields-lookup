@@ -1,0 +1,95 @@
+---
+import { getRelativeLocaleUrl } from 'astro:i18n';
+
+import { languages } from '@/i18n/ui';
+import { useTranslations, type Lang } from '@/i18n/utils';
+
+interface Props {
+	lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+// ponytail: a native <details> disclosure rather than a React island — the options stay real
+// links, so they work without JS, can be opened in a new tab, and keep the hreflang signal.
+// getRelativeLocaleUrl applies the configured base path.
+const locales = Object.entries(languages) as [Lang, string][];
+---
+
+<nav aria-label={t('lang.label')}>
+	<details class="group relative" data-lang-switcher>
+		<summary
+			class="inline-flex h-8 cursor-pointer list-none items-center justify-center gap-1.5 rounded-lg border border-transparent px-2.5 text-sm font-medium whitespace-nowrap text-muted-foreground transition-all outline-none select-none hover:bg-muted hover:text-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 group-open:bg-muted group-open:text-foreground dark:hover:bg-muted/50 [&::-webkit-details-marker]:hidden"
+		>
+			<svg
+				aria-hidden="true"
+				class="size-4"
+				xmlns="http://www.w3.org/2000/svg"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+			>
+				<circle cx="12" cy="12" r="10"></circle>
+				<path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path>
+				<path d="M2 12h20"></path>
+			</svg>
+			<!-- Label collapses to an icon-only control on phones, matching the buttons beside it. -->
+			<span class="hidden sm:inline">{languages[lang]}</span>
+			<svg
+				aria-hidden="true"
+				class="size-3.5 transition-transform group-open:rotate-180"
+				xmlns="http://www.w3.org/2000/svg"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+			>
+				<path d="m6 9 6 6 6-6"></path>
+			</svg>
+		</summary>
+		<ul
+			class="absolute right-0 z-50 mt-1 min-w-40 space-y-0.5 rounded-lg border border-border bg-background p-1 shadow-lg"
+		>
+			{
+				locales.map(([locale, label]) => (
+					<li>
+						<a
+							href={getRelativeLocaleUrl(locale, '')}
+							hreflang={locale}
+							lang={locale}
+							aria-current={locale === lang ? 'page' : undefined}
+							class="block rounded-md px-2.5 py-1.5 text-sm text-muted-foreground hover:bg-muted hover:text-foreground aria-[current=page]:bg-muted aria-[current=page]:font-medium aria-[current=page]:text-foreground"
+						>
+							{label}
+						</a>
+					</li>
+				))
+			}
+		</ul>
+	</details>
+</nav>
+
+<script is:inline>
+	// ponytail: progressive enhancement only — <details> already opens and closes on its own.
+	// This just adds the dismiss-on-outside-click and Escape behaviour people expect of a menu.
+	const openSwitchers = () => document.querySelectorAll('details[data-lang-switcher][open]');
+
+	document.addEventListener('click', (event) => {
+		for (const details of openSwitchers()) {
+			if (!details.contains(event.target)) details.open = false;
+		}
+	});
+
+	document.addEventListener('keydown', (event) => {
+		if (event.key !== 'Escape') return;
+		for (const details of openSwitchers()) {
+			details.open = false;
+			details.querySelector('summary')?.focus();
+		}
+	});
+</script>

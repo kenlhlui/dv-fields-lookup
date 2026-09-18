@@ -1,26 +1,33 @@
 ---
 import '@/styles/global.css';
+import { getAbsoluteLocaleUrl } from 'astro:i18n';
+
 import BackToTop from '@/components/BackToTop.astro';
+import { languages } from '@/i18n/ui';
+import type { Lang } from '@/i18n/utils';
 
 interface Props {
 	title: string;
 	description: string;
+	lang: Lang;
 }
 
-const { title, description } = Astro.props;
+const { title, description, lang } = Astro.props;
 const baseUrl = import.meta.env.BASE_URL.endsWith('/')
 	? import.meta.env.BASE_URL
 	: `${import.meta.env.BASE_URL}/`;
+const locales = Object.keys(languages) as Lang[];
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={lang}>
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="description" content={description} />
 		<link rel="icon" type="image/svg+xml" href={`${baseUrl}favicon.svg`} />
 		<link rel="icon" href={`${baseUrl}favicon.ico`} />
+		{locales.map((locale) => <link rel="alternate" hreflang={locale} href={getAbsoluteLocaleUrl(locale, '')} />)}
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 		<script is:inline>
@@ -32,6 +39,6 @@ const baseUrl = import.meta.env.BASE_URL.endsWith('/')
 	</head>
 	<body id="top">
 		<slot />
-		<BackToTop />
+		<BackToTop lang={lang} />
 	</body>
 </html>

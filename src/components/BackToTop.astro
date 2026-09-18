@@ -1,6 +1,16 @@
+---
+import { useTranslations, type Lang } from '@/i18n/utils';
+
+interface Props {
+	lang: Lang;
+}
+
+const t = useTranslations(Astro.props.lang);
+---
+
 <a
 	href="#top"
-	aria-label="Back to top"
+	aria-label={t('a11y.backToTop')}
 	class="back-to-top fixed right-4 bottom-4 z-50 rounded-full border border-border bg-background p-2 text-muted-foreground opacity-0 shadow transition-opacity duration-200 pointer-events-none hover:text-foreground data-[visible]:opacity-100 data-[visible]:pointer-events-auto"
 >
 	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">

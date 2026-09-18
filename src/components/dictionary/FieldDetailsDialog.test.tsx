@@ -37,6 +37,7 @@ describe('FieldDetailsDialog', () => {
         selected={selected}
         onOpenChange={vi.fn()}
         restoreFocusRef={createRef<HTMLElement>()}
+        lang="en"
       />,
     );
 
@@ -65,6 +66,7 @@ describe('FieldDetailsDialog', () => {
         selected={selected}
         onOpenChange={onOpenChange}
         restoreFocusRef={createRef<HTMLElement>()}
+        lang="en"
       />,
     );
 
@@ -79,6 +81,7 @@ describe('FieldDetailsDialog', () => {
         selected={null}
         onOpenChange={vi.fn()}
         restoreFocusRef={createRef<HTMLElement>()}
+        lang="en"
       />,
     );
 
@@ -101,6 +104,7 @@ describe('FieldDetailsDialog', () => {
             selected={open ? selected : null}
             onOpenChange={setOpen}
             restoreFocusRef={restoreFocusRef}
+            lang="en"
           />
         </>
       );

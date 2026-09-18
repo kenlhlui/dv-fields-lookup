@@ -12,6 +12,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
+import { tierLabel, useTranslations, type Lang } from '@/i18n/utils';
 import { getFieldPath } from '@/lib/metadata';
 import type { MetadataBlock, MetadataField } from '@/lib/metadata';
 
@@ -27,9 +28,12 @@ interface FieldDetailsDialogProps {
   selected: SelectedField | null;
   onOpenChange(open: boolean): void;
   restoreFocusRef: React.RefObject<HTMLElement | null>;
+  lang: Lang;
 }
 
-export function FieldDetailsDialog({ selected, onOpenChange, restoreFocusRef }: FieldDetailsDialogProps) {
+export function FieldDetailsDialog({ selected, onOpenChange, restoreFocusRef, lang }: FieldDetailsDialogProps) {
+  const t = useTranslations(lang);
+
   return (
     <Dialog open={selected !== null} onOpenChange={onOpenChange}>
       {selected && (
@@ -47,25 +51,25 @@ export function FieldDetailsDialog({ selected, onOpenChange, restoreFocusRef }: 
 
           <dl className="grid gap-3 text-sm sm:grid-cols-2">
             <div>
-              <dt className="font-medium text-muted-foreground">Identifier</dt>
+              <dt className="font-medium text-muted-foreground">{t('details.identifier')}</dt>
               <dd className="mt-1 font-mono text-xs break-words">{selected.field.id}</dd>
             </div>
             <div>
-              <dt className="font-medium text-muted-foreground">Type</dt>
+              <dt className="font-medium text-muted-foreground">{t('details.type')}</dt>
               <dd className="mt-1">{selected.field.type}</dd>
             </div>
             <div>
-              <dt className="font-medium text-muted-foreground">Required</dt>
-              <dd className="mt-1">{selected.field.required ? 'Yes' : 'No'}</dd>
+              <dt className="font-medium text-muted-foreground">{t('details.required')}</dt>
+              <dd className="mt-1">{t(selected.field.required ? 'details.yes' : 'details.no')}</dd>
             </div>
             <div>
-              <dt className="font-medium text-muted-foreground">Repeatable</dt>
-              <dd className="mt-1">{selected.field.repeatable ? 'Yes' : 'No'}</dd>
+              <dt className="font-medium text-muted-foreground">{t('details.repeatable')}</dt>
+              <dd className="mt-1">{t(selected.field.repeatable ? 'details.yes' : 'details.no')}</dd>
             </div>
             {selected.field.recommendation && (
               <div>
-                <dt className="font-medium text-muted-foreground">Best practice</dt>
-                <dd className="mt-1">{selected.field.recommendation}</dd>
+                <dt className="font-medium text-muted-foreground">{t('details.bestPractice')}</dt>
+                <dd className="mt-1">{tierLabel(t, selected.field.recommendation)}</dd>
               </div>
             )}
           </dl>
@@ -74,7 +78,7 @@ export function FieldDetailsDialog({ selected, onOpenChange, restoreFocusRef }: 
 
           {selected.field.bestPracticeDefinitionHtml ? (
             <div className="space-y-2">
-              <h3 className="text-sm font-medium">Best practice definition</h3>
+              <h3 className="text-sm font-medium">{t('details.bestPracticeDefinition')}</h3>
               <div
                 className="space-y-2 text-sm text-muted-foreground [&_a:hover]:text-foreground [&_a]:underline [&_a]:underline-offset-3 [&_ol]:list-decimal [&_ol]:pl-5 [&_strong]:font-medium [&_strong]:text-foreground [&_ul]:list-disc [&_ul]:pl-5"
                 // eslint-disable-next-line react/no-danger -- trusted, build-time content from metadata.overrides.yaml
@@ -85,7 +89,7 @@ export function FieldDetailsDialog({ selected, onOpenChange, restoreFocusRef }: 
 
           {selected.field.example ? (
             <div className="space-y-2">
-              <h3 className="text-sm font-medium">Example</h3>
+              <h3 className="text-sm font-medium">{t('details.example')}</h3>
               <pre className="overflow-x-auto rounded-md bg-muted p-3 text-xs whitespace-pre-wrap">
                 <code>{selected.field.example}</code>
               </pre>
@@ -94,7 +98,7 @@ export function FieldDetailsDialog({ selected, onOpenChange, restoreFocusRef }: 
 
           {selected.field.values?.length ? (
             <div className="space-y-2">
-              <h3 className="text-sm font-medium">Allowed values</h3>
+              <h3 className="text-sm font-medium">{t('details.allowedValues')}</h3>
               <div className="flex flex-wrap gap-2">
                 {selected.field.values.map((value) => (
                   <Badge
@@ -110,13 +114,13 @@ export function FieldDetailsDialog({ selected, onOpenChange, restoreFocusRef }: 
           ) : null}
 
           <div className="space-y-1">
-            <h3 className="text-sm font-medium">Path</h3>
+            <h3 className="text-sm font-medium">{t('details.path')}</h3>
             <p className="text-sm text-muted-foreground">{getFieldPath(selected.block, selected.field)}</p>
           </div>
 
           <DialogFooter>
             <DialogClose asChild>
-              <Button variant="outline">Close</Button>
+              <Button variant="outline">{t('details.close')}</Button>
             </DialogClose>
           </DialogFooter>
         </DialogContent>

@@ -11,6 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { tierLabel, useTranslations, type Lang } from '@/i18n/utils';
 import type { MetadataField } from '@/lib/metadata';
 import type { FieldMatch } from '@/lib/search';
 import { cn } from '@/lib/utils';
@@ -19,6 +20,7 @@ interface FieldCardProps {
   field: MetadataField;
   match?: FieldMatch;
   onSelect(opener: HTMLButtonElement): void;
+  lang: Lang;
 }
 
 // GitHub Primer accent colors (accent/danger/done/neutral), 10% tint w/ tinted text + border.
@@ -38,7 +40,8 @@ const bestPracticeColor: Record<string, string> = {
 const bestPracticeColorDefault =
   'border-[#656d76]/30 bg-[#656d76]/10 text-[#656d76] dark:border-[#9198a1]/40 dark:bg-[#656d76]/15 dark:text-[#9198a1]';
 
-export function FieldCard({ field, match, onSelect }: FieldCardProps) {
+export function FieldCard({ field, match, onSelect, lang }: FieldCardProps) {
+  const t = useTranslations(lang);
   const isMatch = match !== undefined;
 
   return (
@@ -52,17 +55,18 @@ export function FieldCard({ field, match, onSelect }: FieldCardProps) {
           </CardTitle>
           {field.required && (
             <p className="text-xs font-medium text-[#cf222e] dark:text-[#f85149]">
-              <span aria-hidden="true">* </span>Required
+              <span aria-hidden="true">* </span>
+              {t('card.required')}
             </p>
           )}
           {isMatch && (
             <Badge
               variant="secondary"
               className="h-auto max-w-full gap-1 whitespace-normal break-words text-left"
-              aria-label="Search match"
+              aria-label={t('card.searchMatch')}
             >
               <Search aria-hidden="true" />
-              Search match
+              {t('card.searchMatch')}
             </Badge>
           )}
         </div>
@@ -71,7 +75,7 @@ export function FieldCard({ field, match, onSelect }: FieldCardProps) {
         </CardDescription>
         {field.bestPracticeDefinition && match?.ranges.bestPracticeDefinition && (
           <CardDescription>
-            <span className="font-medium text-foreground">Best practice: </span>
+            <span className="font-medium text-foreground">{t('card.bestPracticePrefix')}</span>
             <HighlightText text={field.bestPracticeDefinition} ranges={match.ranges.bestPracticeDefinition} />
           </CardDescription>
         )}
@@ -88,7 +92,7 @@ export function FieldCard({ field, match, onSelect }: FieldCardProps) {
             variant="outline"
             className={cn('h-auto max-w-full whitespace-normal break-words text-left', badgeColor.repeatable)}
           >
-            Repeatable
+            {t('card.repeatable')}
           </Badge>
         )}
         {field.recommendation && field.recommendation !== 'Required' && (
@@ -99,7 +103,7 @@ export function FieldCard({ field, match, onSelect }: FieldCardProps) {
               bestPracticeColor[field.recommendation] ?? bestPracticeColorDefault,
             )}
           >
-            Best practice: {field.recommendation}
+            {t('card.bestPracticeBadge', { tier: tierLabel(t, field.recommendation) })}
           </Badge>
         )}
       </CardContent>
@@ -108,9 +112,9 @@ export function FieldCard({ field, match, onSelect }: FieldCardProps) {
           variant="outline"
           size="sm"
           onClick={(event) => onSelect(event.currentTarget)}
-          aria-label={`View details for ${field.name}`}
+          aria-label={t('card.viewDetailsFor', { name: field.name })}
         >
-          View details
+          {t('card.viewDetails')}
         </Button>
       </CardFooter>
     </Card>

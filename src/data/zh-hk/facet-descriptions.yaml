@@ -1,0 +1,7 @@
+# 元數據字典介面中，「必填」／「最佳實踐」等篩選條件下方顯示的說明。
+# 非來自 API，由人手編寫。未列出的鍵會沿用 src/data/en/facet-descriptions.yaml 的英文內容。
+metadataBlock: |
+  元數據區塊將相關的元數據欄位歸類，以便輸入及顯示。
+required: 發佈數據集時，必須填寫嘅欄位。
+bestPractice: |
+  <a href="https://zenodo.org/records/5668945" target="_blank" rel="noopener noreferrer" class="underline">Dataverse North Metadata Best Practices Guide v 3.0</a>標示為「建議」或「選填」嘅欄位。

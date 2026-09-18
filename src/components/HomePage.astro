@@ -1,0 +1,71 @@
+---
+import { marked } from 'marked';
+
+import InformationDialog from '@/components/InformationDialog';
+import LanguageSwitcher from '@/components/LanguageSwitcher.astro';
+import MetadataDictionary from '@/components/dictionary/MetadataDictionary';
+import ThemeToggle from '@/components/ThemeToggle';
+import Footer from '@/components/Footer.astro';
+import { localeData } from '@/data';
+import metadataJson from '@/data/metadata.json';
+import { useTranslations, type Lang } from '@/i18n/utils';
+import Layout from '@/layouts/Layout.astro';
+import { buildMetadata } from '@/lib/metadata';
+import { site } from '@/site.config';
+import * as informationEn from '@/content/information.en.md';
+import * as informationZhHk from '@/content/information.zh-hk.md';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const { overrides, blockDescriptions, facetDescriptions } = localeData(lang);
+
+// bestPracticeDefinition is hand-authored markdown; render it to HTML here (build time,
+// same as the information page below) so the client never ships a markdown parser.
+const metadata = buildMetadata(metadataJson, overrides, blockDescriptions).map((block) => ({
+  ...block,
+  fields: block.fields.map((field) =>
+    field.bestPracticeDefinition
+      ? { ...field, bestPracticeDefinitionHtml: marked.parse(field.bestPracticeDefinition, { async: false }) }
+      : field,
+  ),
+}));
+
+// Every locale's markdown is imported statically so Astro compiles it to HTML at build time;
+// a dynamic import built from `lang` would opt out of that. Adding a locale means adding an
+// import above and an entry here — the type checker flags it if you forget.
+const informationPages = { en: informationEn, 'zh-hk': informationZhHk };
+const InformationHtml = await informationPages[lang].compiledContent();
+
+// ponytail: defaults for installations that don't set their own name/URL
+const dataverseName = site.dataverseName || 'The Dataverse Project';
+const dataverseURL = site.dataverseURL || 'https://dataverse.org/';
+---
+
+<Layout title={t('site.title')} description={t('site.description')} lang={lang}>
+	<main class="mx-auto min-h-screen w-full max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+		<!-- Wraps the control cluster below the title on narrow screens; it is wider than it was
+		     before the language switcher, and squeezing the h1 instead reads badly on a phone. -->
+		<header class="mb-6 flex flex-wrap-reverse items-start justify-between gap-4">
+			<div class="min-w-0 max-w-3xl flex-1">
+				<p class="mb-3 text-xl font-semibold uppercase tracking-[0.18em] text-primary">
+					<a href={dataverseURL} target="_blank" rel="noopener noreferrer">{dataverseName}</a>
+				</p>
+				<h1 class="text-4xl font-semibold tracking-tight text-balance sm:text-5xl">{t('site.title')}</h1>
+				<p class="mt-4 text-lg leading-8 text-muted-foreground">{t('site.description')}</p>
+			</div>
+			<div class="flex shrink-0 flex-wrap items-center justify-end gap-1">
+				<LanguageSwitcher lang={lang} />
+				<InformationDialog html={InformationHtml} lang={lang} client:load />
+				<ThemeToggle lang={lang} client:load />
+			</div>
+		</header>
+		<MetadataDictionary blocks={metadata} facetDescriptions={facetDescriptions} lang={lang} client:load />
+	</main>
+	<Footer githubUrl={site.githubUrl}>
+		<p class="whitespace-pre-line">{t('site.footerText')}</p>
+	</Footer>
+</Layout>
