@@ -30,7 +30,7 @@ English key order is preserved by the merge. That matters: `block-descriptions.y
 
 `Required` / `Recommended` / `Optional` are canonical tokens, not display text. The best-practice filter buttons in `MetadataDictionary.tsx`, the badge colours in `FieldCard.tsx`, and the `!== 'Required'` check that hides a redundant badge all match on those exact English strings. Translating them in the YAML silently breaks filtering.
 
-Keep them English in every locale and leave them out of translation files entirely. The visible labels come from the `tier.*` keys in [`src/i18n/ui.ts`](../i18n/ui.ts), applied at render time by `tierLabel()`.
+Keep them English in every locale and leave them out of translation files entirely. The visible labels come from the `tier.*` keys in [`src/i18n/locales/<locale>.json`](../i18n/locales/en.json), applied at render time by `tierLabel()`.
 
 ## Adding a locale
 

@@ -40,6 +40,19 @@ describe('locale narrowing', () => {
   it('has a switcher label for every locale in the dictionary', () => {
     expect(Object.keys(languages).sort()).toEqual(Object.keys(ui).sort());
   });
+
+  it('registers every file in src/i18n/locales/, so a new locale file cannot sit unused', () => {
+    const files = Object.keys(import.meta.glob('./locales/*.json')).map((path) =>
+      path.replace(/^\.\/locales\/|\.json$/g, ''),
+    );
+    expect(files.sort()).toEqual(Object.keys(ui).sort());
+  });
+
+  it('has no keys that English lacks, so a mistyped key in a locale file cannot hide', () => {
+    for (const dictionary of Object.values(ui)) {
+      expect(Object.keys(dictionary).filter((key) => !(key in ui.en))).toEqual([]);
+    }
+  });
 });
 
 describe('plural', () => {

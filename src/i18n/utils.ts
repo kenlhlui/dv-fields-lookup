@@ -14,11 +14,14 @@ export function toLang(value: unknown): Lang {
   return isLang(value) ? value : defaultLang;
 }
 
-/** Returns `t(key, params?)` for `lang`, falling back to English for any untranslated key. */
+/**
+ * Returns `t(key, params?)` for `lang`, falling back to English for any untranslated key.
+ * Empty strings count as untranslated — Weblate writes them for strings nobody has done yet.
+ */
 export function useTranslations(lang: Lang) {
   const dictionary: Partial<Record<UIKey, string>> = ui[lang] ?? {};
   return function t(key: UIKey, params?: Record<string, string | number>): string {
-    const template = dictionary[key] ?? ui[defaultLang][key];
+    const template = dictionary[key] || ui[defaultLang][key];
     if (!params) return template;
     return template.replace(/\{(\w+)\}/g, (match, name: string) =>
       name in params ? String(params[name]) : match,
