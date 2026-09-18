@@ -77,4 +77,18 @@ describe('index page', () => {
       expect(html).toContain('繁體中文');
     }
   });
+
+  it('builds the language switcher as a native disclosure of plain links, not an island', async () => {
+    const html = await renderIndex('zh-hk/');
+    const switcher = html.match(/<details class="[^"]*" data-lang-switcher>.*?<\/details>/s)?.[0];
+
+    expect(switcher).toBeDefined();
+    // Real anchors, so the switcher works with no JS and keeps the hreflang signal.
+    // Paths are asserted base-agnostically; the configured base is covered by the icon test above.
+    expect(switcher).toMatch(/<a href="\S*\/" hreflang="en"/);
+    expect(switcher).toMatch(/<a href="\S*\/zh-hk\/" hreflang="zh-hk"/);
+    // The marked option is the page you are on.
+    expect(switcher).toMatch(/hreflang="zh-hk"[^>]*aria-current="page"/);
+    expect(switcher).not.toContain('astro-island');
+  });
 });
