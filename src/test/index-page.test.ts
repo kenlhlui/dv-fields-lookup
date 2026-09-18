@@ -62,7 +62,7 @@ describe('index page', () => {
     const html = await renderIndex('zh-hk/');
 
     expect(html).toMatch(/<html[^>]*\blang="zh-hk"/);
-    expect(html).toContain('搜尋元數據欄位');
+    expect(html).toContain('搵元數據欄位');
     // Block description from src/data/zh-hk/block-descriptions.yaml.
     expect(html).toContain('在 Dataverse 儲存庫發布資料集所需的核心元數據');
     // Field names come from metadata.json, which is not localized.

@@ -338,13 +338,13 @@ describe('MetadataDictionary', () => {
     const user = userEvent.setup();
     renderDictionary(facetBlocks, 'zh-hk');
 
-    expect(screen.getByLabelText('搜尋元數據欄位')).toBeInTheDocument();
+    expect(screen.getByLabelText('搵元數據欄位')).toBeInTheDocument();
     expect(screen.getByRole('status')).toHaveTextContent('5 個欄位 · 2 個元數據區塊');
 
     // The recommendation values in the data stay English; only the button label is translated.
     await user.click(screen.getByRole('button', { name: '選填' }));
 
     expect(screen.getByRole('status')).toHaveTextContent('2 個欄位 · 2 個元數據區塊');
-    expect(screen.getAllByRole('button', { name: /檢視「.+」的詳情/ }).length).toBe(2);
+    expect(screen.getAllByRole('button', { name: /睇「.+」的詳情/ }).length).toBe(2);
   });
 });

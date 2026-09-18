@@ -49,7 +49,7 @@ describe('localeData', () => {
   });
 
   it('translates every facet description', () => {
-    expect(zh.facetDescriptions.required).toBe('系統規定發布資料集時必須填寫的欄位');
+    expect(zh.facetDescriptions.required).toBe('發佈數據集時，必須填寫嘅欄位。');
     expect(zh.facetDescriptions.metadataBlock).not.toBe(en.facetDescriptions.metadataBlock);
   });
 });
