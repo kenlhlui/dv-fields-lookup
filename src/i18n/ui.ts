@@ -5,7 +5,7 @@
 //
 // Any key a locale leaves out (or leaves empty) falls back to English, so a partial translation
 // is shippable. Adding a locale takes five steps across this file, astro.config.mjs, src/data/,
-// src/content/ and src/pages/ — see the Internationalization section of the root README.
+// src/content/ and src/pages/ — see docs/internationalization.md.
 
 import en from '@/i18n/locales/en.json';
 import zhHk from '@/i18n/locales/zh-hk.json';

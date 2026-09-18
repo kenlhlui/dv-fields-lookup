@@ -34,4 +34,4 @@ Keep them English in every locale and leave them out of translation files entire
 
 ## Adding a locale
 
-See the Internationalization section of the [root README](../../README.md#internationalization).
+See [docs/internationalization.md](../../docs/internationalization.md).
