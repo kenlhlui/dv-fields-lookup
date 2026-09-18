@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.7.1](https://github.com/kenlhlui/dv-fields-lookup/compare/v0.7.0...v0.7.1) (2026-09-18)
+
+### Bug Fixes
+
+* typo in zh-hk ([4c25e9c](https://github.com/kenlhlui/dv-fields-lookup/commit/4c25e9c417f487894a4904779cc80b5a70cd56ce))
+
 ## [0.7.0](https://github.com/kenlhlui/dv-fields-lookup/compare/v0.6.0...v0.7.0) (2026-09-18)
 
 ### Features
