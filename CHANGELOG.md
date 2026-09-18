@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.7.0](https://github.com/kenlhlui/dv-fields-lookup/compare/v0.6.0...v0.7.0) (2026-09-18)
+
+### Features
+
+* multilingual site ([#30](https://github.com/kenlhlui/dv-fields-lookup/issues/30)) ([d8984d5](https://github.com/kenlhlui/dv-fields-lookup/commit/d8984d5687f2aa2f11450ad8b7e2f96fe4b54641))
+
 ## [0.6.0](https://github.com/kenlhlui/dv-fields-lookup/compare/v0.5.0...v0.6.0) (2026-09-04)
 
 ### Features
