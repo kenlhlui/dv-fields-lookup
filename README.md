@@ -74,8 +74,10 @@ See [docs/internationalization.md](docs/internationalization.md) for instruction
 
 ## Deployment
 
-You can deploy the application to any static hosting service. For example, to deploy to GitHub Pages:
+You can deploy the application to any static hosting service. For example, to deploy to GitHub Pages, follow the steps below:
 
+<details>
+  <summary>Deployment steps</summary>
 1. Fork this repository.
 
 2. Change the `site` value in [`astro.config.mjs`](astro.config.mjs) to your GitHub Pages URL:
@@ -139,6 +141,7 @@ You can deploy the application to any static hosting service. For example, to de
 7. Optionally translate steps 3, 5 and 6 into the other locales you serve, or delete `src/pages/zh-hk/`, `src/i18n/locales/zh-hk.json`, the `zh-hk` entries in `src/i18n/ui.ts` and `src/data/zh-hk/` to ship English only.
 
 8. Commit and push your changes. Make sure the repository's Pages settings are set to deploy from GitHub Actions.
+</details>
 
 ## Acknowledgments
 The best practice definitions, recommendations, and examples (see [`src/data/en/metadata.overrides.yaml`](src/data/en/metadata.overrides.yaml)) are from the [Dataverse North Metadata Best Practices Guide v 3.0](https://doi.org/10.5281/zenodo.5668945), license under [CC-BY 4.0](https://creativecommons.org/licenses/by/4.0/).
