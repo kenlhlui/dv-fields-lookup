@@ -33,7 +33,7 @@ describe('BlockNav', () => {
   afterEach(() => vi.useRealTimers());
 
   it('stays hidden near the top of the page and floats in once scrolled', () => {
-    render(<BlockNav blocks={blocks} />);
+    render(<BlockNav blocks={blocks} lang="en" />);
     const nav = screen.getByRole('navigation', { name: 'Metadata blocks' });
     expect(nav.className).toMatch(/opacity-0/);
 
@@ -45,7 +45,7 @@ describe('BlockNav', () => {
   });
 
   it('stays hidden until the viewport has enough left gutter to avoid the cards', () => {
-    render(<BlockNav blocks={blocks} />);
+    render(<BlockNav blocks={blocks} lang="en" />);
     const nav = screen.getByRole('navigation', { name: 'Metadata blocks' });
 
     expect(nav.className).toMatch(/\bhidden\b.*\bmin-\[1600px\]:block\b/);
@@ -54,7 +54,7 @@ describe('BlockNav', () => {
 
   it('fades back out after 3 seconds of no further scrolling', () => {
     vi.useFakeTimers();
-    render(<BlockNav blocks={blocks} />);
+    render(<BlockNav blocks={blocks} lang="en" />);
     const nav = screen.getByRole('navigation', { name: 'Metadata blocks' });
 
     scrollTo(500);
@@ -70,7 +70,7 @@ describe('BlockNav', () => {
   it('marks the block whose heading has scrolled above the detection line as current', () => {
     positionHeading('metadata-block-citation', -900);
     positionHeading('metadata-block-geospatial', 50);
-    render(<BlockNav blocks={blocks} />);
+    render(<BlockNav blocks={blocks} lang="en" />);
 
     scrollTo(900);
 
@@ -80,7 +80,7 @@ describe('BlockNav', () => {
   it('snaps back to the first section on a jump to the top, instead of sticking on the old one', () => {
     positionHeading('metadata-block-citation', -900);
     positionHeading('metadata-block-geospatial', 50);
-    render(<BlockNav blocks={blocks} />);
+    render(<BlockNav blocks={blocks} lang="en" />);
     scrollTo(900);
     expect(screen.getByRole('link', { name: 'Geospatial Metadata' })).toHaveAttribute('aria-current', 'location');
 
@@ -94,7 +94,7 @@ describe('BlockNav', () => {
   });
 
   it('renders nothing when there are no blocks to navigate', () => {
-    const { container } = render(<BlockNav blocks={[]} />);
+    const { container } = render(<BlockNav blocks={[]} lang="en" />);
     expect(container).toBeEmptyDOMElement();
   });
 });

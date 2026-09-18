@@ -2,8 +2,10 @@ import { Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { useTranslations, type Lang } from "@/i18n/utils";
 
-export default function ThemeToggle() {
+export default function ThemeToggle({ lang }: { lang: Lang }) {
+  const t = useTranslations(lang);
   // ponytail: read the class the blocking head script already set, no extra "system" state to track
   const [dark, setDark] = useState(
     () => typeof document !== "undefined" && document.documentElement.classList.contains("dark")
@@ -18,7 +20,7 @@ export default function ThemeToggle() {
     <Button
       variant="ghost"
       size="icon"
-      aria-label={dark ? "Switch to light theme" : "Switch to dark theme"}
+      aria-label={t(dark ? "theme.toLight" : "theme.toDark")}
       onClick={() => setDark((d) => !d)}
     >
       {dark ? <Sun /> : <Moon />}

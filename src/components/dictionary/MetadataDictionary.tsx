@@ -7,15 +7,14 @@ import { MetadataBlockSection } from '@/components/dictionary/MetadataBlockSecti
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
-import { facetDescriptions } from '@/data/facet-descriptions';
+import type { FacetDescriptions } from '@/data';
+import { plural, useTranslations, type Lang } from '@/i18n/utils';
 import type { MetadataBlock, MetadataField } from '@/lib/metadata';
 import { createMetadataSearch, getVisibleFields } from '@/lib/search';
 
+// Canonical tokens as authored in metadata.overrides.yaml, never translated in the data —
+// filtering and badge colours match on them. Display labels come from the tier.* keys.
 const bestPracticeTiers = ['Recommended', 'Optional'] as const;
-
-function pluralize(count: number, singular: string, plural = `${singular}s`) {
-  return count === 1 ? singular : plural;
-}
 
 function toggleInSet<T>(set: ReadonlySet<T>, value: T): Set<T> {
   const next = new Set(set);
@@ -23,7 +22,15 @@ function toggleInSet<T>(set: ReadonlySet<T>, value: T): Set<T> {
   return next;
 }
 
-export default function MetadataDictionary({ blocks }: { blocks: MetadataBlock[] }) {
+interface MetadataDictionaryProps {
+  blocks: MetadataBlock[];
+  // Locale-resolved on the server and passed in, so the yaml parser stays out of the client bundle.
+  facetDescriptions: FacetDescriptions;
+  lang: Lang;
+}
+
+export default function MetadataDictionary({ blocks, facetDescriptions, lang }: MetadataDictionaryProps) {
+  const t = useTranslations(lang);
   const [query, setQuery] = useState('');
   const [blockFilter, setBlockFilter] = useState<ReadonlySet<string>>(new Set());
   const [requiredOnly, setRequiredOnly] = useState(false);
@@ -48,7 +55,15 @@ export default function MetadataDictionary({ blocks }: { blocks: MetadataBlock[]
   const isEmpty = visibleBlocks.length === 0;
 
   const fieldCount = visibleBlocks.reduce((total, result) => total + getVisibleFields(result, fieldFilter).length, 0);
-  const summary = `${fieldCount} ${view.isSearching ? 'matching ' : ''}${pluralize(fieldCount, 'field')} · ${visibleBlocks.length} ${pluralize(visibleBlocks.length, 'metadata block')}`;
+  const summary = t(view.isSearching ? 'summary.searching' : 'summary.browsing', {
+    fields: fieldCount,
+    fieldWord: plural(t, fieldCount, 'count.field.one', 'count.field.other'),
+    blocks: visibleBlocks.length,
+    blockWord: plural(t, visibleBlocks.length, 'count.block.one', 'count.block.other'),
+  });
+  const emptyMessage = view.isSearching
+    ? t('search.emptyQuery', { query: view.normalizedQuery })
+    : t('search.emptyFilters');
   const hasActiveFilters = query || blockFilter.size > 0 || requiredOnly || bestPracticeFilter.size > 0;
 
   function selectField(block: MetadataBlock, field: MetadataField, opener: HTMLButtonElement) {
@@ -66,10 +81,10 @@ export default function MetadataDictionary({ blocks }: { blocks: MetadataBlock[]
 
   return (
     <div className="space-y-8">
-      <BlockNav blocks={visibleBlocks.map((result) => result.block)} />
+      <BlockNav blocks={visibleBlocks.map((result) => result.block)} lang={lang} />
       <div className="space-y-3">
         <label htmlFor="metadata-search" className="text-xl font-medium gap-1 flex items-center">
-          Search metadata fields
+          {t('search.label')}
         </label>
         <div className="flex gap-2">
           <div className="relative flex-1">
@@ -83,20 +98,20 @@ export default function MetadataDictionary({ blocks }: { blocks: MetadataBlock[]
               type="search"
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder="Search names, descriptions, identifiers, and examples…"
+              placeholder={t('search.placeholder')}
               className="h-10 pl-9"
             />
           </div>
           {hasActiveFilters && (
             <Button type="button" variant="outline" className="h-10" onClick={clearSearch}>
-              Clear all
+              {t('search.clearAll')}
             </Button>
           )}
         </div>
         <div className="space-y-1">
-          <p className="text-md font-medium text-muted-foreground">Metadata block</p>
+          <p className="text-md font-medium text-muted-foreground">{t('facet.metadataBlock')}</p>
           <p className="text-sm text-muted-foreground">{facetDescriptions.metadataBlock}</p>
-          <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by metadata block">
+          <div className="flex flex-wrap gap-2" role="group" aria-label={t('facet.filterByBlock')}>
             {blocks.map((block) => (
               <Button
                 key={block.id}
@@ -113,9 +128,9 @@ export default function MetadataDictionary({ blocks }: { blocks: MetadataBlock[]
         </div>
         <Separator />
         <div className="space-y-1">
-          <p className="text-md font-medium text-muted-foreground">Required</p>
+          <p className="text-md font-medium text-muted-foreground">{t('facet.required')}</p>
           <p className="text-sm text-muted-foreground">{facetDescriptions.required}</p>
-          <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by required">
+          <div className="flex flex-wrap gap-2" role="group" aria-label={t('facet.filterByRequired')}>
             <Button
               type="button"
               variant={requiredOnly ? 'default' : 'outline'}
@@ -123,19 +138,19 @@ export default function MetadataDictionary({ blocks }: { blocks: MetadataBlock[]
               aria-pressed={requiredOnly}
               onClick={() => setRequiredOnly((current) => !current)}
             >
-              Required
+              {t('facet.required')}
             </Button>
           </div>
         </div>
         <Separator />
         <div className="space-y-1">
-          <p className="text-md font-medium text-muted-foreground">Best practice</p>
+          <p className="text-md font-medium text-muted-foreground">{t('facet.bestPractice')}</p>
           {/* ponytail: static, repo-authored yaml, not user input — safe to render as HTML */}
           <p
             className="text-sm text-muted-foreground"
             dangerouslySetInnerHTML={{ __html: facetDescriptions.bestPractice }}
           />
-          <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by best practice">
+          <div className="flex flex-wrap gap-2" role="group" aria-label={t('facet.filterByBestPractice')}>
             {bestPracticeTiers.map((tier) => (
               <Button
                 key={tier}
@@ -145,38 +160,36 @@ export default function MetadataDictionary({ blocks }: { blocks: MetadataBlock[]
                 aria-pressed={bestPracticeFilter.has(tier)}
                 onClick={() => setBestPracticeFilter((current) => toggleInSet(current, tier))}
               >
-                {tier}
+                {t(`tier.${tier}`)}
               </Button>
             ))}
           </div>
         </div>
         <p role="status" aria-live="polite" className="text-sm text-muted-foreground">
-          {isEmpty
-            ? view.isSearching
-              ? `No metadata fields matched “${view.normalizedQuery}”`
-              : 'No metadata fields match the selected filters'
-            : summary}
+          {isEmpty ? emptyMessage : summary}
         </p>
       </div>
 
       {isEmpty ? (
-        <div className="rounded-lg border p-6" aria-label="No search results">
-          <p>
-            {view.isSearching
-              ? `No metadata fields matched “${view.normalizedQuery}”`
-              : 'No metadata fields match the selected filters'}
-          </p>
+        <div className="rounded-lg border p-6" aria-label={t('search.noResultsLabel')}>
+          <p>{emptyMessage}</p>
           <p className="text-muted-foreground">
-            {view.isSearching ? 'Try a different search term or clear the current search.' : 'Try different filters or clear them.'}
+            {view.isSearching ? t('search.emptyQueryHint') : t('search.emptyFiltersHint')}
           </p>
           <Button className="mt-4" variant="outline" onClick={clearSearch}>
-            {view.isSearching ? 'Clear search' : 'Clear filters'}
+            {view.isSearching ? t('search.clearSearch') : t('search.clearFilters')}
           </Button>
         </div>
       ) : (
         <div className="space-y-12">
           {visibleBlocks.map((result) => (
-            <MetadataBlockSection key={result.block.id} result={result} onSelectField={selectField} fieldFilter={fieldFilter} />
+            <MetadataBlockSection
+              key={result.block.id}
+              result={result}
+              onSelectField={selectField}
+              fieldFilter={fieldFilter}
+              lang={lang}
+            />
           ))}
         </div>
       )}
@@ -189,6 +202,7 @@ export default function MetadataDictionary({ blocks }: { blocks: MetadataBlock[]
           }
         }}
         restoreFocusRef={restoreFocusRef}
+        lang={lang}
       />
     </div>
   );

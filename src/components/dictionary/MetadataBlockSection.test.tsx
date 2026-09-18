@@ -67,7 +67,7 @@ describe('MetadataBlockSection', () => {
         fields: block.fields.map((field, index) => (index === 0 ? field : { ...field, parent: 'Author' })),
       },
     };
-    render(<MetadataBlockSection result={withParent} onSelectField={vi.fn()} />);
+    render(<MetadataBlockSection result={withParent} onSelectField={vi.fn()} lang="en" />);
 
     const group = screen.getByRole('region', { name: 'Author' });
     expect(within(group).getByText('Compound field · 2 sub-fields')).toBeInTheDocument();
@@ -79,7 +79,7 @@ describe('MetadataBlockSection', () => {
     const user = userEvent.setup();
     const onSelectField = vi.fn();
 
-    render(<MetadataBlockSection result={result} onSelectField={onSelectField} />);
+    render(<MetadataBlockSection result={result} onSelectField={onSelectField} lang="en" />);
 
     expect(screen.getByRole('heading', { name: 'Citation Metadata' })).toBeInTheDocument();
     expect(screen.queryByText('Author Name')).not.toBeInTheDocument();
@@ -100,7 +100,7 @@ describe('MetadataBlockSection', () => {
   it('shows every field when not searching (matches empty)', () => {
     const browsing: SearchBlock = { ...result, matches: new Map() };
 
-    render(<MetadataBlockSection result={browsing} onSelectField={vi.fn()} />);
+    render(<MetadataBlockSection result={browsing} onSelectField={vi.fn()} lang="en" />);
 
     expect(screen.getByText('Author Name')).toBeInTheDocument();
     expect(screen.getByText('Author Identifier')).toBeInTheDocument();
@@ -113,7 +113,7 @@ describe('MetadataBlockSection', () => {
     const browsing: SearchBlock = { ...result, matches: new Map() };
 
     render(
-      <MetadataBlockSection result={browsing} onSelectField={vi.fn()} fieldFilter={(field) => field.required} />,
+      <MetadataBlockSection result={browsing} onSelectField={vi.fn()} fieldFilter={(field) => field.required} lang="en" />,
     );
 
     expect(screen.getByText('Author Name')).toBeInTheDocument();

@@ -1,0 +1,32 @@
+---
+import { getRelativeLocaleUrl } from 'astro:i18n';
+
+import { languages } from '@/i18n/ui';
+import { useTranslations, type Lang } from '@/i18n/utils';
+
+interface Props {
+	lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+// ponytail: plain links, no JS and no stored preference — one static page per locale, so
+// there is nothing to negotiate at runtime. getRelativeLocaleUrl applies the configured base.
+const locales = Object.entries(languages) as [Lang, string][];
+---
+
+<nav aria-label={t('lang.label')} class="flex items-center gap-1">
+	{
+		locales.map(([locale, label]) => (
+			<a
+				href={getRelativeLocaleUrl(locale, '')}
+				hreflang={locale}
+				lang={locale}
+				aria-current={locale === lang ? 'page' : undefined}
+				class="rounded-md px-2 py-1 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground aria-[current=page]:bg-muted aria-[current=page]:font-medium aria-[current=page]:text-foreground"
+			>
+				{label}
+			</a>
+		))
+	}
+</nav>

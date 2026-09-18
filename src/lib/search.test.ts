@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import { blockDescriptions } from '@/data/block-descriptions';
+import { localeData } from '@/data';
 import demoMetadata from '@/data/metadata.json';
-import { metadataOverrides as demoOverrides } from '@/data/metadata.overrides';
 import { buildMetadata, type MetadataBlock } from '@/lib/metadata';
 import { createMetadataSearch, getVisibleFields } from '@/lib/search';
 
+const { overrides: demoOverrides, blockDescriptions } = localeData('en');
 const blocks = buildMetadata(demoMetadata, demoOverrides, blockDescriptions);
 const search = createMetadataSearch(blocks);
 

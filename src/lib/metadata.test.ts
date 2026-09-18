@@ -1,8 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { blockDescriptions } from '@/data/block-descriptions';
+import { localeData } from '@/data';
 import Metadata from '@/data/metadata.json';
-import { metadataOverrides } from '@/data/metadata.overrides';
 import { buildMetadata, countFields, getFieldPath, validateMetadata } from '@/lib/metadata';
 
 const valid = [
@@ -60,7 +59,8 @@ it('counts fields across blocks and builds a hierarchy path', () => {
   expect(getFieldPath(blocks[0], blocks[0].fields[0])).toBe('Citation Metadata › Author Identifier');
 });
 
-it('validates the data source', () => {
-  const blocks = buildMetadata(Metadata, metadataOverrides, blockDescriptions);
+it.each(['en', 'zh-hk'] as const)('validates the data source for %s', (lang) => {
+  const { overrides, blockDescriptions } = localeData(lang);
+  const blocks = buildMetadata(Metadata, overrides, blockDescriptions);
   expect(countFields(blocks)).toBeGreaterThan(blocks.length);
 });

@@ -3,6 +3,8 @@ import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 
 import MetadataDictionary from '@/components/dictionary/MetadataDictionary';
+import { localeData } from '@/data';
+import type { Lang } from '@/i18n/utils';
 import type { MetadataBlock } from '@/lib/metadata';
 
 const blocks: MetadataBlock[] = [
@@ -148,9 +150,15 @@ const facetBlocks: MetadataBlock[] = [
   },
 ];
 
+function renderDictionary(fixture: MetadataBlock[] = blocks, lang: Lang = 'en') {
+  return render(
+    <MetadataDictionary blocks={fixture} facetDescriptions={localeData(lang).facetDescriptions} lang={lang} />,
+  );
+}
+
 describe('MetadataDictionary', () => {
   it('renders the full dictionary with an accessible search input and summary', () => {
-    render(<MetadataDictionary blocks={blocks} />);
+    renderDictionary();
 
     expect(screen.getByLabelText('Search metadata fields')).toBeInTheDocument();
     expect(screen.getByRole('status')).toHaveTextContent('7 fields · 2 metadata blocks');
@@ -160,7 +168,7 @@ describe('MetadataDictionary', () => {
 
   it('narrows Citation to only its matching fields and marks both authoritative Fuse matches', async () => {
     const user = userEvent.setup();
-    render(<MetadataDictionary blocks={blocks} />);
+    renderDictionary();
 
     await user.type(screen.getByLabelText('Search metadata fields'), 'ORCID');
 
@@ -174,7 +182,7 @@ describe('MetadataDictionary', () => {
 
   it('restores source-order blocks after clearing a search', async () => {
     const user = userEvent.setup();
-    render(<MetadataDictionary blocks={blocks} />);
+    renderDictionary();
     const input = screen.getByLabelText('Search metadata fields');
 
     await user.type(input, 'ORCID');
@@ -188,7 +196,7 @@ describe('MetadataDictionary', () => {
 
   it('clears a no-results search and restores focus to the input', async () => {
     const user = userEvent.setup();
-    render(<MetadataDictionary blocks={blocks} />);
+    renderDictionary();
     const input = screen.getByLabelText('Search metadata fields');
 
     await user.type(input, 'zzzz-no-field');
@@ -203,7 +211,7 @@ describe('MetadataDictionary', () => {
 
   it('opens the selected field dialog and returns focus to its details button on Escape', async () => {
     const user = userEvent.setup();
-    render(<MetadataDictionary blocks={blocks} />);
+    renderDictionary();
     const opener = screen.getByRole('button', { name: 'View details for Author Identifier' });
 
     await user.click(opener);
@@ -218,7 +226,7 @@ describe('MetadataDictionary', () => {
 
   it('filters to one block by clicking its facet chip, and toggles off on a second click', async () => {
     const user = userEvent.setup();
-    render(<MetadataDictionary blocks={blocks} />);
+    renderDictionary();
 
     const chip = screen.getByRole('button', { name: 'Geospatial Metadata' });
     await user.click(chip);
@@ -235,7 +243,7 @@ describe('MetadataDictionary', () => {
 
   it('selects multiple facet chips at once', async () => {
     const user = userEvent.setup();
-    render(<MetadataDictionary blocks={blocks} />);
+    renderDictionary();
 
     await user.click(screen.getByRole('button', { name: 'Citation Metadata' }));
     await user.click(screen.getByRole('button', { name: 'Geospatial Metadata' }));
@@ -247,7 +255,7 @@ describe('MetadataDictionary', () => {
 
   it('combines the block facet with an active text search', async () => {
     const user = userEvent.setup();
-    render(<MetadataDictionary blocks={blocks} />);
+    renderDictionary();
 
     await user.type(screen.getByLabelText('Search metadata fields'), 'ORCID');
     await user.click(screen.getByRole('button', { name: 'Geospatial Metadata' }));
@@ -262,7 +270,7 @@ describe('MetadataDictionary', () => {
 
   it('filters to required fields only, and back off on a second click', async () => {
     const user = userEvent.setup();
-    render(<MetadataDictionary blocks={facetBlocks} />);
+    renderDictionary(facetBlocks);
 
     const chip = screen.getByRole('button', { name: 'Required' });
     await user.click(chip);
@@ -281,7 +289,7 @@ describe('MetadataDictionary', () => {
 
   it('filters by best-practice tier and combines with the block facet', async () => {
     const user = userEvent.setup();
-    render(<MetadataDictionary blocks={facetBlocks} />);
+    renderDictionary(facetBlocks);
 
     await user.click(screen.getByRole('button', { name: 'Optional' }));
 
@@ -298,7 +306,7 @@ describe('MetadataDictionary', () => {
 
   it('shows a filters-only empty state and clears it without touching an active search', async () => {
     const user = userEvent.setup();
-    render(<MetadataDictionary blocks={facetBlocks} />);
+    renderDictionary(facetBlocks);
 
     await user.click(screen.getByRole('button', { name: 'Required' }));
     await user.click(screen.getByRole('button', { name: 'Recommended' }));
@@ -314,7 +322,7 @@ describe('MetadataDictionary', () => {
 
   it('restores focus to the explicit details-button opener after an unfocused click', async () => {
     const user = userEvent.setup();
-    render(<MetadataDictionary blocks={blocks} />);
+    renderDictionary();
     const opener = screen.getByRole('button', { name: 'View details for Author Identifier' });
 
     expect(opener).not.toHaveFocus();
@@ -324,5 +332,19 @@ describe('MetadataDictionary', () => {
     await user.keyboard('{Escape}');
 
     expect(opener).toHaveFocus();
+  });
+
+  it('renders zh-HK chrome while still filtering on the canonical English tier tokens', async () => {
+    const user = userEvent.setup();
+    renderDictionary(facetBlocks, 'zh-hk');
+
+    expect(screen.getByLabelText('搜尋元數據欄位')).toBeInTheDocument();
+    expect(screen.getByRole('status')).toHaveTextContent('5 個欄位 · 2 個元數據區塊');
+
+    // The recommendation values in the data stay English; only the button label is translated.
+    await user.click(screen.getByRole('button', { name: '選填' }));
+
+    expect(screen.getByRole('status')).toHaveTextContent('2 個欄位 · 2 個元數據區塊');
+    expect(screen.getAllByRole('button', { name: /檢視「.+」的詳情/ }).length).toBe(2);
   });
 });

@@ -11,13 +11,15 @@ afterEach(() => {
   vi.resetModules();
 });
 
-async function renderIndex() {
-  const { default: IndexPage } = await import('@/pages/index.astro');
+async function renderIndex(path = '') {
+  const { default: IndexPage } = path
+    ? await import('@/pages/zh-hk/index.astro')
+    : await import('@/pages/index.astro');
   const renderers = await loadRenderers([getContainerRenderer()]);
   const container = await AstroContainer.create({ renderers });
   return container.renderToString(IndexPage, {
     partial: false,
-    request: new Request('https://kenlhlui.github.io/dv-fields-lookup/'),
+    request: new Request(`https://kenlhlui.github.io/dv-fields-lookup/${path}`),
   });
 }
 
@@ -45,17 +47,34 @@ describe('index page', () => {
     vi.resetModules();
     vi.doMock('@/site.config', () => ({
       site: {
-        title: 'Metadata Field Lookup',
-        description: 'Search and explore metadata fields.',
         dataverseName: '',
         dataverseURL: '',
         githubUrl: 'https://github.com/kenlhlui/dv-fields-lookup',
-        footerText: 'Made with love.',
       },
     }));
     const html = await renderIndex();
     expect(html).toContain('https://dataverse.org/');
     expect(html).toContain('The Dataverse Project');
     expect(html).not.toContain('borealisdata.ca');
+  });
+
+  it('renders the zh-HK page in Chinese, keeping the untranslated Dataverse data in English', async () => {
+    const html = await renderIndex('zh-hk/');
+
+    expect(html).toMatch(/<html[^>]*\blang="zh-hk"/);
+    expect(html).toContain('搜尋元數據欄位');
+    // Block description from src/data/zh-hk/block-descriptions.yaml.
+    expect(html).toContain('在 Dataverse 儲存庫發布資料集所需的核心元數據');
+    // Field names come from metadata.json, which is not localized.
+    expect(html).toContain('Citation Metadata');
+  });
+
+  it('offers both locales on every page, as hreflang alternates and switcher links', async () => {
+    for (const path of ['', 'zh-hk/']) {
+      const html = await renderIndex(path);
+      expect(html).toContain('hreflang="en"');
+      expect(html).toContain('hreflang="zh-hk"');
+      expect(html).toContain('繁體中文');
+    }
   });
 });

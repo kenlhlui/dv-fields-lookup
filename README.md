@@ -17,6 +17,7 @@ The audience of this tool is primarily:
 - Full-text search across each field's added context, including best practices and examples.
 - Browse available metadata fields by block.
 - Filter fields by metadata block, required-only, and best practice tier (Recommended/Optional).
+- Multi-language support. See [Internationalization](#internationalization).
 
 
 ## Prerequisites
@@ -67,6 +68,70 @@ To check the data before a build or deployment:
 pnpm test src/lib/metadata.test.ts
 ```
 
+## Internationalization
+
+The site ships English (`en`, served at `/`) and Traditional Chinese — Hong Kong (`zh-hk`, served at `/zh-hk/`). Both are built statically; a language switcher in the header links between them. Locale ids are lowercase so the config id, the URL segment and the `<html lang>` value are all one string.
+
+### What is and isn't translated
+
+| | Translated | Where |
+| --- | --- | --- |
+| Interface text (labels, buttons, dialogs) | Yes | [`src/i18n/ui.ts`](src/i18n/ui.ts) |
+| Site title, description, footer | Yes | [`src/i18n/ui.ts`](src/i18n/ui.ts) under the `site.*` keys |
+| Block, facet and best-practice descriptions | Yes | `src/data/<locale>/*.yaml` |
+| Acknowledgements dialog | Yes | `src/content/information.<locale>.md` |
+| Field names, definitions, controlled vocabulary | **No** | `src/data/metadata.json`, straight from the Dataverse API |
+| `recommendation` values (`Required`/`Recommended`/`Optional`) | **No** | Canonical tokens — see below |
+| Installation name and URLs | **No** | [`src/site.config.ts`](src/site.config.ts) |
+
+Anything a locale doesn't translate falls back to English **per key**, so a partial translation is a valid, shippable state — a new locale renders correctly from its first commit and fills in over time.
+
+`recommendation` values are load-bearing: the filter buttons and badge colours match on those exact English strings. Keep them English in every locale; their visible labels come from the `tier.*` keys in `src/i18n/ui.ts`. See [`src/data/README.md`](src/data/README.md) for the full rule.
+
+### Adding a locale
+
+Using `fr` as an example:
+
+1. Add it to `i18n.locales` in [`astro.config.mjs`](astro.config.mjs):
+
+    ```js
+    i18n: {
+      locales: ['en', 'zh-hk', 'fr'],
+      defaultLocale: 'en',
+      routing: { prefixDefaultLocale: false },
+    },
+    ```
+
+2. Add a switcher label and a `fr` block to `ui` in [`src/i18n/ui.ts`](src/i18n/ui.ts). Copy the `en` block and translate it, or start with only the keys you have — the rest falls back to English.
+
+3. Create `src/data/fr/` with any of `metadata.overrides.yaml`, `block-descriptions.yaml` and `facet-descriptions.yaml`. Each file needs only the keys you translate; omit `recommendation` entirely.
+
+4. Create `src/content/information.fr.md` — this is the Acknowledgements dialog, plain Markdown. Then register it in [`src/components/HomePage.astro`](src/components/HomePage.astro), which takes two edits: an import alongside the existing ones, and an entry in the `informationPages` map.
+
+    ```astro
+    import * as informationEn from '@/content/information.en.md';
+    import * as informationZhHk from '@/content/information.zh-hk.md';
+    import * as informationFr from '@/content/information.fr.md';
+
+    // …
+
+    const informationPages = { en: informationEn, 'zh-hk': informationZhHk, fr: informationFr };
+    ```
+
+    This is the only step that touches source code. The imports are static on purpose: Astro compiles Markdown to HTML at build time, and a dynamic `import()` built from the locale name would opt out of that and leave the file unprocessed. Miss this step and `pnpm check` fails with `ts(7053)` on `HomePage.astro` — the new locale can't index `informationPages` — so it can't ship silently broken.
+
+5. Create `src/pages/fr/index.astro`:
+
+    ```astro
+    ---
+    import HomePage from '@/components/HomePage.astro';
+    ---
+
+    <HomePage lang="fr" />
+    ```
+
+Then `pnpm check && pnpm test && pnpm build`. Steps 1, 2 and 5 must stay in sync: `src/i18n/utils.test.ts` asserts that every locale in the `ui` dictionary has a switcher label, and the build emits one page per `src/pages/<locale>/index.astro` — a locale with a dictionary but no page file gets a switcher link that 404s.
+
 ## Deployment
 
 You can deploy the application to any static hosting service. For example, to deploy to GitHub Pages:
@@ -82,14 +147,26 @@ You can deploy the application to any static hosting service. For example, to de
     });
     ```
 
-3. Change the relevant values in [`src/site.config.ts`](src/site.config.ts), especially `description`, `dataverseName`, `dataverseURL`, and `githubUrl`:
+3. Point [`src/site.config.ts`](src/site.config.ts) at your installation:
 
     ```ts
     export const site = {
-      description: 'Search and explore metadata fields in {YOUR-DATAVERSE-NAME}, with specifications and best practices in context.',
       dataverseName: '{YOUR-DATAVERSE-NAME}',
       dataverseURL: '{YOUR-DATAVERSE-URL}',
       githubUrl: 'https://github.com/{YOUR-GITHUB-USERNAME}/dv-fields-lookup',
+    };
+    ```
+
+    Then change the site title, description and footer in [`src/i18n/ui.ts`](src/i18n/ui.ts) — **in each locale you serve**, since that text is translatable:
+
+    ```ts
+    export const ui = {
+      en: {
+        'site.title': 'Dataverse Metadata Field Lookup',
+        'site.description': 'Search and explore metadata fields in {YOUR-DATAVERSE-NAME}, with specifications and best practices in context.',
+        'site.footerText': 'Made with ❤️ for the Dataverse community.',
+        // ...
+      },
       // ...
     };
     ```
@@ -100,7 +177,7 @@ You can deploy the application to any static hosting service. For example, to de
    2. The `/api/dataverses/{id}/metadatablocks?returnDatasetFieldTypes=true` endpoint, which returns all metadata blocks and fields from a collection.
       1. Example: [https://demo.borealisdata.ca/api/dataverses/toronto/metadatablocks?returnDatasetFieldTypes=true](https://borealisdata.ca/api/dataverses/toronto/metadatablocks?returnDatasetFieldTypes=true)
 
-5. Add best practice definitions and examples for individual fields in [`src/data/metadata.overrides.yaml`](src/data/metadata.overrides.yaml). Look up the field's `name` in `src/data/metadata.json`, then add an entry keyed by that name:
+5. Add best practice definitions and examples for individual fields in [`src/data/en/metadata.overrides.yaml`](src/data/en/metadata.overrides.yaml). Look up the field's `name` in `src/data/metadata.json`, then add an entry keyed by that name:
 
     ```yaml
     alternativeTitle:
@@ -109,7 +186,7 @@ You can deploy the application to any static hosting service. For example, to de
       example: Youth Social Media Survey
     ```
 
-6. Add metadata block names and descriptions in [`src/data/block-descriptions.yaml`](src/data/block-descriptions.yaml). The block names are the `name` values in `src/data/metadata.json`:
+6. Add metadata block names and descriptions in [`src/data/en/block-descriptions.yaml`](src/data/en/block-descriptions.yaml). The block names are the `name` values in `src/data/metadata.json`:
 
     ```yaml
     citation: >-
@@ -120,12 +197,14 @@ You can deploy the application to any static hosting service. For example, to de
     vocabulary.
     ```
 
-    The order of the blocks determines their display order in the application. Blocks with no description are displayed last, without a description.
+    The order of the blocks determines their display order in the application. Blocks with no description are displayed last, without a description. Only `src/data/en/` controls the order — translation files inherit it.
 
-7. Commit and push your changes. Make sure the repository's Pages settings are set to deploy from GitHub Actions.
+7. Optionally translate steps 3, 5 and 6 into the other locales you serve, or delete `src/pages/zh-hk/` and the `zh-hk` entries in `src/i18n/ui.ts` and `src/data/` to ship English only.
+
+8. Commit and push your changes. Make sure the repository's Pages settings are set to deploy from GitHub Actions.
 
 ## Acknowledgments
-The best practice definitions, recommendations, and examples (see [`src/data/metadata.overrides.yaml`](src/data/metadata.overrides.yaml)) are from the [Dataverse North Metadata Best Practices Guide v 3.0](https://doi.org/10.5281/zenodo.5668945), license under [CC-BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+The best practice definitions, recommendations, and examples (see [`src/data/en/metadata.overrides.yaml`](src/data/en/metadata.overrides.yaml)) are from the [Dataverse North Metadata Best Practices Guide v 3.0](https://doi.org/10.5281/zenodo.5668945), license under [CC-BY 4.0](https://creativecommons.org/licenses/by/4.0/).
 
 ## License
 [Apache License 2.0](LICENSE)

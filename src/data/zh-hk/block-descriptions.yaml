@@ -1,0 +1,24 @@
+# 元數據區塊說明，以區塊 id（即原始 API 中區塊的 name）為鍵。
+# 只需列出已翻譯的區塊；未列出的會沿用 src/data/en/block-descriptions.yaml 的英文內容。
+# 顯示次序由英文檔案的鍵次序決定，此處的次序不影響排列。
+citation: >-
+  在 Dataverse 儲存庫發布資料集所需的核心元數據。本區塊的必填欄位用於生成資料集的引用格式。
+  符合 DDI Lite、DDI 2.5 Codebook、DataCite 3.1 及 Dublin Core 的 DCMI Metadata Terms 標準。
+  「語言」欄位採用 ISO 639-1 控制詞彙。
+geospatial: >-
+  描述地圖、GIS 檔案或其他以位置為基礎的資料。任何與地點或地理範圍相關（即具有空間範圍）的
+  資料集，除一般引用元數據區塊外，亦應加入地理空間元數據。符合 DDI Lite、DDI 2.5 Codebook、
+  DataCite 及 Dublin Core 標準。「國家／地區」欄位採用 ISO 3166-1 控制詞彙。
+socialscience: >-
+  描述屬於社會科學及人文學科範疇的資料，例如調查資料及相關資料集。符合 DDI Lite、
+  DDI 2.5 Codebook 及 Dublin Core 標準。
+astrophysics: >-
+  用於描述天文學或天體物理學資料。大部分欄位以虛擬天文台（VO）Discovery and Provenance
+  Metadata 建議為基礎，該建議是 IVOA 的 Resource Metadata for the Virtual Observatory
+  1.12 版（2007）規格（簡稱 IVOA-RM）的一種實作。可對應至 VO Discovery and Provenance
+  Metadata；不屬於 IVOA-RM 的欄位已於下方註明。
+biomedical: 描述生命科學範疇的資料。符合 ISA-Tab 規格。
+journal: 描述與期刊出版品相關的資料，例如預印本及複製研究資料。
+computationalworkflow: >-
+  描述計算工作流程：一系列以資料流相互依存的計算工作。
+3dobjects: 描述 3D 物件檔案，例如由 3D 掃描或建模產生的檔案。
