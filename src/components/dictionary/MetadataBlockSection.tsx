@@ -43,7 +43,7 @@ export function MetadataBlockSection({ result, onSelectField, fieldFilter, lang 
   const groups = groupByParent(fields);
 
   const cards = (group: FieldGroup) => (
-    <div className="grid gap-4 md:grid-cols-2">
+    <div className="grid gap-4 @2xl:grid-cols-2 @6xl:grid-cols-3">
       {group.fields.map((field) => (
         <FieldCard
           key={field.id}
@@ -51,6 +51,7 @@ export function MetadataBlockSection({ result, onSelectField, fieldFilter, lang 
           match={result.matches.get(field.id)}
           onSelect={(opener) => onSelectField(result.block, field, opener)}
           lang={lang}
+          headingLevel={group.parent ? 4 : 3}
         />
       ))}
     </div>

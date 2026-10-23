@@ -39,6 +39,7 @@ export function FieldDetailsDialog({ selected, onOpenChange, restoreFocusRef, la
       {selected && (
         <DialogContent
           className="max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-lg"
+          closeLabel={t('details.close')}
           onCloseAutoFocus={(event) => {
             event.preventDefault();
             restoreFocusRef.current?.focus();
@@ -90,7 +91,7 @@ export function FieldDetailsDialog({ selected, onOpenChange, restoreFocusRef, la
           {selected.field.example ? (
             <div className="space-y-2">
               <h3 className="text-sm font-medium">{t('details.example')}</h3>
-              <pre className="overflow-x-auto rounded-md bg-muted p-3 text-xs whitespace-pre-wrap">
+              <pre className="overflow-x-auto rounded-md bg-muted p-3 text-xs whitespace-pre-wrap wrap-anywhere">
                 <code>{selected.field.example}</code>
               </pre>
             </div>
@@ -115,7 +116,17 @@ export function FieldDetailsDialog({ selected, onOpenChange, restoreFocusRef, la
 
           <div className="space-y-1">
             <h3 className="text-sm font-medium">{t('details.path')}</h3>
-            <p className="text-sm text-muted-foreground">{getFieldPath(selected.block, selected.field)}</p>
+            {/* A list, not a joined string: screen readers skip the › glyph, so "list, 3 items"
+                is what conveys the hierarchy. role="list" keeps Safari from dropping list semantics
+                once preflight removes the bullets. */}
+            <ol role="list" className="text-sm text-muted-foreground">
+              {getFieldPath(selected.block, selected.field).map((segment, index) => (
+                <li key={index} className="inline">
+                  {index > 0 ? <span aria-hidden="true"> › </span> : null}
+                  {segment}
+                </li>
+              ))}
+            </ol>
           </div>
 
           <DialogFooter>

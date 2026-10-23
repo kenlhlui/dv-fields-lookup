@@ -56,7 +56,7 @@ describe('validateMetadata', () => {
 it('counts fields across blocks and builds a hierarchy path', () => {
   const blocks = validateMetadata(valid);
   expect(countFields(blocks)).toBe(1);
-  expect(getFieldPath(blocks[0], blocks[0].fields[0])).toBe('Citation Metadata › Author Identifier');
+  expect(getFieldPath(blocks[0], blocks[0].fields[0])).toEqual(['Citation Metadata', 'Author Identifier']);
 });
 
 it.each(['en', 'zh-hk'] as const)('validates the data source for %s', (lang) => {

@@ -28,7 +28,7 @@ export default function InformationDialog({ html, lang }: InformationDialogProps
           <Info />
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="sm:max-w-lg" closeLabel={t('info.close')}>
         <DialogHeader>
           <DialogTitle>{t('info.title')}</DialogTitle>
         </DialogHeader>

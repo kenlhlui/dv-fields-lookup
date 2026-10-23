@@ -4,14 +4,8 @@ import { useTranslations, type Lang } from '@/i18n/utils';
 import type { MetadataBlock } from '@/lib/metadata';
 import { cn } from '@/lib/utils';
 
-// Matches BackToTop's threshold so both floating controls appear together.
-const SHOW_AFTER_SCROLL_Y = 400;
-// Fade out this long after the last scroll event, so it doesn't sit over content while reading.
-const IDLE_HIDE_MS = 3000;
-
 export function BlockNav({ blocks, lang }: { blocks: MetadataBlock[]; lang: Lang }) {
   const t = useTranslations(lang);
-  const [visible, setVisible] = useState(false);
   const [activeId, setActiveId] = useState<string | undefined>(blocks[0]?.id);
   const blockIds = blocks.map((block) => block.id).join('|');
 
@@ -19,16 +13,7 @@ export function BlockNav({ blocks, lang }: { blocks: MetadataBlock[]; lang: Lang
     const headings = blocks
       .map((block) => document.getElementById(`metadata-block-${block.id}`))
       .filter((el): el is HTMLElement => el !== null);
-    let idleTimer: ReturnType<typeof setTimeout>;
-
     const onScroll = () => {
-      const pastThreshold = window.scrollY > SHOW_AFTER_SCROLL_Y;
-      setVisible(pastThreshold);
-      clearTimeout(idleTimer);
-      if (pastThreshold) {
-        idleTimer = setTimeout(() => setVisible(false), IDLE_HIDE_MS);
-      }
-
       // Recomputed from live geometry on every tick (not "did a heading just
       // cross a line" events) so a big jump — e.g. the back-to-top button —
       // lands on the right section instead of leaving the old one stuck.
@@ -45,7 +30,6 @@ export function BlockNav({ blocks, lang }: { blocks: MetadataBlock[]; lang: Lang
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => {
       window.removeEventListener('scroll', onScroll);
-      clearTimeout(idleTimer);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps -- blockIds is the stable form of blocks
   }, [blockIds]);
@@ -55,10 +39,9 @@ export function BlockNav({ blocks, lang }: { blocks: MetadataBlock[]; lang: Lang
   return (
     <nav
       aria-label={t('nav.blocks')}
-      className={cn(
-        'fixed top-1/2 left-4 z-40 hidden max-h-[70vh] w-56 -translate-x-4 -translate-y-1/2 overflow-y-auto rounded-lg border border-border bg-background/95 p-2 opacity-0 shadow-lg backdrop-blur pointer-events-none transition-all duration-200 min-[1600px]:block',
-        visible && 'translate-x-0 opacity-100 pointer-events-auto',
-      )}
+      // A sticky column beside the blocks, only where there's room for one. It never
+      // fades out, so what a screen reader reads is always on screen.
+      className="sticky top-6 hidden max-h-[calc(100vh-3rem)] self-start overflow-y-auto rounded-lg border border-border bg-background p-2 xl:block"
     >
       <ul className="space-y-0.5">
         {blocks.map((block) => (
@@ -67,7 +50,7 @@ export function BlockNav({ blocks, lang }: { blocks: MetadataBlock[]; lang: Lang
               href={`#metadata-block-${block.id}`}
               aria-current={activeId === block.id ? 'location' : undefined}
               className={cn(
-                'block truncate rounded-md px-2.5 py-1.5 text-xs text-muted-foreground hover:bg-muted hover:text-foreground',
+                'block rounded-md px-2.5 py-1.5 text-xs text-muted-foreground hover:bg-muted hover:text-foreground',
                 activeId === block.id && 'bg-muted font-medium text-foreground',
               )}
             >
