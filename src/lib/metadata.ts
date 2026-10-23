@@ -171,6 +171,6 @@ export function countFields(blocks: MetadataBlock[]): number {
   return blocks.reduce((total, block) => total + block.fields.length, 0);
 }
 
-export function getFieldPath(block: MetadataBlock, field: MetadataField): string {
-  return [block.name, field.parent, field.name].filter(Boolean).join(' › ');
+export function getFieldPath(block: MetadataBlock, field: MetadataField): string[] {
+  return [block.name, field.parent, field.name].filter((segment): segment is string => Boolean(segment));
 }
