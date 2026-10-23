@@ -35,7 +35,7 @@ export function HighlightText({ text, ranges = [] }: HighlightTextProps) {
       segments.push(text.slice(cursor, start));
     }
     segments.push(
-      <mark key={`${start}-${end}`} className="rounded-sm bg-yellow-200 px-0.5 text-inherit dark:bg-yellow-500/40">
+      <mark key={`${start}-${end}`} className="rounded-sm bg-yellow-200 px-0.5 text-foreground dark:bg-yellow-500/40">
         {text.slice(start, end + 1)}
       </mark>,
     );

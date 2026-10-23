@@ -25,10 +25,11 @@ interface FieldCardProps {
   headingLevel?: 3 | 4;
 }
 
-// GitHub Primer accent colors (accent/danger/done/neutral), 10% tint w/ tinted text + border.
+// GitHub Primer accent colors (accent/danger/done/neutral), 10% tint + border; light text uses the
+// darker emphasis shade so it holds 4.5:1 on the matched-card tint too.
 const badgeColor = {
-  type: 'border-[#0969da]/30 bg-[#0969da]/10 text-[#0969da] dark:border-[#4493f8]/40 dark:bg-[#0969da]/15 dark:text-[#4493f8]',
-  repeatable: 'border-[#8250df]/30 bg-[#8250df]/10 text-[#8250df] dark:border-[#a475f9]/40 dark:bg-[#8250df]/15 dark:text-[#a475f9]',
+  type: 'border-[#0969da]/30 bg-[#0969da]/10 text-[#0550ae] dark:border-[#4493f8]/40 dark:bg-[#0969da]/15 dark:text-[#4493f8]',
+  repeatable: 'border-[#8250df]/30 bg-[#8250df]/10 text-[#6639ba] dark:border-[#a475f9]/40 dark:bg-[#8250df]/15 dark:text-[#bc8cff]',
 } as const;
 
 // Best-practice badge tracks the recommendation tier, not a flat color: Recommended gets a
@@ -37,10 +38,10 @@ const badgeColor = {
 // best-practice-required without also making it schema-required.
 const bestPracticeColor: Record<string, string> = {
   Recommended:
-    'border-[#1a7f37]/30 bg-[#1a7f37]/10 text-[#1a7f37] dark:border-[#3fb950]/40 dark:bg-[#1a7f37]/15 dark:text-[#3fb950]',
+    'border-[#1a7f37]/30 bg-[#1a7f37]/10 text-[#116329] dark:border-[#3fb950]/40 dark:bg-[#1a7f37]/15 dark:text-[#3fb950]',
 };
 const bestPracticeColorDefault =
-  'border-[#656d76]/30 bg-[#656d76]/10 text-[#656d76] dark:border-[#9198a1]/40 dark:bg-[#656d76]/15 dark:text-[#9198a1]';
+  'border-[#656d76]/30 bg-[#656d76]/10 text-[#59636e] dark:border-[#9198a1]/40 dark:bg-[#656d76]/15 dark:text-[#9198a1]';
 
 export function FieldCard({ field, match, onSelect, lang, headingLevel = 3 }: FieldCardProps) {
   const t = useTranslations(lang);
