@@ -55,8 +55,9 @@ export function BlockNav({ blocks, lang }: { blocks: MetadataBlock[]; lang: Lang
   return (
     <nav
       aria-label={t('nav.blocks')}
+      // Hidden links stay in the tab order, so keyboard focus and hover keep the nav shown.
       className={cn(
-        'fixed top-1/2 left-4 z-40 hidden max-h-[70vh] w-56 -translate-x-4 -translate-y-1/2 overflow-y-auto rounded-lg border border-border bg-background/95 p-2 opacity-0 shadow-lg backdrop-blur pointer-events-none transition-all duration-200 min-[1600px]:block',
+        'fixed top-1/2 left-4 z-40 hidden max-h-[70vh] w-56 -translate-x-4 -translate-y-1/2 overflow-y-auto rounded-lg border border-border bg-background/95 p-2 opacity-0 shadow-lg backdrop-blur pointer-events-none transition-all duration-200 min-[1600px]:block focus-within:translate-x-0 focus-within:opacity-100 focus-within:pointer-events-auto hover:translate-x-0 hover:opacity-100 hover:pointer-events-auto',
         visible && 'translate-x-0 opacity-100 pointer-events-auto',
       )}
     >

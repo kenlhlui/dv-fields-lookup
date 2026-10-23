@@ -39,7 +39,7 @@
   "card.bestPracticePrefix": "最佳實踐：",
   "card.bestPracticeBadge": "最佳實踐：{tier}",
   "card.viewDetails": "睇詳情",
-  "card.viewDetailsFor": "睇「{name}」的詳情",
+  "card.viewDetailsFor": "睇詳情：{name}",
   "details.identifier": "識別碼",
   "details.type": "類型",
   "details.required": "必填",

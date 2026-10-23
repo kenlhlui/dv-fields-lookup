@@ -345,6 +345,6 @@ describe('MetadataDictionary', () => {
     await user.click(screen.getByRole('button', { name: '選填' }));
 
     expect(screen.getByRole('status')).toHaveTextContent('2 個欄位 · 2 個元數據區塊');
-    expect(screen.getAllByRole('button', { name: /睇「.+」的詳情/ }).length).toBe(2);
+    expect(screen.getAllByRole('button', { name: /^睇詳情：.+/ }).length).toBe(2);
   });
 });

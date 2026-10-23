@@ -39,6 +39,7 @@ export function FieldDetailsDialog({ selected, onOpenChange, restoreFocusRef, la
       {selected && (
         <DialogContent
           className="max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-lg"
+          closeLabel={t('details.close')}
           onCloseAutoFocus={(event) => {
             event.preventDefault();
             restoreFocusRef.current?.focus();
