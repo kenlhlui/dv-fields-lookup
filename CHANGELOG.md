@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.7.2](https://github.com/kenlhlui/dv-fields-lookup/compare/v0.7.1...v0.7.2) (2026-10-23)
+
+### Bug Fixes
+
+* accessibility & UI changes ([#32](https://github.com/kenlhlui/dv-fields-lookup/issues/32)) ([0c1018f](https://github.com/kenlhlui/dv-fields-lookup/commit/0c1018fc8173d873cd8952143151b89a11e897b3))
+
 ## [0.7.1](https://github.com/kenlhlui/dv-fields-lookup/compare/v0.7.0...v0.7.1) (2026-09-18)
 
 ### Bug Fixes
