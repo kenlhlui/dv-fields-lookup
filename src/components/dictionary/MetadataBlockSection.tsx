@@ -51,6 +51,7 @@ export function MetadataBlockSection({ result, onSelectField, fieldFilter, lang 
           match={result.matches.get(field.id)}
           onSelect={(opener) => onSelectField(result.block, field, opener)}
           lang={lang}
+          headingLevel={group.parent ? 4 : 3}
         />
       ))}
     </div>

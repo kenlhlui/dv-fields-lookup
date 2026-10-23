@@ -75,6 +75,22 @@ describe('MetadataBlockSection', () => {
     expect(within(group).queryByText('Author Name')).not.toBeInTheDocument();
   });
 
+  it('nests field headings without skipping a level', () => {
+    const withParent: SearchBlock = {
+      ...result,
+      matches: new Map(),
+      block: {
+        ...block,
+        fields: block.fields.map((field, index) => (index === 0 ? field : { ...field, parent: 'Author' })),
+      },
+    };
+    render(<MetadataBlockSection result={withParent} onSelectField={vi.fn()} lang="en" />);
+
+    expect(screen.getByRole('heading', { level: 3, name: 'Author Name' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 3, name: 'Author' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 4, name: 'Author Identifier' })).toBeInTheDocument();
+  });
+
   it('shows only matching fields while searching, with match state and selection details', async () => {
     const user = userEvent.setup();
     const onSelectField = vi.fn();

@@ -21,6 +21,8 @@ interface FieldCardProps {
   match?: FieldMatch;
   onSelect(opener: HTMLButtonElement): void;
   lang: Lang;
+  // h3 when the card sits directly under a block's h2, h4 inside a compound group's h3.
+  headingLevel?: 3 | 4;
 }
 
 // GitHub Primer accent colors (accent/danger/done/neutral), 10% tint w/ tinted text + border.
@@ -40,8 +42,9 @@ const bestPracticeColor: Record<string, string> = {
 const bestPracticeColorDefault =
   'border-[#656d76]/30 bg-[#656d76]/10 text-[#656d76] dark:border-[#9198a1]/40 dark:bg-[#656d76]/15 dark:text-[#9198a1]';
 
-export function FieldCard({ field, match, onSelect, lang }: FieldCardProps) {
+export function FieldCard({ field, match, onSelect, lang, headingLevel = 3 }: FieldCardProps) {
   const t = useTranslations(lang);
+  const Heading = `h${headingLevel}` as const;
   const isMatch = match !== undefined;
 
   return (
@@ -49,9 +52,9 @@ export function FieldCard({ field, match, onSelect, lang }: FieldCardProps) {
       <CardHeader>
         <div className="flex flex-wrap items-start justify-between gap-3">
           <CardTitle className="min-w-0 flex-1">
-            <h4>
+            <Heading>
               <HighlightText text={field.name} ranges={match?.ranges.name} />
-            </h4>
+            </Heading>
           </CardTitle>
           {field.required && (
             <p className="text-xs font-medium text-[#cf222e] dark:text-[#f85149]">
