@@ -10,7 +10,7 @@ import { Separator } from '@/components/ui/separator';
 import type { FacetDescriptions } from '@/data';
 import { plural, useTranslations, type Lang } from '@/i18n/utils';
 import type { MetadataBlock, MetadataField } from '@/lib/metadata';
-import { createMetadataSearch, getVisibleFields } from '@/lib/search';
+import { createMetadataSearch, getVisibleFields, type SearchBlock } from '@/lib/search';
 
 // Canonical tokens as authored in metadata.overrides.yaml, never translated in the data —
 // filtering and badge colours match on them. Display labels come from the tier.* keys.
@@ -49,18 +49,39 @@ export default function MetadataDictionary({ blocks, facetDescriptions, lang }: 
     return true;
   }
 
-  const blockFiltered =
-    blockFilter.size > 0 ? view.blocks.filter((result) => blockFilter.has(result.block.id)) : view.blocks;
-  const visibleBlocks = blockFiltered.filter((result) => getVisibleFields(result, fieldFilter).length > 0);
-  const isEmpty = visibleBlocks.length === 0;
+  function visible(results: SearchBlock[]): SearchBlock[] {
+    const blockFiltered =
+      blockFilter.size > 0 ? results.filter((result) => blockFilter.has(result.block.id)) : results;
+    return blockFiltered.filter((result) => getVisibleFields(result, fieldFilter).length > 0);
+  }
 
-  const fieldCount = visibleBlocks.reduce((total, result) => total + getVisibleFields(result, fieldFilter).length, 0);
-  const summary = t(view.isSearching ? 'summary.searching' : 'summary.browsing', {
-    fields: fieldCount,
-    fieldWord: plural(t, fieldCount, 'count.field.one', 'count.field.other'),
-    blocks: visibleBlocks.length,
-    blockWord: plural(t, visibleBlocks.length, 'count.block.one', 'count.block.other'),
-  });
+  function countVisibleFields(results: SearchBlock[]): number {
+    return results.reduce((total, result) => total + getVisibleFields(result, fieldFilter).length, 0);
+  }
+
+  const visibleBlocks = visible(view.blocks);
+  const visibleSimilarBlocks = visible(view.similarBlocks);
+  const isEmpty = visibleBlocks.length === 0 && visibleSimilarBlocks.length === 0;
+
+  const fieldCount = countVisibleFields(visibleBlocks);
+  const similarFieldCount = countVisibleFields(visibleSimilarBlocks);
+  // With only similar matches, "0 matching fields · 0 metadata blocks" would just be noise.
+  const summary = [
+    (fieldCount > 0 || similarFieldCount === 0) &&
+      t(view.isSearching ? 'summary.searching' : 'summary.browsing', {
+        fields: fieldCount,
+        fieldWord: plural(t, fieldCount, 'count.field.one', 'count.field.other'),
+        blocks: visibleBlocks.length,
+        blockWord: plural(t, visibleBlocks.length, 'count.block.one', 'count.block.other'),
+      }),
+    similarFieldCount > 0 &&
+      t('summary.similar', {
+        fields: similarFieldCount,
+        fieldWord: plural(t, similarFieldCount, 'count.field.one', 'count.field.other'),
+      }),
+  ]
+    .filter(Boolean)
+    .join(' · ');
   const emptyMessage = view.isSearching
     ? t('search.emptyQuery', { query: view.normalizedQuery })
     : t('search.emptyFilters');
@@ -194,6 +215,32 @@ export default function MetadataDictionary({ blocks, facetDescriptions, lang }: 
                   lang={lang}
                 />
               ))}
+              {visibleSimilarBlocks.length > 0 && (
+                // Kept below and apart from the exact results so a near-miss spelling is never
+                // mistaken for what was typed.
+                <section aria-labelledby="similar-matches" className="space-y-12">
+                  <div className="space-y-2 rounded-lg border border-dashed p-4">
+                    <h2 id="similar-matches" className="text-xl font-semibold tracking-tight">
+                      {t('search.similarHeading')}
+                    </h2>
+                    <p className="text-muted-foreground">
+                      {t(visibleBlocks.length > 0 ? 'search.similarDescription' : 'search.similarOnlyDescription', {
+                        query: view.normalizedQuery,
+                      })}
+                    </p>
+                  </div>
+                  {visibleSimilarBlocks.map((result) => (
+                    <MetadataBlockSection
+                      key={result.block.id}
+                      result={result}
+                      onSelectField={selectField}
+                      fieldFilter={fieldFilter}
+                      lang={lang}
+                      similar
+                    />
+                  ))}
+                </section>
+              )}
             </div>
           )}
         </div>

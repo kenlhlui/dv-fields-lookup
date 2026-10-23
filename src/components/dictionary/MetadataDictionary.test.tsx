@@ -180,6 +180,57 @@ describe('MetadataDictionary', () => {
     expect(screen.queryByRole('heading', { name: 'Geospatial Metadata' })).not.toBeInTheDocument();
   });
 
+  it('lists near-miss spellings in a separate similar matches section', async () => {
+    const user = userEvent.setup();
+    const contactBlocks: MetadataBlock[] = [
+      {
+        id: 'citation',
+        name: 'Citation Metadata',
+        description: 'Core information used to identify and cite a dataset.',
+        fields: [
+          {
+            id: 'contactEmail',
+            name: 'Contact Email',
+            definition: 'The email address of the dataset contact.',
+            type: 'Email',
+            required: false,
+            repeatable: false,
+          },
+          {
+            id: 'grantNumber',
+            name: 'Grant Number',
+            definition: 'The grant or contract number of the funding agency.',
+            type: 'Text',
+            required: false,
+            repeatable: false,
+          },
+        ],
+      },
+    ];
+    renderDictionary(contactBlocks);
+
+    await user.type(screen.getByLabelText('Search metadata fields'), 'contact');
+
+    expect(screen.getByRole('status')).toHaveTextContent('1 matching field · 1 metadata block · 1 similar field');
+    const similar = screen.getByRole('region', { name: 'Similar matches' });
+    expect(within(similar).getByText('Grant Number')).toBeInTheDocument();
+    expect(within(similar).getByLabelText('Similar match')).toBeInTheDocument();
+    expect(within(similar).queryByText('Contact Email')).not.toBeInTheDocument();
+    // The same block appears in both lists, so its heading ids must not collide.
+    expect(document.querySelectorAll('[id="metadata-block-citation"]')).toHaveLength(1);
+    expect(document.querySelectorAll('[id="similar-metadata-block-citation"]')).toHaveLength(1);
+  });
+
+  it('summarizes only the similar matches when nothing matches exactly', async () => {
+    const user = userEvent.setup();
+    renderDictionary();
+
+    await user.type(screen.getByLabelText('Search metadata fields'), 'Westernmost Longitde');
+
+    expect(screen.getByRole('status')).toHaveTextContent(/^1 similar field$/);
+    expect(screen.getByText('No exact matches for “Westernmost Longitde”. These fields have a spelling close to it.')).toBeInTheDocument();
+  });
+
   it('restores source-order blocks after clearing a search', async () => {
     const user = userEvent.setup();
     renderDictionary();

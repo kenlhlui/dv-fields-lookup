@@ -11,6 +11,8 @@ interface MetadataBlockSectionProps {
   onSelectField(block: MetadataBlock, field: MetadataField, opener: HTMLButtonElement): void;
   fieldFilter?: (field: MetadataField) => boolean;
   lang: Lang;
+  // Typo-tolerant results. A block can appear in both lists, so these get their own element ids.
+  similar?: boolean;
 }
 
 interface FieldGroup {
@@ -34,8 +36,16 @@ function groupByParent(fields: MetadataField[]): FieldGroup[] {
   }, []);
 }
 
-export function MetadataBlockSection({ result, onSelectField, fieldFilter, lang }: MetadataBlockSectionProps) {
+export function MetadataBlockSection({
+  result,
+  onSelectField,
+  fieldFilter,
+  lang,
+  similar = false,
+}: MetadataBlockSectionProps) {
   const t = useTranslations(lang);
+  const idPrefix = similar ? 'similar-' : '';
+  const blockHeadingId = `${idPrefix}metadata-block-${result.block.id}`;
   // Searching narrows a block to its matching fields; browsing shows every field (matches is empty).
   // fieldFilter then narrows further by facet (required, best practice).
   const fields = getVisibleFields(result, fieldFilter);
@@ -49,6 +59,7 @@ export function MetadataBlockSection({ result, onSelectField, fieldFilter, lang 
           key={field.id}
           field={field}
           match={result.matches.get(field.id)}
+          similar={similar}
           onSelect={(opener) => onSelectField(result.block, field, opener)}
           lang={lang}
           headingLevel={group.parent ? 4 : 3}
@@ -60,12 +71,12 @@ export function MetadataBlockSection({ result, onSelectField, fieldFilter, lang 
   return (
     // section keeps the `region` landmark role; `open` by default so search results and
     // first-visit browsing aren't hidden behind a click.
-    <section aria-labelledby={`metadata-block-${result.block.id}`}>
+    <section aria-labelledby={blockHeadingId}>
       <details open className="group space-y-6">
         <summary className="flex cursor-pointer list-none items-start justify-between gap-3 [&::-webkit-details-marker]:hidden">
           <div className="space-y-2">
             <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
-              <h2 id={`metadata-block-${result.block.id}`} className="text-2xl font-semibold tracking-tight">
+              <h2 id={blockHeadingId} className="text-2xl font-semibold tracking-tight">
                 {result.block.name}
               </h2>
               <p className="text-sm text-muted-foreground">
@@ -85,7 +96,7 @@ export function MetadataBlockSection({ result, onSelectField, fieldFilter, lang 
         <Separator />
         <div className="space-y-4">
           {groups.map((group) => {
-            const headingId = `compound-${result.block.id}-${group.fields[0].id}`;
+            const headingId = `${idPrefix}compound-${result.block.id}-${group.fields[0].id}`;
             return group.parent ? (
               <section
                 key={group.fields[0].id}

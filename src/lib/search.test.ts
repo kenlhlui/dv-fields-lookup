@@ -3,11 +3,15 @@ import { describe, expect, it } from 'vitest';
 import { localeData } from '@/data';
 import demoMetadata from '@/data/metadata.json';
 import { buildMetadata, type MetadataBlock } from '@/lib/metadata';
-import { createMetadataSearch, getVisibleFields } from '@/lib/search';
+import { createMetadataSearch, getVisibleFields, type SearchBlock } from '@/lib/search';
 
 const { overrides: demoOverrides, blockDescriptions } = localeData('en');
 const blocks = buildMetadata(demoMetadata, demoOverrides, blockDescriptions);
 const search = createMetadataSearch(blocks);
+
+function fieldIds(results: SearchBlock[]): string[] {
+  return results.flatMap((result) => [...result.matches.keys()]);
+}
 
 describe('createMetadataSearch', () => {
   it('returns all blocks in source order for a whitespace-only query', () => {
@@ -47,6 +51,63 @@ describe('createMetadataSearch', () => {
     const affiliationMatches = search.search('avoid abbreviations').blocks[0].matches;
     expect(affiliationMatches.has('author.authorAffiliation')).toBe(true);
     expect(search.search('Ada Lovelace').matchingFieldCount).toBe(0);
+  });
+
+  it('matches multi-word queries in any order, requiring every word', () => {
+    const reordered = search.search('affiliation author');
+
+    expect(reordered.matchingFieldCount).toBe(1);
+    expect(reordered.blocks[0].matches.has('author.authorAffiliation')).toBe(true);
+    expect(search.search('affiliation zzzz').matchingFieldCount).toBe(0);
+  });
+
+  it('requires short words to match exactly while tolerating a typo in longer words', () => {
+    const title = search.search('title');
+
+    expect(fieldIds([...title.blocks, ...title.similarBlocks])).not.toContain('keyword.keywordVocabularyURI');
+    expect(search.search('email').matchingFieldCount).toBe(1);
+    expect(fieldIds(search.search('subjct').similarBlocks)).toContain('subject');
+  });
+
+  it('only matches at word starts, including camelCase humps', () => {
+    const cityMatches = search.search('city').blocks.flatMap((result) => [...result.matches.keys()]);
+
+    expect(cityMatches).toContain('geographicCoverage.city');
+    expect(cityMatches).not.toContain('coverage.RedshiftValue.coverage.Redshift.MinimumValue');
+    expect(search.search('url').blocks[0].matches.get('producer.producerURL')?.ranges.id).toEqual([[17, 19]]);
+  });
+
+  it('lists typo-tolerant matches separately from exact matches', () => {
+    const contact = search.search('contact');
+
+    expect(fieldIds(contact.blocks)).toContain('datasetContact.datasetContactEmail');
+    expect(fieldIds(contact.blocks)).not.toContain('grantNumber.grantNumberValue');
+    expect(fieldIds(contact.similarBlocks)).toContain('grantNumber.grantNumberValue');
+    expect(fieldIds(contact.similarBlocks)).not.toContain('datasetContact.datasetContactEmail');
+
+    // A typo match only lines up some letters; the highlight still covers the whole word.
+    const contract = contact.similarBlocks
+      .find((result) => result.matches.has('grantNumber.grantNumberValue'))
+      ?.matches.get('grantNumber.grantNumberValue');
+    const definition = blocks.flatMap((block) => block.fields).find((field) => field.id === 'grantNumber.grantNumberValue')
+      ?.definition ?? '';
+    const start = definition.indexOf('contract');
+    expect(contract?.ranges.definition).toEqual([[start, start + 'contract'.length - 1]]);
+
+    const typo = search.search('affilation');
+    expect(typo.blocks).toEqual([]);
+    expect(fieldIds(typo.similarBlocks)).toContain('author.authorAffiliation');
+  });
+
+  it('matches space-separated keywords in translated Chinese text', () => {
+    const { overrides, blockDescriptions: zhBlockDescriptions } = localeData('zh-hk');
+    const zhSearch = createMetadataSearch(buildMetadata(demoMetadata, overrides, zhBlockDescriptions));
+    const match = zhSearch.search('機構 縮寫').blocks[0].matches.get('author.authorAffiliation');
+
+    expect(match?.ranges.bestPracticeDefinition).toEqual([
+      [6, 7],
+      [18, 19],
+    ]);
   });
 
   it('ranks a direct field-name match ahead of a definition-only match', () => {

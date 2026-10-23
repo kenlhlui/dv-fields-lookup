@@ -27,8 +27,8 @@ importers:
         specifier: ^2.1.1
         version: 2.1.1
       fuse.js:
-        specifier: ^7.5.0
-        version: 7.5.0
+        specifier: ^7.6.0-beta.0
+        version: 7.6.0-beta.0
       js-yaml:
         specifier: ^5.4.1
         version: 5.4.1
@@ -3111,8 +3111,8 @@ packages:
   function-bind@1.1.2:
     resolution: {integrity: sha512-7XHNxH7qX9xG5mIwxkhumTox/MIRNcOgDrxWsMt2pAr23WHp6MrRlN7FBSFpCpr+oVO0F744iUgR82nJMfG2SA==}
 
-  fuse.js@7.5.0:
-    resolution: {integrity: sha512-sQtrEfA+ez/3G0cCZecF70oqpCRttCexYUG4mUrtWL49ULUzUyxokt5kyqwtKzj1270RaKih+hcP3qLcumccow==}
+  fuse.js@7.6.0-beta.0:
+    resolution: {integrity: sha512-eplgxSpAbS1poytA3h24GD9Kaq9lQXkdYNzyhPjaqzf/91t90KnJWjVOMDUv9dQEFFo3OKoALdEv2PyNBSJimA==}
     engines: {node: '>=10'}
 
   fuzzysort@3.1.0:
@@ -8145,7 +8145,7 @@ snapshots:
 
   function-bind@1.1.2: {}
 
-  fuse.js@7.5.0: {}
+  fuse.js@7.6.0-beta.0: {}
 
   fuzzysort@3.1.0: {}
 
