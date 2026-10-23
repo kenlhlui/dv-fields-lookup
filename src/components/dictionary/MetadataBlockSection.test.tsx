@@ -106,7 +106,7 @@ describe('MetadataBlockSection', () => {
     expect(screen.getByText('Identifier')).toBeInTheDocument();
 
     const detailsButton = screen.getByRole('button', { name: 'View details for Author Identifier' });
-    expect(detailsButton.closest('.grid')).toHaveClass('md:grid-cols-2');
+    expect(detailsButton.closest('.grid')).toHaveClass('@2xl:grid-cols-2');
 
     await user.click(detailsButton);
 

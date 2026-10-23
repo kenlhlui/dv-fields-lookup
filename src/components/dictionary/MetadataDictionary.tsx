@@ -81,7 +81,6 @@ export default function MetadataDictionary({ blocks, facetDescriptions, lang }: 
 
   return (
     <div className="space-y-8">
-      <BlockNav blocks={visibleBlocks.map((result) => result.block)} lang={lang} />
       <div className="space-y-3">
         <label htmlFor="metadata-search" className="text-xl font-medium gap-1 flex items-center">
           {t('search.label')}
@@ -170,29 +169,35 @@ export default function MetadataDictionary({ blocks, facetDescriptions, lang }: 
         </p>
       </div>
 
-      {isEmpty ? (
-        <div className="rounded-lg border p-6" aria-label={t('search.noResultsLabel')}>
-          <p>{emptyMessage}</p>
-          <p className="text-muted-foreground">
-            {view.isSearching ? t('search.emptyQueryHint') : t('search.emptyFiltersHint')}
-          </p>
-          <Button className="mt-4" variant="outline" onClick={clearSearch}>
-            {view.isSearching ? t('search.clearSearch') : t('search.clearFilters')}
-          </Button>
+      <div className="xl:grid xl:grid-cols-[14rem_minmax(0,1fr)] xl:gap-8">
+        <BlockNav blocks={visibleBlocks.map((result) => result.block)} lang={lang} />
+        {/* A container, so the field grid sizes to the space left beside the sidebar, not the viewport. */}
+        <div className="@container min-w-0 xl:col-start-2">
+          {isEmpty ? (
+            <div className="rounded-lg border p-6" aria-label={t('search.noResultsLabel')}>
+              <p>{emptyMessage}</p>
+              <p className="text-muted-foreground">
+                {view.isSearching ? t('search.emptyQueryHint') : t('search.emptyFiltersHint')}
+              </p>
+              <Button className="mt-4" variant="outline" onClick={clearSearch}>
+                {view.isSearching ? t('search.clearSearch') : t('search.clearFilters')}
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-12">
+              {visibleBlocks.map((result) => (
+                <MetadataBlockSection
+                  key={result.block.id}
+                  result={result}
+                  onSelectField={selectField}
+                  fieldFilter={fieldFilter}
+                  lang={lang}
+                />
+              ))}
+            </div>
+          )}
         </div>
-      ) : (
-        <div className="space-y-12">
-          {visibleBlocks.map((result) => (
-            <MetadataBlockSection
-              key={result.block.id}
-              result={result}
-              onSelectField={selectField}
-              fieldFilter={fieldFilter}
-              lang={lang}
-            />
-          ))}
-        </div>
-      )}
+      </div>
 
       <FieldDetailsDialog
         selected={selected}

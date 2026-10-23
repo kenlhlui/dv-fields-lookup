@@ -1,5 +1,5 @@
 import { act, render, screen } from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 import { BlockNav } from '@/components/dictionary/BlockNav';
 import type { MetadataBlock } from '@/lib/metadata';
@@ -30,41 +30,20 @@ beforeEach(() => {
 });
 
 describe('BlockNav', () => {
-  afterEach(() => vi.useRealTimers());
-
-  it('stays hidden near the top of the page and floats in once scrolled', () => {
+  it('shows every block link without needing to scroll, hover or open anything', () => {
     render(<BlockNav blocks={blocks} lang="en" />);
     const nav = screen.getByRole('navigation', { name: 'Metadata blocks' });
-    expect(nav.className).toMatch(/opacity-0/);
 
-    scrollTo(500);
-    expect(nav.className).toMatch(/opacity-100/);
-
-    scrollTo(0);
-    expect(nav.className).toMatch(/opacity-0/);
+    expect(nav.className).not.toMatch(/opacity-0/);
+    expect(screen.getAllByRole('link')).toHaveLength(2);
   });
 
-  it('stays hidden until the viewport has enough left gutter to avoid the cards', () => {
+  it('only shows as a column on wide screens, never as an overlay on small ones', () => {
     render(<BlockNav blocks={blocks} lang="en" />);
     const nav = screen.getByRole('navigation', { name: 'Metadata blocks' });
 
-    expect(nav.className).toMatch(/\bhidden\b.*\bmin-\[1600px\]:block\b/);
+    expect(nav.className).toMatch(/\bhidden\b.*\bxl:block\b/);
     expect(nav.className).not.toMatch(/\bmd:block\b/);
-  });
-
-  it('fades back out after 3 seconds of no further scrolling', () => {
-    vi.useFakeTimers();
-    render(<BlockNav blocks={blocks} lang="en" />);
-    const nav = screen.getByRole('navigation', { name: 'Metadata blocks' });
-
-    scrollTo(500);
-    expect(nav.className).toMatch(/opacity-100/);
-
-    act(() => vi.advanceTimersByTime(2999));
-    expect(nav.className).toMatch(/opacity-100/);
-
-    act(() => vi.advanceTimersByTime(1));
-    expect(nav.className).toMatch(/opacity-0/);
   });
 
   it('marks the block whose heading has scrolled above the detection line as current', () => {
