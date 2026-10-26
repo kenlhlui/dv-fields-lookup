@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.8.0](https://github.com/kenlhlui/dv-fields-lookup/compare/v0.7.2...v0.8.0) (2026-10-26)
+
+### Features
+
+* switch to use keyword search ([#33](https://github.com/kenlhlui/dv-fields-lookup/issues/33)) ([02778f9](https://github.com/kenlhlui/dv-fields-lookup/commit/02778f978784398b937085f880c88ce79772fa13))
+
 ## [0.7.2](https://github.com/kenlhlui/dv-fields-lookup/compare/v0.7.1...v0.7.2) (2026-10-23)
 
 ### Bug Fixes
