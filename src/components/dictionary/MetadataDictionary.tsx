@@ -12,11 +12,8 @@ import { plural, useTranslations, type Lang } from '@/i18n/utils';
 import type { MetadataBlock, MetadataField } from '@/lib/metadata';
 import { createMetadataSearch, getVisibleFields, type SearchBlock } from '@/lib/search';
 import { cn, toggleInSet } from '@/lib/utils';
+import { bestPracticeTiers } from '@/lib/bestPracticeTiers';
 
-
-// Canonical tokens as authored in metadata.overrides.yaml, never translated in the data —
-// filtering and badge colours match on them. Display labels come from the tier.* keys.
-const bestPracticeTiers = ['Recommended', 'Optional'] as const;
 
 interface MetadataDictionaryProps {
   blocks: MetadataBlock[];
