@@ -140,7 +140,7 @@ You can deploy the application to any static hosting service. For example, to de
 
 7. Optionally translate steps 3, 5 and 6 into the other locales you serve, or delete `src/pages/zh-hk/`, `src/i18n/locales/zh-hk.json`, the `zh-hk` entries in `src/i18n/ui.ts` and `src/data/zh-hk/` to ship English only.
 
-8. Commit and push your changes. Make sure the repository's Pages settings are set to deploy from GitHub Actions.
+8. Commit and push your changes. Make sure the repository's Pages settings are set to deploy from GitHub Actions. The site deploys when a `v*` tag is pushed (for example with `pnpm release`), or manually by running the **Release and Deploy** workflow from the Actions tab.
 </details>
 
 ## Acknowledgments
