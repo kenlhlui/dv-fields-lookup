@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.9.1](https://github.com/kenlhlui/dv-fields-lookup/compare/v0.9.0...v0.9.1) (2026-10-26)
+
+### Bug Fixes
+
+* color contrast for ring ([#35](https://github.com/kenlhlui/dv-fields-lookup/issues/35)) ([61c6d2b](https://github.com/kenlhlui/dv-fields-lookup/commit/61c6d2b02d98bf5d2c68f7f6e0a5786ad4eefe91))
+
 ## [0.9.0](https://github.com/kenlhlui/dv-fields-lookup/compare/v0.8.0...v0.9.0) (2026-10-26)
 
 ### Features
