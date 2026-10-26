@@ -228,7 +228,7 @@ export default function MetadataDictionary({ blocks, facetDescriptions, lang }: 
         {/* A container, so the field grid sizes to the space left beside the sidebar, not the viewport. */}
         <div className="@container min-w-0 xl:col-start-2">
           {isEmpty ? (
-            <div className="rounded-lg border p-6" aria-label={t('search.noResultsLabel')}>
+            <div className="rounded-lg border p-6">
               <p>{emptyMessage}</p>
               <p className="text-muted-foreground">
                 {view.isSearching ? t('search.emptyQueryHint') : t('search.emptyFiltersHint')}

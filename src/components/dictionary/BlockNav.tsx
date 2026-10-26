@@ -51,7 +51,8 @@ export function BlockNav({ blocks, similarMatches = false, lang }: BlockNavProps
 
   return (
     <nav
-      aria-label={t('nav.blocks')}
+      // Named for its contents: once it links to the similar matches, it's more than a list of blocks.
+      aria-label={t(similarMatches ? 'nav.onThisPage' : 'nav.blocks')}
       // A sticky column beside the blocks, only where there's room for one. It never
       // fades out, so what a screen reader reads is always on screen.
       className="sticky top-6 hidden max-h-[calc(100vh-3rem)] self-start overflow-y-auto rounded-lg border border-border bg-background p-2 xl:block"
