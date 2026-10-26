@@ -12,13 +12,14 @@ function type(p: any): string {
 function table(name: string, schema: z.ZodObject): string {
   const { properties = {}, required = [] } = z.toJSONSchema(schema) as any;
   const rows = Object.entries<any>(properties).map(
-    ([key, p]) =>
-      `| \`${key}\` | ${type(p)} | ${required.includes(key) ? 'yes' : 'no'} | ${p.description ?? ''} |`,
+    ([key, p]) => `| \`${key}\` | ${type(p)} | ${required.includes(key) ? 'yes' : 'no'} | ${p.description ?? ''} |`,
   );
-  return [`## ${name}`, '', '| Field | Type | Required | Description |', '| --- | --- | --- | --- |', ...rows, ''].join('\n');
+  return [`## ${name}`, '', '| Field | Type | Required | Description |', '| --- | --- | --- | --- |', ...rows, ''].join(
+    '\n',
+  );
 }
 
 writeFileSync(
   'docs/schema.md',
-['# metadata.json schema', '', table('Block', metadataBlockSchema), table('Field', metadataFieldSchema)].join('\n'),
+  ['# metadata.json schema', '', table('Block', metadataBlockSchema), table('Field', metadataFieldSchema)].join('\n'),
 );

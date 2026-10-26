@@ -129,7 +129,12 @@ describe('MetadataBlockSection', () => {
     const browsing: SearchBlock = { ...result, matches: new Map() };
 
     render(
-      <MetadataBlockSection result={browsing} onSelectField={vi.fn()} fieldFilter={(field) => field.required} lang="en" />,
+      <MetadataBlockSection
+        result={browsing}
+        onSelectField={vi.fn()}
+        fieldFilter={(field) => field.required}
+        lang="en"
+      />,
     );
 
     expect(screen.getByText('Author Name')).toBeInTheDocument();

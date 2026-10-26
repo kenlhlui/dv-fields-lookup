@@ -23,9 +23,7 @@ export function useTranslations(lang: Lang) {
   return function t(key: UIKey, params?: Record<string, string | number>): string {
     const template = dictionary[key] || ui[defaultLang][key];
     if (!params) return template;
-    return template.replace(/\{(\w+)\}/g, (match, name: string) =>
-      name in params ? String(params[name]) : match,
-    );
+    return template.replace(/\{(\w+)\}/g, (match, name: string) => (name in params ? String(params[name]) : match));
   };
 }
 

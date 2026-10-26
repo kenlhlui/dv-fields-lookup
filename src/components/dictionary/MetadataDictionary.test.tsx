@@ -248,7 +248,9 @@ describe('MetadataDictionary', () => {
     await user.type(screen.getByLabelText('Search metadata fields'), 'Westernmost Longitde');
 
     expect(screen.getByRole('status')).toHaveTextContent(/^1 similar field$/);
-    expect(screen.getByText('No exact matches for “Westernmost Longitde”. These fields have a spelling close to it.')).toBeInTheDocument();
+    expect(
+      screen.getByText('No exact matches for “Westernmost Longitde”. These fields have a spelling close to it.'),
+    ).toBeInTheDocument();
   });
 
   it('restores source-order blocks after clearing a search', async () => {

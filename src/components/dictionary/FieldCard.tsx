@@ -3,14 +3,7 @@ import { Search } from 'lucide-react';
 import { HighlightText } from '@/components/dictionary/HighlightText';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { tierLabel, useTranslations, type Lang } from '@/i18n/utils';
 import type { MetadataField } from '@/lib/metadata';
 import type { FieldMatch } from '@/lib/search';
@@ -31,7 +24,8 @@ interface FieldCardProps {
 // darker emphasis shade so it holds 4.5:1 on the matched-card tint too.
 const badgeColor = {
   type: 'border-[#0969da]/30 bg-[#0969da]/10 text-[#0550ae] dark:border-[#4493f8]/40 dark:bg-[#0969da]/15 dark:text-[#4493f8]',
-  repeatable: 'border-[#8250df]/30 bg-[#8250df]/10 text-[#6639ba] dark:border-[#a475f9]/40 dark:bg-[#8250df]/15 dark:text-[#bc8cff]',
+  repeatable:
+    'border-[#8250df]/30 bg-[#8250df]/10 text-[#6639ba] dark:border-[#a475f9]/40 dark:bg-[#8250df]/15 dark:text-[#bc8cff]',
 } as const;
 
 // Best-practice badge tracks the recommendation tier, not a flat color: Recommended gets a

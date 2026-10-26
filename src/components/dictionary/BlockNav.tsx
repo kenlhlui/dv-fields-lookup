@@ -67,7 +67,8 @@ export function BlockNav({ blocks, similarMatches = false, lang }: BlockNavProps
                 // The global focus outline is pulled inside because the nav scrolls, which would clip it at the edges.
                 'block rounded-md border border-transparent px-2.5 py-1.5 text-xs text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:-outline-offset-2',
                 // The muted fill alone barely shows against the background, so the active item also gets a border tuned per theme.
-                activeId === item.id && 'border-foreground/20 bg-muted font-medium text-foreground dark:border-white/35',
+                activeId === item.id &&
+                  'border-foreground/20 bg-muted font-medium text-foreground dark:border-white/35',
               )}
             >
               {item.label}

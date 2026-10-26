@@ -16,7 +16,7 @@ import * as informationEn from '@/content/information.en.md';
 import * as informationZhHk from '@/content/information.zh-hk.md';
 
 interface Props {
-  lang: Lang;
+	lang: Lang;
 }
 
 const { lang } = Astro.props;
@@ -26,12 +26,12 @@ const { overrides, blockDescriptions, facetDescriptions } = localeData(lang);
 // bestPracticeDefinition is hand-authored markdown; render it to HTML here (build time,
 // same as the information page below) so the client never ships a markdown parser.
 const metadata = buildMetadata(metadataJson, overrides, blockDescriptions).map((block) => ({
-  ...block,
-  fields: block.fields.map((field) =>
-    field.bestPracticeDefinition
-      ? { ...field, bestPracticeDefinitionHtml: marked.parse(field.bestPracticeDefinition, { async: false }) }
-      : field,
-  ),
+	...block,
+	fields: block.fields.map((field) =>
+		field.bestPracticeDefinition
+			? { ...field, bestPracticeDefinitionHtml: marked.parse(field.bestPracticeDefinition, { async: false }) }
+			: field,
+	),
 }));
 
 // Every locale's markdown is imported statically so Astro compiles it to HTML at build time;
@@ -59,7 +59,9 @@ const dataverseURL = site.dataverseURL || 'https://dataverse.org/';
 		<header class="mb-6 flex flex-wrap-reverse items-start justify-between gap-4">
 			<div class="min-w-0 max-w-3xl flex-1">
 				<p class="mb-3 text-xl font-semibold uppercase tracking-[0.18em] text-primary">
-					<a href={dataverseURL} target="_blank" rel="noopener noreferrer">{dataverseName}</a>
+					<a href={dataverseURL} target="_blank" rel="noopener noreferrer">
+						{dataverseName}
+					</a>
 				</p>
 				<h1 class="text-4xl font-semibold tracking-tight text-balance sm:text-5xl">{t('site.title')}</h1>
 				<p class="mt-4 text-lg leading-8 text-muted-foreground">{t('site.description')}</p>

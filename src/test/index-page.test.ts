@@ -12,9 +12,7 @@ afterEach(() => {
 });
 
 async function renderIndex(path = '') {
-  const { default: IndexPage } = path
-    ? await import('@/pages/zh-hk/index.astro')
-    : await import('@/pages/index.astro');
+  const { default: IndexPage } = path ? await import('@/pages/zh-hk/index.astro') : await import('@/pages/index.astro');
   const renderers = await loadRenderers([getContainerRenderer()]);
   const container = await AstroContainer.create({ renderers });
   return container.renderToString(IndexPage, {
@@ -29,9 +27,7 @@ describe('index page', () => {
     const html = await renderIndex();
     expect(html).toMatch(/<html[^>]*\blang="en"/);
     expect(html).toMatch(/<title>[^<]+<\/title>/);
-    expect(html).toMatch(
-      /<meta name="description" content="[^"]+">/,
-    );
+    expect(html).toMatch(/<meta name="description" content="[^"]+">/);
     expect(html).toContain('<link rel="icon" type="image/svg+xml" href="/dv-fields-lookup/favicon.svg">');
     expect(html).toContain('Search metadata fields');
     expect(html).toContain('Citation Metadata');
