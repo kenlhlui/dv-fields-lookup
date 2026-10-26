@@ -11,17 +11,12 @@ import type { FacetDescriptions } from '@/data';
 import { plural, useTranslations, type Lang } from '@/i18n/utils';
 import type { MetadataBlock, MetadataField } from '@/lib/metadata';
 import { createMetadataSearch, getVisibleFields, type SearchBlock } from '@/lib/search';
-import { cn } from '@/lib/utils';
+import { cn, toggleInSet } from '@/lib/utils';
+
 
 // Canonical tokens as authored in metadata.overrides.yaml, never translated in the data —
 // filtering and badge colours match on them. Display labels come from the tier.* keys.
 const bestPracticeTiers = ['Recommended', 'Optional'] as const;
-
-function toggleInSet<T>(set: ReadonlySet<T>, value: T): Set<T> {
-  const next = new Set(set);
-  if (!next.delete(value)) next.add(value);
-  return next;
-}
 
 interface MetadataDictionaryProps {
   blocks: MetadataBlock[];
