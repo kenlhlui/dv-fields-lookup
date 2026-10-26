@@ -11,21 +11,21 @@
 # bestPracticeDefinition 支援 Markdown（標題除外，會以純文字顯示）。
 
 accessToSources:
-  bestPracticeDefinition: "提示：可用於說明原始資料文件的任何存取限制或取用方式。"
+  bestPracticeDefinition: '提示：可用於說明原始資料文件的任何存取限制或取用方式。'
 alternativeTitle:
-  bestPracticeDefinition: "提示：完整標題的縮寫、簡稱或譯名。"
+  bestPracticeDefinition: '提示：完整標題的縮寫、簡稱或譯名。'
 authorAffiliation:
-  bestPracticeDefinition: "提示：請使用機構的正式全名，避免使用縮寫。"
+  bestPracticeDefinition: '提示：請使用機構的正式全名，避免使用縮寫。'
 city:
-  bestPracticeDefinition: "提示：使用此欄位時，請一併填寫「國家／地區」，如可能亦請填寫「州／省」，以免混淆。"
+  bestPracticeDefinition: '提示：使用此欄位時，請一併填寫「國家／地區」，如可能亦請填寫「州／省」，以免混淆。'
 country:
   bestPracticeDefinition: >-
     註：此欄位為下拉式選單，請選擇一項。提示：請從 ISO-3166 的名稱清單中選取。如資料集涵蓋
     多個國家／地區，請全部列出。
 datasetContactAffiliation:
-  bestPracticeDefinition: "提示：請使用機構的正式全名，避免使用縮寫。"
+  bestPracticeDefinition: '提示：請使用機構的正式全名，避免使用縮寫。'
 dsDescriptionValue:
-  bestPracticeDefinition: "提示：良好的說明能清楚交代資料集的內容，並協助使用者判斷自己是否具備使用該資料的技術能力。"
+  bestPracticeDefinition: '提示：良好的說明能清楚交代資料集的內容，並協助使用者判斷自己是否具備使用該資料的技術能力。'
 keywordValue:
   bestPracticeDefinition: >-
     提示：關鍵詞欄位可重複，請按「+」按鈕，將每個關鍵詞分別填入獨立欄位。提示：在 Dataverse
@@ -34,7 +34,7 @@ keywordValue:
     為標籤。提示：FAST 及 RVMFAST 是改編自美國國會圖書館主題標目（LCSH）的通用控制詞彙，適合
     一般用途。提示：地理名稱應填入「地理空間」元數據區塊。
 state:
-  bestPracticeDefinition: "提示：使用此欄位時，請一併填寫「國家／地區」，以免混淆。"
+  bestPracticeDefinition: '提示：使用此欄位時，請一併填寫「國家／地區」，以免混淆。'
 subject:
   bestPracticeDefinition: >-
     註：此欄位為下拉式選單，可選擇多項。

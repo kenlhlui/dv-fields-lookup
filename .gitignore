@@ -26,3 +26,6 @@ pnpm-debug.log*
 
 # isolated feature worktrees
 .worktrees/
+
+# playground
+playground.ts

@@ -51,8 +51,7 @@ export default function MetadataDictionary({ blocks, facetDescriptions, lang }: 
   }
 
   function visible(results: SearchBlock[]): SearchBlock[] {
-    const blockFiltered =
-      blockFilter.size > 0 ? results.filter((result) => blockFilter.has(result.block.id)) : results;
+    const blockFiltered = blockFilter.size > 0 ? results.filter((result) => blockFilter.has(result.block.id)) : results;
     return blockFiltered.filter((result) => getVisibleFields(result, fieldFilter).length > 0);
   }
 
@@ -221,11 +220,7 @@ export default function MetadataDictionary({ blocks, facetDescriptions, lang }: 
 
       {/* The skip link's target. tabIndex -1 so focus actually lands here and the next Tab
           continues into the block nav or first result; it's a container, so no ring. */}
-      <div
-        id="results"
-        tabIndex={-1}
-        className="outline-none xl:grid xl:grid-cols-[14rem_minmax(0,1fr)] xl:gap-8"
-      >
+      <div id="results" tabIndex={-1} className="outline-none xl:grid xl:grid-cols-[14rem_minmax(0,1fr)] xl:gap-8">
         <BlockNav
           blocks={visibleBlocks.map((result) => result.block)}
           similarMatches={visibleSimilarBlocks.length > 0}

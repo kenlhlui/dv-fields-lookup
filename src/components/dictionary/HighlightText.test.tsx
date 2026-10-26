@@ -5,7 +5,15 @@ import { HighlightText } from '@/components/dictionary/HighlightText';
 
 describe('HighlightText', () => {
   it('renders merged ranges with mark elements and preserves all text', () => {
-    const { container } = render(<HighlightText text="Author Identifier" ranges={[[0, 5], [7, 16]]} />);
+    const { container } = render(
+      <HighlightText
+        text="Author Identifier"
+        ranges={[
+          [0, 5],
+          [7, 16],
+        ]}
+      />,
+    );
 
     expect(container).toHaveTextContent('Author Identifier');
     expect(screen.getAllByText(/Author|Identifier/).every((node) => node.tagName === 'MARK')).toBe(true);

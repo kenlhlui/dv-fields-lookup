@@ -10,7 +10,10 @@ interface HighlightTextProps {
 function mergeRanges(text: string, ranges: readonly TextRange[]): TextRange[] {
   const lastIndex = text.length - 1;
   const validRanges = ranges
-    .filter(([start, end]) => Number.isFinite(start) && Number.isFinite(end) && start <= end && end >= 0 && start <= lastIndex)
+    .filter(
+      ([start, end]) =>
+        Number.isFinite(start) && Number.isFinite(end) && start <= end && end >= 0 && start <= lastIndex,
+    )
     .map(([start, end]) => [Math.max(0, start), Math.min(lastIndex, end)] as TextRange)
     .sort(([leftStart, leftEnd], [rightStart, rightEnd]) => leftStart - rightStart || leftEnd - rightEnd);
 

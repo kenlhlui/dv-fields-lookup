@@ -55,10 +55,11 @@ describe('FieldDetailsDialog', () => {
     expect(dialog).toHaveTextContent('https://orcid.org/0000-0002-1825-0097');
     expect(dialog).toHaveTextContent('ORCID');
     expect(dialog).toHaveTextContent('Citation Metadata › Author Identifier');
-    expect(within(dialog).getAllByRole('listitem').map((item) => item.textContent?.replace('›', '').trim())).toEqual([
-      'Citation Metadata',
-      'Author Identifier',
-    ]);
+    expect(
+      within(dialog)
+        .getAllByRole('listitem')
+        .map((item) => item.textContent?.replace('›', '').trim()),
+    ).toEqual(['Citation Metadata', 'Author Identifier']);
     expect(screen.getByText('ISNI')).toHaveClass('h-auto', 'max-w-full', 'whitespace-normal', 'break-words');
   });
 

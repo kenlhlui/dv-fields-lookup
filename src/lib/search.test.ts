@@ -89,8 +89,9 @@ describe('createMetadataSearch', () => {
     const contract = contact.similarBlocks
       .find((result) => result.matches.has('grantNumber.grantNumberValue'))
       ?.matches.get('grantNumber.grantNumberValue');
-    const definition = blocks.flatMap((block) => block.fields).find((field) => field.id === 'grantNumber.grantNumberValue')
-      ?.definition ?? '';
+    const definition =
+      blocks.flatMap((block) => block.fields).find((field) => field.id === 'grantNumber.grantNumberValue')
+        ?.definition ?? '';
     const start = definition.indexOf('contract');
     expect(contract?.ranges.definition).toEqual([[start, start + 'contract'.length - 1]]);
 
@@ -148,10 +149,11 @@ describe('createMetadataSearch', () => {
       },
     ];
 
-    expect(createMetadataSearch(equalScoreBlocks).search('Same name').blocks.map(({ block }) => block.id)).toEqual([
-      'first',
-      'second',
-    ]);
+    expect(
+      createMetadataSearch(equalScoreBlocks)
+        .search('Same name')
+        .blocks.map(({ block }) => block.id),
+    ).toEqual(['first', 'second']);
   });
 
   it('returns an empty block list for no matches', () => {
@@ -198,8 +200,8 @@ describe('getVisibleFields', () => {
     const searching = mixedSearch.search('widget').blocks[0];
 
     expect(searching.matches.size).toBe(2);
-    expect(getVisibleFields(searching, (field) => field.recommendation === 'Optional').map((field) => field.id)).toEqual([
-      'optional1',
-    ]);
+    expect(
+      getVisibleFields(searching, (field) => field.recommendation === 'Optional').map((field) => field.id),
+    ).toEqual(['optional1']);
   });
 });
