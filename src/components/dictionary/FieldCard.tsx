@@ -19,10 +19,12 @@ import { cn } from '@/lib/utils';
 interface FieldCardProps {
   field: MetadataField;
   match?: FieldMatch;
+  // Matched only with typo tolerance; labelled differently so it isn't read as an exact hit.
+  similar?: boolean;
   onSelect(opener: HTMLButtonElement): void;
   lang: Lang;
-  // h3 when the card sits directly under a block's h2, h4 inside a compound group's h3.
-  headingLevel?: 3 | 4;
+  // One below its block or compound heading: h3/h4 normally, h4/h5 inside a match group.
+  headingLevel?: 3 | 4 | 5;
 }
 
 // GitHub Primer accent colors (accent/danger/done/neutral), 10% tint + border; light text uses the
@@ -43,10 +45,11 @@ const bestPracticeColor: Record<string, string> = {
 const bestPracticeColorDefault =
   'border-[#656d76]/30 bg-[#656d76]/10 text-[#59636e] dark:border-[#9198a1]/40 dark:bg-[#656d76]/15 dark:text-[#9198a1]';
 
-export function FieldCard({ field, match, onSelect, lang, headingLevel = 3 }: FieldCardProps) {
+export function FieldCard({ field, match, similar = false, onSelect, lang, headingLevel = 3 }: FieldCardProps) {
   const t = useTranslations(lang);
   const Heading = `h${headingLevel}` as const;
   const isMatch = match !== undefined;
+  const matchLabel = t(similar ? 'card.similarMatch' : 'card.searchMatch');
 
   return (
     <Card className={cn('h-full', isMatch && 'bg-primary/5 ring-2 ring-primary/35')}>
@@ -64,13 +67,9 @@ export function FieldCard({ field, match, onSelect, lang, headingLevel = 3 }: Fi
             </p>
           )}
           {isMatch && (
-            <Badge
-              variant="secondary"
-              className="h-auto max-w-full gap-1 whitespace-normal break-words text-left"
-              aria-label={t('card.searchMatch')}
-            >
+            <Badge variant="secondary" className="h-auto max-w-full gap-1 whitespace-normal break-words text-left">
               <Search aria-hidden="true" />
-              {t('card.searchMatch')}
+              {matchLabel}
             </Badge>
           )}
         </div>

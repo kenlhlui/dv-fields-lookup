@@ -156,6 +156,11 @@ function renderDictionary(fixture: MetadataBlock[] = blocks, lang: Lang = 'en') 
   );
 }
 
+// Each block's section toggle shares its name with the block's facet chip, so chips are found in their group.
+function blockChip(name: string) {
+  return within(screen.getByRole('group', { name: 'Filter by metadata block' })).getByRole('button', { name });
+}
+
 describe('MetadataDictionary', () => {
   it('renders the full dictionary with an accessible search input and summary', () => {
     renderDictionary();
@@ -173,11 +178,77 @@ describe('MetadataDictionary', () => {
     await user.type(screen.getByLabelText('Search metadata fields'), 'ORCID');
 
     expect(screen.getByRole('status')).toHaveTextContent('2 matching fields · 1 metadata block');
+    // The exact-matches section shows even when there are no similar matches to set it apart from.
+    expect(screen.getByRole('heading', { level: 2, name: 'Exact matches' })).toBeInTheDocument();
+    expect(screen.queryByRole('region', { name: 'Similar matches' })).not.toBeInTheDocument();
     const citation = screen.getByRole('region', { name: 'Citation Metadata' });
     expect(within(citation).getAllByRole('button', { name: /view details for/i })).toHaveLength(2);
-    expect(within(citation).getAllByLabelText('Search match')).toHaveLength(2);
+    expect(within(citation).getAllByText('Search match')).toHaveLength(2);
     expect(within(citation).queryByText('Author Name')).not.toBeInTheDocument();
     expect(screen.queryByRole('heading', { name: 'Geospatial Metadata' })).not.toBeInTheDocument();
+  });
+
+  it('lists near-miss spellings in a separate similar matches section', async () => {
+    const user = userEvent.setup();
+    const contactBlocks: MetadataBlock[] = [
+      {
+        id: 'citation',
+        name: 'Citation Metadata',
+        description: 'Core information used to identify and cite a dataset.',
+        fields: [
+          {
+            id: 'contactEmail',
+            name: 'Contact Email',
+            definition: 'The email address of the dataset contact.',
+            type: 'Email',
+            required: false,
+            repeatable: false,
+          },
+          {
+            id: 'grantNumber',
+            name: 'Grant Number',
+            definition: 'The grant or contract number of the funding agency.',
+            type: 'Text',
+            required: false,
+            repeatable: false,
+          },
+        ],
+      },
+    ];
+    renderDictionary(contactBlocks);
+
+    await user.type(screen.getByLabelText('Search metadata fields'), 'contact');
+
+    expect(screen.getByRole('status')).toHaveTextContent('1 matching field · 1 metadata block · 1 similar field');
+    const similar = screen.getByRole('region', { name: 'Similar matches' });
+    expect(within(similar).getByText('Grant Number')).toBeInTheDocument();
+    expect(within(similar).getByText('Similar match')).toBeInTheDocument();
+    // Both lists get their own h2, with their blocks nested one level below.
+    expect(screen.getAllByRole('heading', { level: 2 }).map((heading) => heading.textContent)).toEqual([
+      'Exact matches',
+      'Similar matches',
+    ]);
+    const exact = screen.getByRole('region', { name: 'Exact matches' });
+    expect(within(exact).getByRole('heading', { level: 3, name: 'Citation Metadata' })).toBeInTheDocument();
+    expect(within(similar).getByRole('heading', { level: 3, name: 'Citation Metadata' })).toBeInTheDocument();
+    expect(within(similar).getByRole('heading', { level: 4, name: 'Grant Number' })).toBeInTheDocument();
+    expect(
+      within(screen.getByRole('navigation', { name: 'On this page' })).getByRole('link', { name: 'Similar matches' }),
+    ).toHaveAttribute('href', '#similar-matches');
+    expect(within(similar).queryByText('Contact Email')).not.toBeInTheDocument();
+    // The same block appears in both lists, so its heading ids must not collide.
+    expect(document.querySelectorAll('[id="metadata-block-citation"]')).toHaveLength(1);
+    expect(document.querySelectorAll('[id="similar-metadata-block-citation"]')).toHaveLength(1);
+  });
+
+  it('summarizes only the similar matches when nothing matches exactly', async () => {
+    const user = userEvent.setup();
+    renderDictionary();
+
+    await user.type(screen.getByLabelText('Search metadata fields'), 'Westernmost Longitde');
+
+    expect(screen.getByRole('status')).toHaveTextContent(/^1 similar field$/);
+    expect(screen.getByText('No exact matches for “Westernmost Longitde”. These fields have a spelling close to it.')).toBeInTheDocument();
   });
 
   it('restores source-order blocks after clearing a search', async () => {
@@ -192,6 +263,21 @@ describe('MetadataDictionary', () => {
       'Citation Metadata',
       'Geospatial Metadata',
     ]);
+  });
+
+  it('collapses a block from the toggle button inside its heading', async () => {
+    const user = userEvent.setup();
+    renderDictionary();
+    const citation = screen.getByRole('region', { name: 'Citation Metadata' });
+    const toggle = within(citation).getByRole('button', { name: 'Citation Metadata' });
+
+    expect(toggle).toHaveAttribute('aria-expanded', 'true');
+    expect(within(citation).getByRole('heading', { level: 2 })).toContainElement(toggle);
+
+    await user.click(toggle);
+
+    expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    expect(within(citation).queryByRole('button', { name: /view details for/i })).not.toBeInTheDocument();
   });
 
   it('clears a no-results search and restores focus to the input', async () => {
@@ -228,7 +314,7 @@ describe('MetadataDictionary', () => {
     const user = userEvent.setup();
     renderDictionary();
 
-    const chip = screen.getByRole('button', { name: 'Geospatial Metadata' });
+    const chip = blockChip('Geospatial Metadata');
     await user.click(chip);
 
     expect(chip).toHaveAttribute('aria-pressed', 'true');
@@ -245,8 +331,8 @@ describe('MetadataDictionary', () => {
     const user = userEvent.setup();
     renderDictionary();
 
-    await user.click(screen.getByRole('button', { name: 'Citation Metadata' }));
-    await user.click(screen.getByRole('button', { name: 'Geospatial Metadata' }));
+    await user.click(blockChip('Citation Metadata'));
+    await user.click(blockChip('Geospatial Metadata'));
 
     expect(screen.getByRole('status')).toHaveTextContent('7 fields · 2 metadata blocks');
     expect(screen.getByRole('heading', { name: 'Citation Metadata' })).toBeInTheDocument();
@@ -258,13 +344,13 @@ describe('MetadataDictionary', () => {
     renderDictionary();
 
     await user.type(screen.getByLabelText('Search metadata fields'), 'ORCID');
-    await user.click(screen.getByRole('button', { name: 'Geospatial Metadata' }));
+    await user.click(blockChip('Geospatial Metadata'));
 
     expect(screen.getByRole('status')).toHaveTextContent('No metadata fields matched “ORCID”');
     const clearButton = screen.getByRole('button', { name: 'Clear search' });
     await user.click(clearButton);
 
-    expect(screen.getByRole('button', { name: 'Geospatial Metadata' })).toHaveAttribute('aria-pressed', 'false');
+    expect(blockChip('Geospatial Metadata')).toHaveAttribute('aria-pressed', 'false');
     expect(screen.getByRole('status')).toHaveTextContent('7 fields · 2 metadata blocks');
   });
 
@@ -298,7 +384,7 @@ describe('MetadataDictionary', () => {
     expect(screen.getByText('Beta Optional')).toBeInTheDocument();
     expect(screen.queryByText('Alpha Required')).not.toBeInTheDocument();
 
-    await user.click(screen.getByRole('button', { name: 'Alpha Block' }));
+    await user.click(blockChip('Alpha Block'));
 
     expect(screen.getByRole('status')).toHaveTextContent('1 field · 1 metadata block');
     expect(screen.queryByRole('heading', { name: 'Beta Block' })).not.toBeInTheDocument();

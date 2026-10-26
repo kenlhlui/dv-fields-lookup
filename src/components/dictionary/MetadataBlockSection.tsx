@@ -1,16 +1,22 @@
 import { ChevronDown } from 'lucide-react';
+import { useState } from 'react';
 
 import { FieldCard } from '@/components/dictionary/FieldCard';
 import { Separator } from '@/components/ui/separator';
 import { plural, useTranslations, type Lang } from '@/i18n/utils';
 import type { MetadataBlock, MetadataField } from '@/lib/metadata';
 import { getVisibleFields, type SearchBlock } from '@/lib/search';
+import { cn } from '@/lib/utils';
 
 interface MetadataBlockSectionProps {
   result: SearchBlock;
   onSelectField(block: MetadataBlock, field: MetadataField, opener: HTMLButtonElement): void;
   fieldFilter?: (field: MetadataField) => boolean;
   lang: Lang;
+  // Typo-tolerant results. A block can appear in both lists, so these get their own element ids.
+  similar?: boolean;
+  // h3 when nested under an "Exact matches" / "Similar matches" h2; compounds and cards follow one below.
+  headingLevel?: 2 | 3;
 }
 
 interface FieldGroup {
@@ -34,8 +40,21 @@ function groupByParent(fields: MetadataField[]): FieldGroup[] {
   }, []);
 }
 
-export function MetadataBlockSection({ result, onSelectField, fieldFilter, lang }: MetadataBlockSectionProps) {
+export function MetadataBlockSection({
+  result,
+  onSelectField,
+  fieldFilter,
+  lang,
+  similar = false,
+  headingLevel = 2,
+}: MetadataBlockSectionProps) {
   const t = useTranslations(lang);
+  const [open, setOpen] = useState(true);
+  const idPrefix = similar ? 'similar-' : '';
+  const blockHeadingId = `${idPrefix}metadata-block-${result.block.id}`;
+  const fieldsId = `${blockHeadingId}-fields`;
+  const BlockHeading = `h${headingLevel}` as const;
+  const CompoundHeading = `h${headingLevel + 1}` as 'h3' | 'h4';
   // Searching narrows a block to its matching fields; browsing shows every field (matches is empty).
   // fieldFilter then narrows further by facet (required, best practice).
   const fields = getVisibleFields(result, fieldFilter);
@@ -49,43 +68,60 @@ export function MetadataBlockSection({ result, onSelectField, fieldFilter, lang 
           key={field.id}
           field={field}
           match={result.matches.get(field.id)}
+          similar={similar}
           onSelect={(opener) => onSelectField(result.block, field, opener)}
           lang={lang}
-          headingLevel={group.parent ? 4 : 3}
+          headingLevel={(headingLevel + (group.parent ? 2 : 1)) as 3 | 4 | 5}
         />
       ))}
     </div>
   );
 
   return (
-    // section keeps the `region` landmark role; `open` by default so search results and
-    // first-visit browsing aren't hidden behind a click.
-    <section aria-labelledby={`metadata-block-${result.block.id}`}>
-      <details open className="group space-y-6">
-        <summary className="flex cursor-pointer list-none items-start justify-between gap-3 [&::-webkit-details-marker]:hidden">
-          <div className="space-y-2">
-            <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
-              <h2 id={`metadata-block-${result.block.id}`} className="text-2xl font-semibold tracking-tight">
+    // section keeps the `region` landmark role; open by default so search results and first-visit
+    // browsing aren't hidden behind a click. A button inside the heading rather than <details>, since
+    // some screen readers drop headings nested in <summary> from heading navigation.
+    <section aria-labelledby={blockHeadingId} className="space-y-6">
+      {/* The button's ::after stretches over this header, so it stays clickable as a whole like a summary. */}
+      <div className="relative flex items-start justify-between gap-3">
+        <div className="space-y-2">
+          <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+            <BlockHeading
+              id={blockHeadingId}
+              className={cn('font-semibold tracking-tight', headingLevel === 2 ? 'text-2xl' : 'text-xl')}
+            >
+              <button
+                type="button"
+                aria-expanded={open}
+                aria-controls={fieldsId}
+                onClick={() => setOpen((current) => !current)}
+                className="cursor-pointer text-left after:absolute after:inset-0"
+              >
                 {result.block.name}
-              </h2>
-              <p className="text-sm text-muted-foreground">
-                {t('block.fieldCount', {
-                  count: fieldCount,
-                  word: plural(t, fieldCount, 'count.field.one', 'count.field.other'),
-                })}
-              </p>
-            </div>
-            <p className="max-w-3xl text-muted-foreground">{result.block.description}</p>
+              </button>
+            </BlockHeading>
+            <p className="text-sm text-muted-foreground">
+              {t('block.fieldCount', {
+                count: fieldCount,
+                word: plural(t, fieldCount, 'count.field.one', 'count.field.other'),
+              })}
+            </p>
           </div>
-          <ChevronDown
-            aria-hidden="true"
-            className="mt-1 size-5 shrink-0 text-muted-foreground transition-transform group-open:rotate-180"
-          />
-        </summary>
+          <p className="max-w-3xl text-muted-foreground">{result.block.description}</p>
+        </div>
+        <ChevronDown
+          aria-hidden="true"
+          className={cn(
+            'mt-1 size-5 shrink-0 text-muted-foreground motion-safe:transition-transform',
+            open && 'rotate-180',
+          )}
+        />
+      </div>
+      <div id={fieldsId} hidden={!open} className="space-y-6">
         <Separator />
         <div className="space-y-4">
           {groups.map((group) => {
-            const headingId = `compound-${result.block.id}-${group.fields[0].id}`;
+            const headingId = `${idPrefix}compound-${result.block.id}-${group.fields[0].id}`;
             return group.parent ? (
               <section
                 key={group.fields[0].id}
@@ -93,9 +129,9 @@ export function MetadataBlockSection({ result, onSelectField, fieldFilter, lang 
                 className="space-y-3 rounded-lg border border-dashed bg-muted/30 p-4"
               >
                 <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                  <h3 id={headingId} className="font-semibold">
+                  <CompoundHeading id={headingId} className="font-semibold">
                     {group.parent}
-                  </h3>
+                  </CompoundHeading>
                   <p className="text-sm text-muted-foreground">
                     {t('block.compound', {
                       count: group.fields.length,
@@ -114,7 +150,7 @@ export function MetadataBlockSection({ result, onSelectField, fieldFilter, lang 
             );
           })}
         </div>
-      </details>
+      </div>
     </section>
   );
 }
