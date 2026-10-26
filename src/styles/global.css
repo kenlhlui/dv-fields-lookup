@@ -102,7 +102,8 @@
     --destructive: oklch(0.704 0.191 22.216);
     --border: oklch(1 0 0 / 10%);
     --input: oklch(1 0 0 / 35%);
-    --ring: oklch(0.556 0 0);
+    /* Brighter than light mode's ring; mid-grey all but disappears on the near-black background. */
+    --ring: oklch(0.8 0 0);
     --chart-1: oklch(0.87 0 0);
     --chart-2: oklch(0.556 0 0);
     --chart-3: oklch(0.439 0 0);
@@ -139,6 +140,12 @@
   button,
   input {
     font: inherit;
+  }
+
+  /* One keyboard focus style for anything without its own; components with a ring set outline-none. */
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
   }
 }
 
