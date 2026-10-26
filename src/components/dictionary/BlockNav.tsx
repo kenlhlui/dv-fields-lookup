@@ -4,14 +4,27 @@ import { useTranslations, type Lang } from '@/i18n/utils';
 import type { MetadataBlock } from '@/lib/metadata';
 import { cn } from '@/lib/utils';
 
-export function BlockNav({ blocks, lang }: { blocks: MetadataBlock[]; lang: Lang }) {
+interface BlockNavProps {
+  blocks: MetadataBlock[];
+  // Adds a final link to the "Similar matches" section, so it can be reached without tabbing past
+  // every exact result.
+  similarMatches?: boolean;
+  lang: Lang;
+}
+
+export function BlockNav({ blocks, similarMatches = false, lang }: BlockNavProps) {
   const t = useTranslations(lang);
-  const [activeId, setActiveId] = useState<string | undefined>(blocks[0]?.id);
-  const blockIds = blocks.map((block) => block.id).join('|');
+  // Keyed by target heading id, so the similar-matches link shares the scroll tracking.
+  const items = [
+    ...blocks.map((block) => ({ id: `metadata-block-${block.id}`, label: block.name })),
+    ...(similarMatches ? [{ id: 'similar-matches', label: t('search.similarHeading') }] : []),
+  ];
+  const [activeId, setActiveId] = useState<string | undefined>(items[0]?.id);
+  const itemIds = items.map((item) => item.id).join('|');
 
   useEffect(() => {
-    const headings = blocks
-      .map((block) => document.getElementById(`metadata-block-${block.id}`))
+    const headings = items
+      .map((item) => document.getElementById(item.id))
       .filter((el): el is HTMLElement => el !== null);
     const onScroll = () => {
       // Recomputed from live geometry on every tick (not "did a heading just
@@ -23,7 +36,7 @@ export function BlockNav({ blocks, lang }: { blocks: MetadataBlock[]; lang: Lang
         if (heading.getBoundingClientRect().top > detectionLine) break;
         current = heading;
       }
-      if (current) setActiveId(current.id.replace('metadata-block-', ''));
+      if (current) setActiveId(current.id);
     };
 
     onScroll();
@@ -31,10 +44,10 @@ export function BlockNav({ blocks, lang }: { blocks: MetadataBlock[]; lang: Lang
     return () => {
       window.removeEventListener('scroll', onScroll);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- blockIds is the stable form of blocks
-  }, [blockIds]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- itemIds is the stable form of items
+  }, [itemIds]);
 
-  if (blocks.length === 0) return null;
+  if (items.length === 0) return null;
 
   return (
     <nav
@@ -44,17 +57,17 @@ export function BlockNav({ blocks, lang }: { blocks: MetadataBlock[]; lang: Lang
       className="sticky top-6 hidden max-h-[calc(100vh-3rem)] self-start overflow-y-auto rounded-lg border border-border bg-background p-2 xl:block"
     >
       <ul className="space-y-0.5">
-        {blocks.map((block) => (
-          <li key={block.id}>
+        {items.map((item) => (
+          <li key={item.id}>
             <a
-              href={`#metadata-block-${block.id}`}
-              aria-current={activeId === block.id ? 'location' : undefined}
+              href={`#${item.id}`}
+              aria-current={activeId === item.id ? 'location' : undefined}
               className={cn(
                 'block rounded-md px-2.5 py-1.5 text-xs text-muted-foreground hover:bg-muted hover:text-foreground',
-                activeId === block.id && 'bg-muted font-medium text-foreground',
+                activeId === item.id && 'bg-muted font-medium text-foreground',
               )}
             >
-              {block.name}
+              {item.label}
             </a>
           </li>
         ))}

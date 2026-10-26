@@ -5,6 +5,7 @@ import { Separator } from '@/components/ui/separator';
 import { plural, useTranslations, type Lang } from '@/i18n/utils';
 import type { MetadataBlock, MetadataField } from '@/lib/metadata';
 import { getVisibleFields, type SearchBlock } from '@/lib/search';
+import { cn } from '@/lib/utils';
 
 interface MetadataBlockSectionProps {
   result: SearchBlock;
@@ -13,6 +14,8 @@ interface MetadataBlockSectionProps {
   lang: Lang;
   // Typo-tolerant results. A block can appear in both lists, so these get their own element ids.
   similar?: boolean;
+  // h3 when nested under an "Exact matches" / "Similar matches" h2; compounds and cards follow one below.
+  headingLevel?: 2 | 3;
 }
 
 interface FieldGroup {
@@ -42,10 +45,13 @@ export function MetadataBlockSection({
   fieldFilter,
   lang,
   similar = false,
+  headingLevel = 2,
 }: MetadataBlockSectionProps) {
   const t = useTranslations(lang);
   const idPrefix = similar ? 'similar-' : '';
   const blockHeadingId = `${idPrefix}metadata-block-${result.block.id}`;
+  const BlockHeading = `h${headingLevel}` as const;
+  const CompoundHeading = `h${headingLevel + 1}` as 'h3' | 'h4';
   // Searching narrows a block to its matching fields; browsing shows every field (matches is empty).
   // fieldFilter then narrows further by facet (required, best practice).
   const fields = getVisibleFields(result, fieldFilter);
@@ -62,7 +68,7 @@ export function MetadataBlockSection({
           similar={similar}
           onSelect={(opener) => onSelectField(result.block, field, opener)}
           lang={lang}
-          headingLevel={group.parent ? 4 : 3}
+          headingLevel={(headingLevel + (group.parent ? 2 : 1)) as 3 | 4 | 5}
         />
       ))}
     </div>
@@ -76,9 +82,12 @@ export function MetadataBlockSection({
         <summary className="flex cursor-pointer list-none items-start justify-between gap-3 [&::-webkit-details-marker]:hidden">
           <div className="space-y-2">
             <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
-              <h2 id={blockHeadingId} className="text-2xl font-semibold tracking-tight">
+              <BlockHeading
+                id={blockHeadingId}
+                className={cn('font-semibold tracking-tight', headingLevel === 2 ? 'text-2xl' : 'text-xl')}
+              >
                 {result.block.name}
-              </h2>
+              </BlockHeading>
               <p className="text-sm text-muted-foreground">
                 {t('block.fieldCount', {
                   count: fieldCount,
@@ -104,9 +113,9 @@ export function MetadataBlockSection({
                 className="space-y-3 rounded-lg border border-dashed bg-muted/30 p-4"
               >
                 <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                  <h3 id={headingId} className="font-semibold">
+                  <CompoundHeading id={headingId} className="font-semibold">
                     {group.parent}
-                  </h3>
+                  </CompoundHeading>
                   <p className="text-sm text-muted-foreground">
                     {t('block.compound', {
                       count: group.fields.length,

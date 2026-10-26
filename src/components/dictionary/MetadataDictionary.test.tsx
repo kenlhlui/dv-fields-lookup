@@ -173,9 +173,12 @@ describe('MetadataDictionary', () => {
     await user.type(screen.getByLabelText('Search metadata fields'), 'ORCID');
 
     expect(screen.getByRole('status')).toHaveTextContent('2 matching fields · 1 metadata block');
+    // The exact-matches section shows even when there are no similar matches to set it apart from.
+    expect(screen.getByRole('heading', { level: 2, name: 'Exact matches' })).toBeInTheDocument();
+    expect(screen.queryByRole('region', { name: 'Similar matches' })).not.toBeInTheDocument();
     const citation = screen.getByRole('region', { name: 'Citation Metadata' });
     expect(within(citation).getAllByRole('button', { name: /view details for/i })).toHaveLength(2);
-    expect(within(citation).getAllByLabelText('Search match')).toHaveLength(2);
+    expect(within(citation).getAllByText('Search match')).toHaveLength(2);
     expect(within(citation).queryByText('Author Name')).not.toBeInTheDocument();
     expect(screen.queryByRole('heading', { name: 'Geospatial Metadata' })).not.toBeInTheDocument();
   });
@@ -214,7 +217,19 @@ describe('MetadataDictionary', () => {
     expect(screen.getByRole('status')).toHaveTextContent('1 matching field · 1 metadata block · 1 similar field');
     const similar = screen.getByRole('region', { name: 'Similar matches' });
     expect(within(similar).getByText('Grant Number')).toBeInTheDocument();
-    expect(within(similar).getByLabelText('Similar match')).toBeInTheDocument();
+    expect(within(similar).getByText('Similar match')).toBeInTheDocument();
+    // Both lists get their own h2, with their blocks nested one level below.
+    expect(screen.getAllByRole('heading', { level: 2 }).map((heading) => heading.textContent)).toEqual([
+      'Exact matches',
+      'Similar matches',
+    ]);
+    const exact = screen.getByRole('region', { name: 'Exact matches' });
+    expect(within(exact).getByRole('heading', { level: 3, name: 'Citation Metadata' })).toBeInTheDocument();
+    expect(within(similar).getByRole('heading', { level: 3, name: 'Citation Metadata' })).toBeInTheDocument();
+    expect(within(similar).getByRole('heading', { level: 4, name: 'Grant Number' })).toBeInTheDocument();
+    expect(
+      within(screen.getByRole('navigation', { name: 'Metadata blocks' })).getByRole('link', { name: 'Similar matches' }),
+    ).toHaveAttribute('href', '#similar-matches');
     expect(within(similar).queryByText('Contact Email')).not.toBeInTheDocument();
     // The same block appears in both lists, so its heading ids must not collide.
     expect(document.querySelectorAll('[id="metadata-block-citation"]')).toHaveLength(1);

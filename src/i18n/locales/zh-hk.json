@@ -13,6 +13,8 @@
   "search.emptyFilters": "冇元數據欄位符合所選嘅篩選條件",
   "search.emptyQueryHint": "請試吓其他搜尋字詞，或重設目前嘅搜尋。",
   "search.emptyFiltersHint": "請試吓其他篩選條件，或將其清除。",
+  "search.exactHeading": "完全符合",
+  "search.exactDescription": "以下欄位包含你輸入嘅「{query}」。",
   "search.similarHeading": "相近結果",
   "search.similarDescription": "以下欄位同「{query}」字面相近，可能係你想搵嘅。",
   "search.similarOnlyDescription": "搵唔到完全符合「{query}」嘅欄位，以下欄位同佢字面相近。",

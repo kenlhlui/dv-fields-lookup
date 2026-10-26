@@ -23,8 +23,8 @@ interface FieldCardProps {
   similar?: boolean;
   onSelect(opener: HTMLButtonElement): void;
   lang: Lang;
-  // h3 when the card sits directly under a block's h2, h4 inside a compound group's h3.
-  headingLevel?: 3 | 4;
+  // One below its block or compound heading: h3/h4 normally, h4/h5 inside a match group.
+  headingLevel?: 3 | 4 | 5;
 }
 
 // GitHub Primer accent colors (accent/danger/done/neutral), 10% tint + border; light text uses the
@@ -67,11 +67,7 @@ export function FieldCard({ field, match, similar = false, onSelect, lang, headi
             </p>
           )}
           {isMatch && (
-            <Badge
-              variant="secondary"
-              className="h-auto max-w-full gap-1 whitespace-normal break-words text-left"
-              aria-label={matchLabel}
-            >
+            <Badge variant="secondary" className="h-auto max-w-full gap-1 whitespace-normal break-words text-left">
               <Search aria-hidden="true" />
               {matchLabel}
             </Badge>

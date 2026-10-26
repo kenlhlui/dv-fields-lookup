@@ -11,6 +11,7 @@ import type { FacetDescriptions } from '@/data';
 import { plural, useTranslations, type Lang } from '@/i18n/utils';
 import type { MetadataBlock, MetadataField } from '@/lib/metadata';
 import { createMetadataSearch, getVisibleFields, type SearchBlock } from '@/lib/search';
+import { cn } from '@/lib/utils';
 
 // Canonical tokens as authored in metadata.overrides.yaml, never translated in the data —
 // filtering and badge colours match on them. Display labels come from the tier.* keys.
@@ -86,6 +87,34 @@ export default function MetadataDictionary({ blocks, facetDescriptions, lang }: 
     ? t('search.emptyQuery', { query: view.normalizedQuery })
     : t('search.emptyFilters');
   const hasActiveFilters = query || blockFilter.size > 0 || requiredOnly || bestPracticeFilter.size > 0;
+
+  // While searching, exact and similar results each get their own labelled section and heading, so the
+  // layout stays the same whether or not similar matches exist, and screen-reader users navigating by
+  // heading or landmark can tell the two apart. Browsing keeps the plain block list.
+
+  function groupHeader(id: string, title: string, description: string, borderStyle: string) {
+    return (
+      <div className={cn('space-y-2 rounded-lg border p-4', borderStyle)}>
+        <h2 id={id} className="text-2xl font-semibold tracking-tight">
+          {title}
+        </h2>
+        <p className="text-muted-foreground">{description}</p>
+      </div>
+    );
+  }
+
+  function blockSections(results: SearchBlock[], options: { headingLevel?: 2 | 3; similar?: boolean } = {}) {
+    return results.map((result) => (
+      <MetadataBlockSection
+        key={result.block.id}
+        result={result}
+        onSelectField={selectField}
+        fieldFilter={fieldFilter}
+        lang={lang}
+        {...options}
+      />
+    ));
+  }
 
   function selectField(block: MetadataBlock, field: MetadataField, opener: HTMLButtonElement) {
     restoreFocusRef.current = opener;
@@ -191,7 +220,11 @@ export default function MetadataDictionary({ blocks, facetDescriptions, lang }: 
       </div>
 
       <div className="xl:grid xl:grid-cols-[14rem_minmax(0,1fr)] xl:gap-8">
-        <BlockNav blocks={visibleBlocks.map((result) => result.block)} lang={lang} />
+        <BlockNav
+          blocks={visibleBlocks.map((result) => result.block)}
+          similarMatches={visibleSimilarBlocks.length > 0}
+          lang={lang}
+        />
         {/* A container, so the field grid sizes to the space left beside the sidebar, not the viewport. */}
         <div className="@container min-w-0 xl:col-start-2">
           {isEmpty ? (
@@ -206,39 +239,33 @@ export default function MetadataDictionary({ blocks, facetDescriptions, lang }: 
             </div>
           ) : (
             <div className="space-y-12">
-              {visibleBlocks.map((result) => (
-                <MetadataBlockSection
-                  key={result.block.id}
-                  result={result}
-                  onSelectField={selectField}
-                  fieldFilter={fieldFilter}
-                  lang={lang}
-                />
-              ))}
+              {visibleBlocks.length > 0 &&
+                (view.isSearching ? (
+                  <section aria-labelledby="exact-matches" className="space-y-12">
+                    {groupHeader(
+                      'exact-matches',
+                      t('search.exactHeading'),
+                      t('search.exactDescription', { query: view.normalizedQuery }),
+                      'border-solid',
+                    )}
+                    {blockSections(visibleBlocks, { headingLevel: 3 })}
+                  </section>
+                ) : (
+                  blockSections(visibleBlocks)
+                ))}
               {visibleSimilarBlocks.length > 0 && (
                 // Kept below and apart from the exact results so a near-miss spelling is never
                 // mistaken for what was typed.
                 <section aria-labelledby="similar-matches" className="space-y-12">
-                  <div className="space-y-2 rounded-lg border border-dashed p-4">
-                    <h2 id="similar-matches" className="text-xl font-semibold tracking-tight">
-                      {t('search.similarHeading')}
-                    </h2>
-                    <p className="text-muted-foreground">
-                      {t(visibleBlocks.length > 0 ? 'search.similarDescription' : 'search.similarOnlyDescription', {
-                        query: view.normalizedQuery,
-                      })}
-                    </p>
-                  </div>
-                  {visibleSimilarBlocks.map((result) => (
-                    <MetadataBlockSection
-                      key={result.block.id}
-                      result={result}
-                      onSelectField={selectField}
-                      fieldFilter={fieldFilter}
-                      lang={lang}
-                      similar
-                    />
-                  ))}
+                  {groupHeader(
+                    'similar-matches',
+                    t('search.similarHeading'),
+                    t(visibleBlocks.length > 0 ? 'search.similarDescription' : 'search.similarOnlyDescription', {
+                      query: view.normalizedQuery,
+                    }),
+                    'border-dashed',
+                  )}
+                  {blockSections(visibleSimilarBlocks, { headingLevel: 3, similar: true })}
                 </section>
               )}
             </div>

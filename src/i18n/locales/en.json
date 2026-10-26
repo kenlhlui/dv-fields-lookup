@@ -13,6 +13,8 @@
   "search.emptyFilters": "No metadata fields match the selected filters",
   "search.emptyQueryHint": "Try a different search term or clear the current search.",
   "search.emptyFiltersHint": "Try different filters or clear them.",
+  "search.exactHeading": "Exact matches",
+  "search.exactDescription": "Fields that contain “{query}” as typed.",
   "search.similarHeading": "Similar matches",
   "search.similarDescription": "Fields with a spelling close to “{query}”, in case you meant one of these.",
   "search.similarOnlyDescription": "No exact matches for “{query}”. These fields have a spelling close to it.",
