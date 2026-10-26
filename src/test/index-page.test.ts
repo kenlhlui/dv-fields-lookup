@@ -58,6 +58,15 @@ describe('index page', () => {
     expect(html).not.toContain('borealisdata.ca');
   });
 
+  it('opens with a skip link to the results', async () => {
+    const html = await renderIndex();
+    const body = html.slice(html.indexOf('<body'));
+    // The first link in the body, so it is the first tab stop.
+    expect(body.match(/<a [^>]*>/)?.[0]).toContain('href="#results"');
+    expect(html).toContain('Skip to results');
+    expect(html).toMatch(/id="results"[^>]*tabindex="-1"/);
+  });
+
   it('renders the zh-HK page in Chinese, keeping the untranslated Dataverse data in English', async () => {
     const html = await renderIndex('zh-hk/');
 

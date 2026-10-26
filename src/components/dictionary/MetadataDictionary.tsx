@@ -219,7 +219,13 @@ export default function MetadataDictionary({ blocks, facetDescriptions, lang }: 
         </p>
       </div>
 
-      <div className="xl:grid xl:grid-cols-[14rem_minmax(0,1fr)] xl:gap-8">
+      {/* The skip link's target. tabIndex -1 so focus actually lands here and the next Tab
+          continues into the block nav or first result; it's a container, so no ring. */}
+      <div
+        id="results"
+        tabIndex={-1}
+        className="outline-none xl:grid xl:grid-cols-[14rem_minmax(0,1fr)] xl:gap-8"
+      >
         <BlockNav
           blocks={visibleBlocks.map((result) => result.block)}
           similarMatches={visibleSimilarBlocks.length > 0}

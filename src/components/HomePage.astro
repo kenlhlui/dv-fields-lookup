@@ -46,6 +46,13 @@ const dataverseURL = site.dataverseURL || 'https://dataverse.org/';
 ---
 
 <Layout title={t('site.title')} description={t('site.description')} lang={lang}>
+	<!-- First tab stop: jumps past the header controls and every filter button to the results. -->
+	<a
+		href="#results"
+		class="sr-only rounded-lg border border-ring bg-background px-3 py-2 text-sm font-medium focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50"
+	>
+		{t('a11y.skipToResults')}
+	</a>
 	<main class="mx-auto min-h-screen w-full max-w-[96rem] px-4 py-10 sm:px-6 lg:px-8">
 		<!-- Wraps the control cluster below the title on narrow screens; it is wider than it was
 		     before the language switcher, and squeezing the h1 instead reads badly on a phone. -->
