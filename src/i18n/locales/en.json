@@ -64,5 +64,6 @@
   "info.close": "Close",
   "theme.toLight": "Switch to light theme",
   "theme.toDark": "Switch to dark theme",
-  "a11y.backToTop": "Back to top"
+  "a11y.backToTop": "Back to top",
+  "a11y.skipToResults": "Skip to results"
 }

@@ -64,5 +64,6 @@
   "info.close": "關閉",
   "theme.toLight": "轉淺色模式",
   "theme.toDark": "轉用深色模式",
-  "a11y.backToTop": "翻去頂部"
+  "a11y.backToTop": "翻去頂部",
+  "a11y.skipToResults": "跳到搜尋結果"
 }
