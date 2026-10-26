@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.9.0](https://github.com/kenlhlui/dv-fields-lookup/compare/v0.8.0...v0.9.0) (2026-10-26)
+
+### Features
+
+* add skipToResults button for accessibility ([#34](https://github.com/kenlhlui/dv-fields-lookup/issues/34)) ([ebbd751](https://github.com/kenlhlui/dv-fields-lookup/commit/ebbd7512fc22527de9366d0b7bdbda755b3322ba))
+
 ## [0.8.0](https://github.com/kenlhlui/dv-fields-lookup/compare/v0.7.2...v0.8.0) (2026-10-26)
 
 ### Features
