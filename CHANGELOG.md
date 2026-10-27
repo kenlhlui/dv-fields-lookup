@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.10.0](https://github.com/kenlhlui/dv-fields-lookup/compare/v0.9.1...v0.10.0) (2026-10-27)
+
+### Features
+
+* query by URL ([#39](https://github.com/kenlhlui/dv-fields-lookup/issues/39)) ([e7d5af5](https://github.com/kenlhlui/dv-fields-lookup/commit/e7d5af574170e3a0ccdd7d468d2d927aad0c6984))
+
 ## [0.9.1](https://github.com/kenlhlui/dv-fields-lookup/compare/v0.9.0...v0.9.1) (2026-10-26)
 
 ### Bug Fixes
