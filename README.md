@@ -17,6 +17,7 @@ The audience of this tool is primarily:
 - Full-text search across each field's added context, including best practices and examples.
 - Browse available metadata fields by block.
 - Filter fields by metadata block, required-only, and best practice tier (Recommended/Optional).
+- Share or bookmark a filtered view: the search and filters are kept in the page URL. See [URL parameters](docs/url-parameters.md).
 - Multi-language support. See [Internationalization](#internationalization).
 
 

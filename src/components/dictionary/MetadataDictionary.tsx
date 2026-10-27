@@ -1,5 +1,5 @@
 import { Search } from 'lucide-react';
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { BlockNav } from '@/components/dictionary/BlockNav';
 import { FieldDetailsDialog, type SelectedField } from '@/components/dictionary/FieldDetailsDialog';
@@ -9,19 +9,11 @@ import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import type { FacetDescriptions } from '@/data';
 import { plural, useTranslations, type Lang } from '@/i18n/utils';
+import { bestPracticeTiers } from '@/lib/bestPracticeTiers';
 import type { MetadataBlock, MetadataField } from '@/lib/metadata';
 import { createMetadataSearch, getVisibleFields, type SearchBlock } from '@/lib/search';
-import { cn } from '@/lib/utils';
-
-// Canonical tokens as authored in metadata.overrides.yaml, never translated in the data —
-// filtering and badge colours match on them. Display labels come from the tier.* keys.
-const bestPracticeTiers = ['Recommended', 'Optional'] as const;
-
-function toggleInSet<T>(set: ReadonlySet<T>, value: T): Set<T> {
-  const next = new Set(set);
-  if (!next.delete(value)) next.add(value);
-  return next;
-}
+import { parseFiltersFromUrl, serializeFilters } from '@/lib/urlFilters';
+import { cn, toggleInSet } from '@/lib/utils';
 
 interface MetadataDictionaryProps {
   blocks: MetadataBlock[];
@@ -41,6 +33,34 @@ export default function MetadataDictionary({ blocks, facetDescriptions, lang }: 
   const restoreFocusRef = useRef<HTMLElement | null>(null);
   const metadataSearch = useMemo(() => createMetadataSearch(blocks), [blocks]);
   const view = useMemo(() => metadataSearch.search(query), [metadataSearch, query]);
+
+  // Read filters from the URL after hydration. The page is pre-rendered without a URL, so reading
+  // it during the first render would make the client HTML differ from the server HTML.
+  useEffect(() => {
+    const { q, block, required, bestPractice } = parseFiltersFromUrl(
+      window.location.search,
+      blocks.map((b) => b.id),
+      bestPracticeTiers,
+    );
+    setQuery(q);
+    setBlockFilter(new Set(block));
+    setRequiredOnly(required);
+    setBestPracticeFilter(new Set(bestPractice));
+  }, []);
+
+  // Mirror the filters into the URL so the view can be shared or bookmarked. Declared after the read
+  // effect, which must see the URL before this first run clears it. replaceState, not pushState, so
+  // typing doesn't add a Back-button step per keystroke; the #hash is kept for the skip link.
+  useEffect(() => {
+    const search = serializeFilters({
+      q: query,
+      block: [...blockFilter],
+      required: requiredOnly,
+      bestPractice: [...bestPracticeFilter],
+    });
+    const url = `${window.location.pathname}${search ? `?${search}` : ''}${window.location.hash}`;
+    window.history.replaceState(null, '', url);
+  }, [query, blockFilter, requiredOnly, bestPracticeFilter]);
 
   function fieldFilter(field: MetadataField): boolean {
     if (requiredOnly && !field.required) return false;

@@ -86,4 +86,13 @@ const locales = Object.entries(languages) as [Lang, string][];
 			details.querySelector('summary')?.focus();
 		}
 	});
+
+	// Carry the search and filters, which the dictionary keeps in the query string, over to the
+	// other locale. Refreshed each time the menu opens, so new-tab and copied links include them too.
+	for (const details of document.querySelectorAll('details[data-lang-switcher]')) {
+		details.addEventListener('toggle', () => {
+			if (!details.open) return;
+			for (const link of details.querySelectorAll('a[hreflang]')) link.search = location.search;
+		});
+	}
 </script>

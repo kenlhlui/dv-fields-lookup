@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 
 import MetadataDictionary from '@/components/dictionary/MetadataDictionary';
 import { localeData } from '@/data';
@@ -149,6 +149,10 @@ const facetBlocks: MetadataBlock[] = [
     ],
   },
 ];
+
+// jsdom keeps one URL for the whole file and the dictionary mirrors its filters into it, so reset it
+// after every test or the next one starts pre-filtered.
+afterEach(() => window.history.replaceState(null, '', '/'));
 
 function renderDictionary(fixture: MetadataBlock[] = blocks, lang: Lang = 'en') {
   return render(
@@ -434,5 +438,73 @@ describe('MetadataDictionary', () => {
 
     expect(screen.getByRole('status')).toHaveTextContent('2 個欄位 · 2 個元數據區塊');
     expect(screen.getAllByRole('button', { name: /^睇詳情：.+/ }).length).toBe(2);
+  });
+});
+
+describe('MetadataDictionary URL filters', () => {
+  it('restores the search query from the URL', () => {
+    window.history.replaceState(null, '', '/?q=ORCID');
+    renderDictionary();
+
+    expect(screen.getByLabelText('Search metadata fields')).toHaveValue('ORCID');
+  });
+
+  it('restores block and best-practice facets from the URL', () => {
+    window.history.replaceState(null, '', '/?block=beta&bestPractice=Optional');
+    renderDictionary(facetBlocks);
+
+    expect(blockChip('Beta Block')).toHaveAttribute('aria-pressed', 'true');
+    expect(blockChip('Alpha Block')).toHaveAttribute('aria-pressed', 'false');
+    expect(screen.getByRole('button', { name: 'Optional' })).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByRole('status')).toHaveTextContent('1 field · 1 metadata block');
+  });
+
+  it('restores the required facet from the URL', () => {
+    window.history.replaceState(null, '', '/?required=true');
+    renderDictionary(facetBlocks);
+
+    expect(screen.getByRole('button', { name: 'Required' })).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByRole('status')).toHaveTextContent('1 field · 1 metadata block');
+  });
+
+  it('ignores unknown block ids and tiers in the URL', () => {
+    window.history.replaceState(null, '', '/?block=nonsense&bestPractice=Bogus');
+    renderDictionary();
+
+    expect(screen.getByRole('status')).toHaveTextContent('7 fields · 2 metadata blocks');
+  });
+
+  it('keeps the URL from the page load', () => {
+    window.history.replaceState(null, '', '/?q=ORCID');
+    renderDictionary();
+
+    // The write effect also runs before the read effect's state lands; it must not wipe the URL.
+    expect(window.location.search).toBe('?q=ORCID');
+  });
+
+  it('writes the search query to the URL as you type, keeping the hash', async () => {
+    const user = userEvent.setup();
+    window.history.replaceState(null, '', '/#results');
+    renderDictionary();
+
+    await user.type(screen.getByLabelText('Search metadata fields'), 'ORCID');
+
+    expect(window.location.search).toBe('?q=ORCID');
+    expect(window.location.hash).toBe('#results');
+  });
+
+  it('writes facets to the URL and removes the query string when everything is cleared', async () => {
+    const user = userEvent.setup();
+    renderDictionary(facetBlocks);
+
+    await user.click(blockChip('Beta Block'));
+    await user.click(screen.getByRole('button', { name: 'Required' }));
+    await user.click(screen.getByRole('button', { name: 'Optional' }));
+
+    expect(window.location.search).toBe('?block=beta&required=true&bestPractice=Optional');
+
+    await user.click(screen.getByRole('button', { name: 'Clear all' }));
+
+    expect(window.location.search).toBe('');
   });
 });
