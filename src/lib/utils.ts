@@ -6,7 +6,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function toggleInSet<T>(set: ReadonlySet<T>, value: T): Set<T> {
-  const NewSet = new Set(set);
-  if (!NewSet.delete(value)) NewSet.add(value);
-  return NewSet;
+  const newSet = new Set(set);
+  if (!newSet.delete(value)) newSet.add(value);
+  return newSet;
 }
