@@ -15,6 +15,8 @@ Repeat `block` or `bestPractice` to select several values, the same as clicking 
 
 ## Examples
 
+Replace `{DOMAIN}` with your site's domain. The `/dv-fields-lookup` path is the `base` set in [`astro.config.mjs`](../astro.config.mjs), so change it too if you've changed `base`.
+
 Fields matching "author" in the Citation block that are required:
 
 ```
@@ -33,6 +35,7 @@ https://{DOMAIN}/dv-fields-lookup/zh-hk/?block=geospatial&bestPractice=Recommend
 - **Unknown values are ignored**, so an outdated or mistyped link still opens and shows everything that was valid. A `block` that isn't in this installation's data is dropped, as is a misspelled tier or a `required` value other than `true`. Unrecognised parameters are ignored too.
 - **Spaces and symbols in `q` are escaped.** A search for `soil & water` is written as `q=soil+%26+water`.
 - **The URL is updated in place.** Typing or clicking a filter doesn't add entries to the browser's Back history.
+- **Clicking the site title clears everything.** It links to the page without its query string, the same as **Clear all**.
 - **Switching language keeps the search and filters.** The parameters are the same on every locale, so the switcher copies the query string onto its links each time its menu opens. Without JavaScript, the links still work but open the other locale unfiltered.
 
 ## Implementation

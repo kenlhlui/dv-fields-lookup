@@ -473,4 +473,38 @@ describe('MetadataDictionary URL filters', () => {
 
     expect(screen.getByRole('status')).toHaveTextContent('7 fields · 2 metadata blocks');
   });
+
+  it('keeps the URL from the page load', () => {
+    window.history.replaceState(null, '', '/?q=ORCID');
+    renderDictionary();
+
+    // The write effect also runs before the read effect's state lands; it must not wipe the URL.
+    expect(window.location.search).toBe('?q=ORCID');
+  });
+
+  it('writes the search query to the URL as you type, keeping the hash', async () => {
+    const user = userEvent.setup();
+    window.history.replaceState(null, '', '/#results');
+    renderDictionary();
+
+    await user.type(screen.getByLabelText('Search metadata fields'), 'ORCID');
+
+    expect(window.location.search).toBe('?q=ORCID');
+    expect(window.location.hash).toBe('#results');
+  });
+
+  it('writes facets to the URL and removes the query string when everything is cleared', async () => {
+    const user = userEvent.setup();
+    renderDictionary(facetBlocks);
+
+    await user.click(blockChip('Beta Block'));
+    await user.click(screen.getByRole('button', { name: 'Required' }));
+    await user.click(screen.getByRole('button', { name: 'Optional' }));
+
+    expect(window.location.search).toBe('?block=beta&required=true&bestPractice=Optional');
+
+    await user.click(screen.getByRole('button', { name: 'Clear all' }));
+
+    expect(window.location.search).toBe('');
+  });
 });

@@ -9,11 +9,11 @@ import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import type { FacetDescriptions } from '@/data';
 import { plural, useTranslations, type Lang } from '@/i18n/utils';
+import { bestPracticeTiers } from '@/lib/bestPracticeTiers';
 import type { MetadataBlock, MetadataField } from '@/lib/metadata';
 import { createMetadataSearch, getVisibleFields, type SearchBlock } from '@/lib/search';
-import { cn, toggleInSet } from '@/lib/utils';
-import { bestPracticeTiers } from '@/lib/bestPracticeTiers';
 import { parseFiltersFromUrl, serializeFilters } from '@/lib/urlFilters';
+import { cn, toggleInSet } from '@/lib/utils';
 
 interface MetadataDictionaryProps {
   blocks: MetadataBlock[];
@@ -48,7 +48,9 @@ export default function MetadataDictionary({ blocks, facetDescriptions, lang }: 
     setBestPracticeFilter(new Set(bestPractice));
   }, []);
 
-  // Update the URL whenever filters change
+  // Mirror the filters into the URL so the view can be shared or bookmarked. Declared after the read
+  // effect, which must see the URL before this first run clears it. replaceState, not pushState, so
+  // typing doesn't add a Back-button step per keystroke; the #hash is kept for the skip link.
   useEffect(() => {
     const search = serializeFilters({
       q: query,
