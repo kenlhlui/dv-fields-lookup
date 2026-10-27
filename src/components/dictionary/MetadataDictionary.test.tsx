@@ -150,6 +150,10 @@ const facetBlocks: MetadataBlock[] = [
   },
 ];
 
+// jsdom keeps one URL for the whole file and the dictionary mirrors its filters into it, so reset it
+// after every test or the next one starts pre-filtered.
+afterEach(() => window.history.replaceState(null, '', '/'));
+
 function renderDictionary(fixture: MetadataBlock[] = blocks, lang: Lang = 'en') {
   return render(
     <MetadataDictionary blocks={fixture} facetDescriptions={localeData(lang).facetDescriptions} lang={lang} />,
@@ -438,9 +442,6 @@ describe('MetadataDictionary', () => {
 });
 
 describe('MetadataDictionary URL filters', () => {
-  // jsdom keeps one URL for the whole file, so reset it or later tests start pre-filtered.
-  afterEach(() => window.history.replaceState(null, '', '/'));
-
   it('restores the search query from the URL', () => {
     window.history.replaceState(null, '', '/?q=ORCID');
     renderDictionary();

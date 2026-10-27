@@ -13,7 +13,7 @@ import type { MetadataBlock, MetadataField } from '@/lib/metadata';
 import { createMetadataSearch, getVisibleFields, type SearchBlock } from '@/lib/search';
 import { cn, toggleInSet } from '@/lib/utils';
 import { bestPracticeTiers } from '@/lib/bestPracticeTiers';
-import { parseFiltersFromUrl } from '@/lib/urlFilters';
+import { parseFiltersFromUrl, serializeFilters } from '@/lib/urlFilters';
 
 interface MetadataDictionaryProps {
   blocks: MetadataBlock[];
@@ -47,6 +47,18 @@ export default function MetadataDictionary({ blocks, facetDescriptions, lang }: 
     setRequiredOnly(required);
     setBestPracticeFilter(new Set(bestPractice));
   }, []);
+
+  // Update the URL whenever filters change
+  useEffect(() => {
+    const search = serializeFilters({
+      q: query,
+      block: [...blockFilter],
+      required: requiredOnly,
+      bestPractice: [...bestPracticeFilter],
+    });
+    const url = `${window.location.pathname}${search ? `?${search}` : ''}${window.location.hash}`;
+    window.history.replaceState(null, '', url);
+  }, [query, blockFilter, requiredOnly, bestPracticeFilter]);
 
   function fieldFilter(field: MetadataField): boolean {
     if (requiredOnly && !field.required) return false;
