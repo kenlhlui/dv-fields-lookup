@@ -1,5 +1,5 @@
 import { Search } from 'lucide-react';
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { BlockNav } from '@/components/dictionary/BlockNav';
 import { FieldDetailsDialog, type SelectedField } from '@/components/dictionary/FieldDetailsDialog';
@@ -13,7 +13,7 @@ import type { MetadataBlock, MetadataField } from '@/lib/metadata';
 import { createMetadataSearch, getVisibleFields, type SearchBlock } from '@/lib/search';
 import { cn, toggleInSet } from '@/lib/utils';
 import { bestPracticeTiers } from '@/lib/bestPracticeTiers';
-
+import { parseFiltersFromUrl } from '@/lib/urlFilters';
 
 interface MetadataDictionaryProps {
   blocks: MetadataBlock[];
@@ -33,6 +33,19 @@ export default function MetadataDictionary({ blocks, facetDescriptions, lang }: 
   const restoreFocusRef = useRef<HTMLElement | null>(null);
   const metadataSearch = useMemo(() => createMetadataSearch(blocks), [blocks]);
   const view = useMemo(() => metadataSearch.search(query), [metadataSearch, query]);
+
+  // On first render, parse the URL query parameters and set the initial state accordingly.
+  useEffect(() => {
+    const { q, block, required, bestPractice } = parseFiltersFromUrl(
+      window.location.search,
+      blocks.map((b) => b.id),
+      bestPracticeTiers,
+    );
+    setQuery(q);
+    setBlockFilter(new Set(block));
+    setRequiredOnly(required);
+    setBestPracticeFilter(new Set(bestPractice));
+  }, []);
 
   function fieldFilter(field: MetadataField): boolean {
     if (requiredOnly && !field.required) return false;
