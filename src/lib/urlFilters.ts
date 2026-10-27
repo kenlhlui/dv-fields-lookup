@@ -19,3 +19,20 @@ export function parseFiltersFromUrl(
     bestPractice: params.getAll('bestPractice').filter((tier) => bestPracticeTiers.includes(tier)),
   };
 }
+
+export function serializeFilters(filters: UrlQuery): string {
+  const params = new URLSearchParams();
+  if (filters.q) {
+    params.set('q', filters.q);
+  }
+  for (const id of filters.block) {
+    params.append('block', id);
+  }
+  if (filters.required) {
+    params.set('required', 'true');
+  }
+  for (const tier of filters.bestPractice) {
+    params.append('bestPractice', tier);
+  }
+  return params.toString();
+}
