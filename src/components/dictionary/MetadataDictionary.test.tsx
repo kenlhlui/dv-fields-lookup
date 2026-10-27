@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 
 import MetadataDictionary from '@/components/dictionary/MetadataDictionary';
 import { localeData } from '@/data';
@@ -434,5 +434,42 @@ describe('MetadataDictionary', () => {
 
     expect(screen.getByRole('status')).toHaveTextContent('2 個欄位 · 2 個元數據區塊');
     expect(screen.getAllByRole('button', { name: /^睇詳情：.+/ }).length).toBe(2);
+  });
+});
+
+describe('MetadataDictionary URL filters', () => {
+  // jsdom keeps one URL for the whole file, so reset it or later tests start pre-filtered.
+  afterEach(() => window.history.replaceState(null, '', '/'));
+
+  it('restores the search query from the URL', () => {
+    window.history.replaceState(null, '', '/?q=ORCID');
+    renderDictionary();
+
+    expect(screen.getByLabelText('Search metadata fields')).toHaveValue('ORCID');
+  });
+
+  it('restores block and best-practice facets from the URL', () => {
+    window.history.replaceState(null, '', '/?block=beta&bestPractice=Optional');
+    renderDictionary(facetBlocks);
+
+    expect(blockChip('Beta Block')).toHaveAttribute('aria-pressed', 'true');
+    expect(blockChip('Alpha Block')).toHaveAttribute('aria-pressed', 'false');
+    expect(screen.getByRole('button', { name: 'Optional' })).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByRole('status')).toHaveTextContent('1 field · 1 metadata block');
+  });
+
+  it('restores the required facet from the URL', () => {
+    window.history.replaceState(null, '', '/?required=true');
+    renderDictionary(facetBlocks);
+
+    expect(screen.getByRole('button', { name: 'Required' })).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByRole('status')).toHaveTextContent('1 field · 1 metadata block');
+  });
+
+  it('ignores unknown block ids and tiers in the URL', () => {
+    window.history.replaceState(null, '', '/?block=nonsense&bestPractice=Bogus');
+    renderDictionary();
+
+    expect(screen.getByRole('status')).toHaveTextContent('7 fields · 2 metadata blocks');
   });
 });

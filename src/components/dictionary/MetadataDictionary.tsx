@@ -34,7 +34,8 @@ export default function MetadataDictionary({ blocks, facetDescriptions, lang }: 
   const metadataSearch = useMemo(() => createMetadataSearch(blocks), [blocks]);
   const view = useMemo(() => metadataSearch.search(query), [metadataSearch, query]);
 
-  // On first render, parse the URL query parameters and set the initial state accordingly.
+  // Read filters from the URL after hydration. The page is pre-rendered without a URL, so reading
+  // it during the first render would make the client HTML differ from the server HTML.
   useEffect(() => {
     const { q, block, required, bestPractice } = parseFiltersFromUrl(
       window.location.search,
