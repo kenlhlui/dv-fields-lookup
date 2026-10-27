@@ -63,7 +63,9 @@ const dataverseURL = site.dataverseURL || 'https://dataverse.org/';
 						{dataverseName}
 					</a>
 				</p>
-				<h1 class="text-4xl font-semibold tracking-tight text-balance sm:text-5xl">{t('site.title')}</h1>
+				<a href={Astro.url.pathname}>
+					<h1 class="text-4xl font-semibold tracking-tight text-balance sm:text-5xl">{t('site.title')}</h1>
+				</a>
 				<p class="mt-4 text-lg leading-8 text-muted-foreground">{t('site.description')}</p>
 			</div>
 			<div class="flex shrink-0 flex-wrap items-center justify-end gap-1">
