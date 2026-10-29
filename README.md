@@ -70,6 +70,18 @@ To check the data before a build or deployment:
 pnpm test src/lib/metadata.test.ts
 ```
 
+### Updating the metadata
+
+To fetch the latest metadata blocks and fields from the installation set in [`src/site.config.ts`](src/site.config.ts), run:
+
+```bash
+pnpm tsx scripts/update-metadata.ts
+```
+
+The script only rewrites `src/data/metadata.json` when the fetched metadata differs from it.
+
+The **Update metadata.json** workflow runs this script daily at 02:00 UTC, or manually from the Actions tab. When the metadata has changed, it commits the new file to `main`, runs the tests and redeploys the site.
+
 ## Internationalization
 
 See [docs/internationalization.md](docs/internationalization.md) for instructions on adding a new locale and translating the interface, site text, and metadata descriptions.
@@ -98,6 +110,8 @@ You can deploy the application to any static hosting service. For example, to de
       dataverseName: '{YOUR-DATAVERSE-NAME}',
       dataverseURL: '{YOUR-DATAVERSE-URL}',
       githubUrl: 'https://github.com/{YOUR-GITHUB-USERNAME}/dv-fields-lookup',
+      // Optional: only include the metadata blocks enabled for one collection
+      collectionId: '{YOUR-COLLECTION-ALIAS}',
     };
     ```
 
@@ -112,10 +126,10 @@ You can deploy the application to any static hosting service. For example, to de
     }
     ```
 
-4. Replace [`src/data/metadata.json`](src/data/metadata.json) with the JSON exported from your Dataverse installation with either:
-   1. The `/api/metadatablocks?returnDatasetFieldTypes=true` endpoint, which returns all metadata blocks and fields from the installation, or
+4. Replace [`src/data/metadata.json`](src/data/metadata.json) with your installation's metadata by running `pnpm tsx scripts/update-metadata.ts` (see [Updating the metadata](#updating-the-metadata)). The script uses:
+   1. The `/api/metadatablocks?returnDatasetFieldTypes=true` endpoint, which returns all metadata blocks and fields from the installation, when `collectionId` is not set, or
       1. Example: [https://demo.borealisdata.ca/api/metadatablocks?returnDatasetFieldTypes=true](https://borealisdata.ca/api/metadatablocks?returnDatasetFieldTypes=true)
-   2. The `/api/dataverses/{id}/metadatablocks?returnDatasetFieldTypes=true` endpoint, which returns all metadata blocks and fields from a collection.
+   2. The `/api/dataverses/{id}/metadatablocks?returnDatasetFieldTypes=true` endpoint, which returns all metadata blocks and fields from a collection, when `collectionId` is set.
       1. Example: [https://demo.borealisdata.ca/api/dataverses/toronto/metadatablocks?returnDatasetFieldTypes=true](https://borealisdata.ca/api/dataverses/toronto/metadatablocks?returnDatasetFieldTypes=true)
 
 5. Add best practice definitions and examples for individual fields in [`src/data/en/metadata.overrides.yaml`](src/data/en/metadata.overrides.yaml). Look up the field's `name` in `src/data/metadata.json`, then add an entry keyed by that name:
@@ -142,7 +156,12 @@ You can deploy the application to any static hosting service. For example, to de
 
 7. Optionally translate steps 3, 5 and 6 into the other locales you serve, or delete `src/pages/zh-hk/`, `src/i18n/locales/zh-hk.json`, the `zh-hk` entries in `src/i18n/ui.ts` and `src/data/zh-hk/` to ship English only.
 
-8. Commit and push your changes. Make sure the repository's Pages settings are set to deploy from GitHub Actions. The site deploys when a `v*` tag is pushed (for example with `pnpm release`), or manually by running the **Release and Deploy** workflow from the Actions tab.
+8. Commit and push your changes. Make sure the repository's Pages settings are set to deploy from GitHub Actions. The site deploys:
+   - when a `v*` tag is pushed (for example with `pnpm release`), through the **Release** workflow
+   - when the daily **Update metadata.json** workflow finds new metadata blocks and fields
+   - manually, by running the **Build and Deploy** workflow from the Actions tab
+
+   GitHub disables scheduled workflows in forks, so enable workflows in your fork's Actions tab to turn on the daily update.
 </details>
 
 ## Acknowledgments
