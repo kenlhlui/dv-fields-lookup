@@ -3,12 +3,19 @@ name: CI
 on:
   pull_request:
   workflow_call:
+    inputs:
+      ref:
+        description: Commit to test (defaults to the triggering commit)
+        type: string
+        default: ''
 
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.ref }}
       - uses: pnpm/action-setup@v4
         with:
           version: 11.24.0

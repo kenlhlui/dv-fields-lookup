@@ -1,0 +1,51 @@
+name: Update metadata.json
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 2 * * *'
+
+jobs:
+  update-metadata:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      changed: ${{ steps.commit.outputs.changes_detected }}
+      commit: ${{ steps.commit.outputs.commit_hash }}
+
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 11.24.0
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Run the update-metadata script
+        run: pnpm tsx scripts/update-metadata.ts
+      - name: Commit with auto commit
+        id: commit
+        uses: stefanzweifel/git-auto-commit-action@v7
+        with:
+          commit_message: 'chore: update metadata.json'
+
+  test:
+    needs: update-metadata
+    if: needs.update-metadata.outputs.changed == 'true'
+    uses: ./.github/workflows/ci.yml
+    with:
+      ref: ${{ needs.update-metadata.outputs.commit }}
+
+  deploy:
+    needs: [update-metadata, test]
+    uses: ./.github/workflows/deploy.yml
+    with:
+      ref: ${{ needs.update-metadata.outputs.commit }}
+    permissions:
+      contents: read
+      pages: write
+      id-token: write

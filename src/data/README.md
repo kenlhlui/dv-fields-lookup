@@ -10,7 +10,7 @@ zh-hk/                 translations; only the keys that differ from en/
   …same three files
 ```
 
-`metadata.json` is the raw Dataverse `/api/metadatablocks?returnDatasetFieldTypes=true` export — copy the fresh export over this file to update it, no build step needed. It is **not** translated: field names, definitions and controlled vocabulary come from the installation and render in English in every locale.
+`metadata.json` is the raw Dataverse `/api/metadatablocks?returnDatasetFieldTypes=true` export (or `/api/dataverses/{id}/metadatablocks?returnDatasetFieldTypes=true` when `collectionId` is set in `src/site.config.ts`) — run `pnpm tsx scripts/update-metadata.ts` to refresh it, no build step needed. It is **not** translated: field names, definitions and controlled vocabulary come from the installation and render in English in every locale.
 
 `src/lib/metadata.ts`'s `buildMetadata(metadataJson, overrides, blockDescriptions)` flattens it at runtime into the shape the app uses: compound fields become id-prefixed leaf entries (e.g. `author.authorName`), `metadata.overrides.yaml` (keyed by leaf field name) merges in curated `bestPracticeDefinition`/`recommendation`/`example`, and `block-descriptions.yaml` (keyed by block id) supplies block descriptions, which aren't part of the API response.
 
