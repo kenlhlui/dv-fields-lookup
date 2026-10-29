@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.11.0](https://github.com/kenlhlui/dv-fields-lookup/compare/v0.10.0...v0.11.0) (2026-10-29)
+
+### Features
+
+* update metdata.json daily with actions ([#42](https://github.com/kenlhlui/dv-fields-lookup/issues/42)) ([6bcaf0a](https://github.com/kenlhlui/dv-fields-lookup/commit/6bcaf0ab939fee0de1c39e8cb3ab20419f04347a))
+
 ## [0.10.0](https://github.com/kenlhlui/dv-fields-lookup/compare/v0.9.1...v0.10.0) (2026-10-27)
 
 ### Features
