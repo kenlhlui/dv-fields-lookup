@@ -25,6 +25,7 @@ The audience of this tool is primarily:
 
 - Node.js 22.12.0 or newer
 - [pnpm](https://pnpm.io/)
+- Dataverse installation 6.3 or later
 
 ## Development
 
