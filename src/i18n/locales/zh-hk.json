@@ -2,6 +2,8 @@
   "site.title": "Dataverse 元數據欄位查詢",
   "site.description": "搵同睇 Borealis 的元數據欄位，附有規格說明及最佳實踐指引。",
   "site.footerText": "為 Dataverse 社群用❤️製作 ",
+  "site.metadataUpdatedOn": "元數據更新於 {date}",
+  "site.SiteBuiltOn": "建置於 {date}",
   "lang.label": "語言",
   "search.label": "搵元數據欄位",
   "search.placeholder": "搵名稱、說明、識別碼及範例…",
