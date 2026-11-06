@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.12.0](https://github.com/kenlhlui/dv-fields-lookup/compare/v0.11.1...v0.12.0) (2026-11-06)
+
+### Features
+
+* **ui:** add metadata update & site built timestamp ([#45](https://github.com/kenlhlui/dv-fields-lookup/issues/45)) ([c96b73b](https://github.com/kenlhlui/dv-fields-lookup/commit/c96b73b24027369385099c90aa399a9d134003d9))
+
 ## [0.11.1](https://github.com/kenlhlui/dv-fields-lookup/compare/v0.11.0...v0.11.1) (2026-11-06)
 
 ### Bug Fixes
