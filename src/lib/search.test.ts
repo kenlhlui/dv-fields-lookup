@@ -18,17 +18,8 @@ describe('createMetadataSearch', () => {
     const view = search.search('   ');
 
     expect(view.isSearching).toBe(false);
-    expect(view.matchingFieldCount).toBe(155);
-    expect(view.blocks.map(({ block }) => block.id)).toEqual([
-      'citation',
-      'geospatial',
-      'socialscience',
-      'astrophysics',
-      'biomedical',
-      'journal',
-      'computationalworkflow',
-      '3dobjects',
-    ]);
+    expect(view.matchingFieldCount).toBe(blocks.reduce((total, block) => total + block.fields.length, 0));
+    expect(view.blocks.map(({ block }) => block.id)).toEqual(blocks.map((block) => block.id));
   });
 
   it('removes unrelated blocks while retaining every Fuse-matched field in its full source block', () => {
