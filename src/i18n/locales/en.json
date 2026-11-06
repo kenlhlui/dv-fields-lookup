@@ -2,6 +2,8 @@
   "site.title": "Dataverse Metadata Field Lookup",
   "site.description": "Search and explore metadata fields in Borealis, with specifications and best practices in context.",
   "site.footerText": "Made with ❤️ for the Dataverse community.",
+  "site.metadataUpdatedOn": "Metadata last updated: {date}",
+  "site.SiteBuiltOn": "Site built: {date}",
   "lang.label": "Language",
   "search.label": "Search metadata fields",
   "search.placeholder": "Search names, descriptions, identifiers, and examples…",

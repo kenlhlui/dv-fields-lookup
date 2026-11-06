@@ -20,6 +20,8 @@ jobs:
         uses: actions/checkout@v7
         with:
           ref: ${{ inputs.ref }}
+          # Full history so the footer can show the last commit that changed metadata.json
+          fetch-depth: 0
       - name: Install, build, and upload site
         uses: withastro/action@v6
         with:

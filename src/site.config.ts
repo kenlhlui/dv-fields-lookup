@@ -6,10 +6,12 @@ interface SiteConfig {
   dataverseURL: string;
   githubUrl: string;
   collectionId?: string;
+  timezone?: string;
 }
 
 export const site: SiteConfig = {
   dataverseName: 'Borealis',
   dataverseURL: 'https://borealisdata.ca/',
   githubUrl: 'https://github.com/kenlhlui/dv-fields-lookup',
+  timezone: 'America/Toronto',
 };

@@ -10,6 +10,7 @@ import { localeData } from '@/data';
 import metadataJson from '@/data/metadata.json';
 import { useTranslations, type Lang } from '@/i18n/utils';
 import Layout from '@/layouts/Layout.astro';
+import { getLastCommit } from '@/lib/git';
 import { buildMetadata } from '@/lib/metadata';
 import { site } from '@/site.config';
 import * as informationEn from '@/content/information.en.md';
@@ -43,6 +44,12 @@ const InformationHtml = await informationPages[lang].compiledContent();
 // ponytail: defaults for installations that don't set their own name/URL
 const dataverseName = site.dataverseName || 'The Dataverse Project';
 const dataverseURL = site.dataverseURL || 'https://dataverse.org/';
+
+// The last commit that touched metadata.json tells readers how fresh the field list is
+// (relies on fetch-depth: 0 in deploy.yml).
+const metadataCommit = getLastCommit('src/data/metadata.json');
+const formatDate = new Intl.DateTimeFormat(lang, { dateStyle: 'medium', timeZone: site.timezone || 'UTC' }).format;
+const SiteBuiltOn = formatDate(new Date());
 ---
 
 <Layout title={t('site.title')} description={t('site.description')} lang={lang}>
@@ -79,5 +86,19 @@ const dataverseURL = site.dataverseURL || 'https://dataverse.org/';
 	</main>
 	<Footer githubUrl={site.githubUrl}>
 		<p class="whitespace-pre-line">{t('site.footerText')}</p>
+		<p class="text-xs">
+			{metadataCommit && (
+				<>
+					{t('site.metadataUpdatedOn', { date: formatDate(metadataCommit.date) })}{' '}
+					(<a
+						href={`${site.githubUrl}/commit/${metadataCommit.sha}`}
+						target="_blank"
+						rel="noreferrer"
+						class="font-mono underline-offset-2 hover:underline"
+					>{metadataCommit.sha.slice(0, 7)}</a>) ·{' '}
+				</>
+			)}
+			{t('site.SiteBuiltOn', { date: SiteBuiltOn })}
+		</p>
 	</Footer>
 </Layout>
