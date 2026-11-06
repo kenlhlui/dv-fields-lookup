@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.11.1](https://github.com/kenlhlui/dv-fields-lookup/compare/v0.11.0...v0.11.1) (2026-11-06)
+
+### Bug Fixes
+
+* createMetadataSearch method no longer hardcoded ([#43](https://github.com/kenlhlui/dv-fields-lookup/issues/43)) ([ca6ccc0](https://github.com/kenlhlui/dv-fields-lookup/commit/ca6ccc02dbbc21df04f039a4b7a30adb4e7e06c6))
+
 ## [0.11.0](https://github.com/kenlhlui/dv-fields-lookup/compare/v0.10.0...v0.11.0) (2026-10-29)
 
 ### Features
